@@ -1,4 +1,4 @@
-;;; Time-stamp: "2017-05-30 Tue 14:04 marcelbecker on beckermac.lan"
+;;; Time-stamp: "2017-05-30 Tue 15:45 marcelbecker on beckermac.lan"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -494,6 +494,7 @@ magit
 magit-gitflow
 magit-popup
 majapahit-theme
+makey
 markdown-mode
 markdown-toc
 material-theme

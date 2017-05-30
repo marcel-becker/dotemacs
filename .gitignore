@@ -24,12 +24,18 @@ var/
 .installed.cfg
 *.egg
 elpa/
+el-get/
+request/
+eshell/
 savehistory-*
 *.elc
 *.*~
 recentf*
 places*
 smex-items*
+ac-comphist*
+.python-environments/
+
 
 
 # Installer logs
