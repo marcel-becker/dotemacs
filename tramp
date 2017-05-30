@@ -1,0 +1,45 @@
+;; -*- emacs-lisp -*- <16/08/28 23:01:56 /Users/marcelbecker/Dropbox/.emacs.d/tramp>
+;; Tramp connection history.  Don't change this file.
+;; You can delete it, forcing Tramp to reapply the checks.
+
+((["ssh" nil "becker-openstack" nil nil]
+  ("locale" "LC_ALL=en_US.utf8")
+  ("uname" "Linux 3.13.0-49-generic")
+  ("test" "test")
+  ("remote-path"
+   ("/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin"))
+  ("remote-shell" "/bin/sh")
+  ("file-exists" "test -e")
+  ("ls" "/bin/ls --color=never")
+  ("ls-dired" t)
+  ("stat" "\\stat")
+  ("id" "/usr/bin/id")
+  ("gid-integer" 1000)
+  ("readlink" "\\readlink")
+  ("gid-string" "ubuntu")
+  ("gvfs-monitor-dir" nil)
+  ("inotifywait" nil)
+  ("~" "/home/ubuntu")
+  ("perl-file-spec" t)
+  ("perl-cwd-realpath" t)
+  ("perl" "\\perl"))
+ (["ssh" "DoD_Admin" "50.225.83.4#422" nil nil]
+  ("uname" "CYGWIN_NT-6.1 2.3.1(0.291/5/3)")
+  ("locale" "LC_ALL=en_US.utf8")
+  ("test" "test")
+  ("remote-path"
+   ("/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin"))
+  ("remote-shell" "/bin/bash")
+  ("readlink" "\\readlink")
+  ("stat" nil)
+  ("perl" nil)
+  ("file-exists" "test -e")
+  ("ls" "/bin/ls --color=never")
+  ("ls-quoting-style" t)
+  ("id" "/bin/id")
+  ("gid-integer" 197121)
+  ("gid-string" "None")
+  ("git" nil)
+  ("~" "/home/DoD_Admin"))
+ (["ssh" "DoD_Admin" "50.225.83.4" nil nil]
+  nil))
