@@ -592,6 +592,7 @@ solarized-theme
 soothe-theme
 spacegray-theme
 spaceline
+spaceline-config
 spacemacs-theme
 spinner
 spotify
@@ -676,7 +677,7 @@ zonokai-theme
   (if (file-exists-p elget-lib)
       (add-to-list 'load-path elget-lib)))
 (unless (require 'el-get nil 'noerror)
-  (with-current-buffer
+  (with-current-bufferf
       (url-retrieve-synchronously
        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
     (goto-char (point-max))

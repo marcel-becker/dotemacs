@@ -3,7 +3,7 @@
 
 ;; Format for time string
 (setq display-time-string-forms
-      '((propertize (concat "  TIME: " 24-hours ":" minutes " "))))
+      '((propertize (concat "  TIME: " 24-hours ":" minutes " " am-pm))))
 
 
 (setq-default
