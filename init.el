@@ -234,6 +234,22 @@ of an error, just add the package to a list of missing packages."
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(require 'package)
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ;;("marmalade" . "https://marmalade-repo.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ;;("melpas" . "http://stable.melpa.org/packages/")
+                         ))
+
+(setq package-check-signature nil)
+(setq package-user-dir (concat marcel-lisp-dir "/elpa"))
+(add-to-list 'load-path (concat marcel-lisp-dir "/elpa"))
+;;(when (not package-archive-contents)
+;;(package-refresh-contents))
+(package-initialize)
+
+
+
 (setq my-elpa-packages
       '(
 ac-helm
@@ -592,7 +608,7 @@ solarized-theme
 soothe-theme
 spacegray-theme
 spaceline
-spaceline-config
+;;spaceline-config
 spacemacs-theme
 spinner
 spotify
@@ -643,19 +659,6 @@ zencoding-mode
 zonokai-theme
 ))
 
-(require 'package)
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ;;("marmalade" . "https://marmalade-repo.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ;;("melpas" . "http://stable.melpa.org/packages/")
-                         ))
-
-(setq package-check-signature nil)
-(setq package-user-dir (concat marcel-lisp-dir "/elpa"))
-(add-to-list 'load-path (concat marcel-lisp-dir "/elpa"))
-;;(when (not package-archive-contents)
-;;(package-refresh-contents))
-(package-initialize)
 
 (dolist (p my-elpa-packages)
   (progn
@@ -666,6 +669,7 @@ zonokai-theme
     ;;(require p nil :noerror)
     ))
 
+(package-initialize)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; EL-GET
