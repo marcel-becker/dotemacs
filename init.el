@@ -1,4 +1,4 @@
-;;; Time-stamp: "2017-05-30 Tue 15:45 marcelbecker on beckermac.lan"
+;;; Time-stamp: "2017-06-15 Thu 17:17 marcelbecker on beckermac.local"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -619,6 +619,7 @@ subatomic256-theme
 sublime-themes
 sunny-day-theme
 swiper
+swiper-helm
 switch-window
 tabbar
 tango-2-theme
@@ -1201,13 +1202,13 @@ file to write to."
 (global-set-key (kbd "M--") 'text-scale-decrease)
 
 
-;; (message "Loading swiper")
-;; (require 'swiper)
-;; (require 'ivy)
-;; (ivy-mode 1)
-;; (setq ivy-use-virtual-buffers t)
-;;(global-set-key (kbd "C-c C-s") 'swiper)
-;; (global-set-key (kbd "C-c C-r") 'ivy-resume)
+(message "Loading swiper")
+ (require 'swiper)
+ (require 'ivy)
+ (ivy-mode 1)
+ (setq ivy-use-virtual-buffers t)
+ (global-set-key (kbd "C-c C-s") 'swiper-helm)
+ (global-set-key (kbd "C-c C-r") 'ivy-resume)
 ;; (global-set-key (kbd "M-x") 'counsel-M-x)
 ;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
 ;; (global-set-key (kbd "<f1> f") 'counsel-describe-function)
