@@ -1,4 +1,4 @@
-;;; Time-stamp: "2017-06-16 Fri 18:11 marcelbecker on beckermac.local"
+;;; Time-stamp: "2017-06-21 Wed 23:16 marcelbecker on beckermac.local"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -234,7 +234,6 @@ of an error, just add the package to a list of missing packages."
 (global-set-key (kbd "<M-S-f3>") 'my-open-notes)
 
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; ELPA Packages
@@ -314,6 +313,7 @@ company-jedi
 company-quickhelp
 company-statistics
 company-tern
+counsel
 csv-mode
 ctable
 cyberpunk-theme
@@ -689,7 +689,7 @@ zonokai-theme
   (if (file-exists-p elget-lib)
       (add-to-list 'load-path elget-lib)))
 (unless (require 'el-get nil 'noerror)
-  (with-current-bufferf
+  (with-current-buffer
       (url-retrieve-synchronously
        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
     (goto-char (point-max))
@@ -1166,6 +1166,41 @@ file to write to."
 ;; replacing it with the Emacs’ text.
 ;; https://github.com/dakrone/eos/blob/master/eos.org
 (setq save-interprogram-paste-before-kill t)
+
+
+
+(require 'org)
+(require 'ob)
+
+;; make org mode allow eval of some langs
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (clojure . t)
+   (python . t)
+   (ruby . t)))
+;; stop emacs asking for confirmation
+(setq org-confirm-babel-evaluate nil)
+(setq org-src-fontify-natively t)
+(setq org-support-shift-select t)
+
+;; open my Emacs init file
+(defun my-open-notes ()
+  "Opening `~/Dropbox/EmacsOrg/MarcelNotes.org'"
+  (interactive)
+  (find-file "~/Dropbox/EmacsOrg/MarcelNotes.org"))
+(global-set-key (kbd "<M-S-f3>") 'my-open-notes)
+
+(eval-after-load "org"
+    '(progn
+       (eval-after-load "cua-base"
+         '(progn
+            (defadvice org-call-for-shift-select (before org-call-for-shift-select-cua activate)
+              (if (and cua-mode
+                       org-support-shift-select
+                       (not (use-region-p)))
+                  (cua-set-mark)))))))
+
 
 
 ;; Navigate windows with M-<arrows>
