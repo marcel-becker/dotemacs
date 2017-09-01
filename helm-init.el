@@ -145,4 +145,7 @@
 (require 'org)
 (define-key org-mode-map (kbd "C-x c o h") #'helm-org-headlines)
 
+;(add-to-list 'helm-completing-read-handlers-alist '(find-file))
+;(add-to-list 'helm-completing-read-handlers-alist '(find-file-other-window))
+
 (helm-mode 1)

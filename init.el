@@ -1,4 +1,4 @@
-;;; Time-stamp: "2017-06-21 Wed 23:16 marcelbecker on beckermac.local"
+;;; Time-stamp: "2017-09-01 Fri 08:50 marcelbecker on beckermac.lan"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -243,9 +243,14 @@ of an error, just add the package to a list of missing packages."
 (require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ;;("marmalade" . "https://marmalade-repo.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ;;("melpas" . "http://stable.melpa.org/packages/")
+                         ;;("melpa" . "https://stable.melpa.org/packages/")
+                         ("melpas" . "https://melpa.org/packages/")
                          ))
+
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
+  (add-to-list 'package-archives (cons "melpa" url) t))
 
 (setq package-check-signature nil)
 (setq package-user-dir (concat marcel-lisp-dir "/elpa"))
@@ -263,6 +268,7 @@ ac-ispell
 ac-python
 ace-flyspell
 ace-jump-helm-line
+ace-jump-mode
 ace-link
 ace-window
 adaptive-wrap
@@ -270,6 +276,7 @@ afternoon-theme
 aggressive-indent
 alect-themes
 alert
+all-the-icons
 ample-regexps
 ample-theme
 ample-zen-theme
@@ -344,7 +351,7 @@ dired-hacks-utils
 dired-imenu
 dired-launch
 dired-narrow
-dired-nav-enhance
+;;dired-nav-enhance
 dired-open
 dired-quick-sort
 dired-rainbow
@@ -604,6 +611,8 @@ simple-httpd
 skewer-mode
 smartparens
 smartrep
+smart-mode-line
+smart-mode-line-powerline-theme
 smeargle
 smooth-scroll
 smooth-scrolling
@@ -615,6 +624,8 @@ solarized-theme
 soothe-theme
 spacegray-theme
 spaceline
+spaceline-all-the-icons
+;;spaceline-segments
 ;;spaceline-config
 spacemacs-theme
 spinner
@@ -999,13 +1010,15 @@ file to write to."
  '(anzu-search-threshold 1000)
  '(package-selected-packages
    (quote
-    (vi-tilde-fringe unbound spacemacs-theme shell-command rainbow-mode pydoc move-text gitconfig-mode gitattributes-mode gh-md fancy-battery clean-aindent-mode zoom-frm zonokai-theme zencoding-mode zenburn-theme zen-and-art-theme yaml-mode ws-butler winum window-numbering window-number which-key websocket web-beautify volatile-highlights vline virtualenvwrapper uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tabbar switch-window swiper sunny-day-theme sublime-themes subatomic256-theme subatomic-theme sr-speedbar spray spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smooth-scroll smartrep seti-theme reverse-theme restart-emacs redo+ recentf-ext rainbow-delimiters railscasts-theme python-pep8 python-mode pydoc-info pycomplete py-autopep8 purple-haze-theme professional-theme popwin popup-kill-ring planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pcache pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme nose noctilux-theme niflheim-theme nginx-mode neotree naquadah-theme mwim mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme menu-bar+ material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lua-mode lorem-ipsum livid-mode linum-relative link-hint light-soap-theme leuven-theme latex-preview-pane json-rpc json-mode js2-refactor js-doc jedi jbeans-theme jazz-theme ir-black-theme inkpot-theme info+ indent-guide idomenu ido-vertical-mode icicles hy-mode hungry-delete htmlize hlinum hl-todo highlight-parentheses hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-spotify helm-pydoc helm-projectile helm-package helm-mode-manager helm-make helm-ls-git helm-helm-commands helm-gitignore helm-git-files helm-git helm-flx helm-descbinds helm-company helm-c-yasnippet helm-anything helm-ag header2 hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme goto-last-change gotham-theme google-translate golden-ratio gnuplot git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gandalf-theme fuzzy flyspell-correct-helm flycheck-pos-tip flatui-theme flatland-theme firebelly-theme fill-column-indicator farmhouse-theme eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-leader evil-indent-textobject evil-indent-plus evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme escreen elpy elisp-slime-nav el-get dumb-jump dracula-theme doremi-frm doremi-cmd dockerfile-mode django-theme direx-grep diredful dired-toggle-sudo dired-toggle dired-subtree dired-sort-menu+ dired-sort dired-single dired-ranger dired-rainbow dired-quick-sort dired-open dired-nav-enhance dired-narrow dired-launch dired-imenu dired-filter dired-filetype-face dired-fdclone dired-explorer dired-efap dired-dups dired-details+ dired-avfs dired-atool dired+ diff-hl define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-tern company-statistics company-quickhelp company-jedi company-anaconda column-enforce-mode color-theme-tango color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode clues-theme cherry-blossom-theme centered-cursor-mode busybee-theme buffer-move bubbleberry-theme browse-kill-ring+ birds-of-paradise-plus-theme badwolf-theme autopair auto-yasnippet auto-highlight-symbol auto-dictionary auto-complete-auctex auto-compile auctex apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme ample-regexps alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ace-flyspell ac-python ac-ispell ac-helm))))
+    (vi-tilde-fringe unbound spacemacs-theme shell-command rainbow-mode pydoc move-text gitconfig-mode gitattributes-mode gh-md fancy-battery clean-aindent-mode zoom-frm zonokai-theme zencoding-mode zenburn-theme zen-and-art-theme yaml-mode ws-butler winum window-numbering window-number which-key websocket web-beautify volatile-highlights vline virtualenvwrapper uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tabbar switch-window swiper sunny-day-theme sublime-themes subatomic256-theme subatomic-theme sr-speedbar spray spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smooth-scroll smartrep seti-theme reverse-theme restart-emacs redo+ recentf-ext rainbow-delimiters railscasts-theme python-pep8 python-mode pydoc-info pycomplete py-autopep8 purple-haze-theme professional-theme popwin popup-kill-ring planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pcache pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme nose noctilux-theme niflheim-theme nginx-mode neotree naquadah-theme mwim mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme menu-bar+ material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lua-mode lorem-ipsum livid-mode linum-relative link-hint light-soap-theme leuven-theme latex-preview-pane json-rpc json-mode js2-refactor js-doc jedi jbeans-theme jazz-theme ir-black-theme inkpot-theme info+ indent-guide idomenu ido-vertical-mode icicles hy-mode hungry-delete htmlize hlinum hl-todo highlight-parentheses hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-spotify helm-pydoc helm-projectile helm-package helm-mode-manager helm-make helm-ls-git helm-helm-commands helm-gitignore helm-git-files helm-git helm-flx helm-descbinds helm-company helm-c-yasnippet helm-anything helm-ag header2 hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme goto-last-change gotham-theme google-translate golden-ratio gnuplot git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gandalf-theme fuzzy flyspell-correct-helm flycheck-pos-tip flatui-theme flatland-theme firebelly-theme fill-column-indicator farmhouse-theme eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-leader evil-indent-textobject evil-indent-plus evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme escreen elpy elisp-slime-nav el-get dumb-jump dracula-theme doremi-frm doremi-cmd dockerfile-mode django-theme direx-grep diredful dired-toggle-sudo dired-toggle dired-subtree dired-sort-menu+ dired-sort dired-single dired-ranger dired-rainbow dired-quick-sort dired-open dired-nav-enhance dired-narrow dired-launch dired-imenu dired-filter dired-filetype-face dired-fdclone dired-explorer dired-efap dired-dups dired-details+ dired-avfs dired-atool dired+ diff-hl define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-tern company-statistics company-quickhelp company-jedi company-anaconda column-enforce-mode color-theme-tango color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode clues-theme cherry-blossom-theme centered-cursor-mode busybee-theme buffer-move bubbleberry-theme browse-kill-ring+ birds-of-paradise-plus-theme badwolf-theme autopair auto-yasnippet auto-highlight-symbol auto-dictionary auto-complete-latex auto-compile auctex apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme ample-regexps alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ace-flyspell ac-python ac-ispell ac-helm))))
 
 (define-key isearch-mode-map [remap isearch-query-replace]  #'anzu-isearch-query-replace)
 (define-key isearch-mode-map [remap isearch-query-replace-regexp] #'anzu-isearch-query-replace-regexp)
 
 ;; C-x C-j opens dired with the cursor right on the file you're editing
-(require 'dired-x)
+;;(require 'dired-x)
+
+
 
 (setq stack-trace-on-error t)
 (setq debug-on-error t)
@@ -1027,6 +1040,25 @@ file to write to."
 (line-number-mode 1)
 (global-linum-mode 1)
 (global-hl-line-mode 1)			; highlight current line
+
+
+;;; Keep the highlight color 10% darker than the default background face
+;;; https://emacs.stackexchange.com/questions/9740/how-to-define-a-good-highlight-face
+(require 'color)
+;;(require 'pallet)
+
+(defun my-set-hl-line-color-based-on-theme ()
+  "Sets the hl-line face to have no foregorund and a background
+    that is 10% darker than the default face's background."
+  (interactive)
+  (set-face-attribute 'hl-line nil
+                      :foreground nil
+                      :background (color-darken-name (face-background 'default) 10)))
+
+;;(add-hook 'global-hl-line-mode-hook 'my-set-hl-line-color-based-on-theme)
+
+
+
 ;; dim the ignored part of the file name
 (file-name-shadow-mode 1)
 
@@ -1036,7 +1068,15 @@ file to write to."
 
 
 (require 'hlinum)
+
 (hlinum-activate)
+
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
+(set-face-attribute 'region nil :background "magenta1" :foreground "#ffffff")
+
+(set-face-attribute 'hl-line nil :background "#666666")
+(set-face-attribute 'linum-highlight-face nil :background "#666666")
 
 ;; minibuffer completion incremental feedback
 ;;(icomplete-mode)
@@ -1094,6 +1134,11 @@ file to write to."
 (window-numbering-mode 1)
 
 (window-number-meta-mode 1)
+
+;;Quickly jump between windows using ace-window, I used it frequently and bind it F1.
+(require 'ace-window)
+(global-set-key (kbd "<f1>") 'ace-window)
+(setq aw-scope 'frame)
 
 ;; ----------------------------------------------------------[Window Number]
 
@@ -1303,6 +1348,59 @@ file to write to."
 ; Iterate through CamelCase words
 (global-subword-mode 1)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; neotree
+(message "Loading and configuring neotree")
+
+(require 'neotree)
+(require 'all-the-icons)
+(global-set-key [f8] 'neotree-toggle)
+(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+
+  (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (ffip-project-root))
+          (file-name (buffer-file-name)))
+      (if project-dir
+          (progn
+            (neotree-dir project-dir)
+            (neotree-find file-name))
+        (message "Could not find git project root."))))
+
+(global-set-key (kbd "C-c C-p") 'neotree-project-dir)
+;; every time when the neotree window is  opened, it will try to find current
+;; file and jump to node.
+(setq-default neo-smart-open t)
+
+;; change root automatically when running `projectile-switch-project`
+(setq projectile-switch-project-action 'neotree-projectile-action)
+
+(global-set-key [f8] 'neotree-toggle)
+
+(setq neo-theme (if window-system 'icons 'nerd)) ; 'classic, 'nerd, 'ascii, 'arrow
+
+(setq neo-vc-integration '(face char))
+
+(setq neo-show-hidden-files t)
+
+(setq neo-toggle-window-keep-p t)
+
+(setq neo-force-change-root t)
+(setq neo-window-fixed-size nil)
+
+(add-hook 'neotree-mode-hook (lambda () (setq-local mode-line-format nil)))
+
+ (defun neotree-resize-window (&rest _args)
+    "Resize neotree window.
+https://github.com/jaypei/emacs-neotree/pull/110"
+    (interactive)
+    (neo-buffer--with-resizable-window
+     (let ((fit-window-to-buffer-horizontally t))
+       (fit-window-to-buffer))))
+
+  (add-hook 'neo-change-root-hook #'neotree-resize-window)
+  (add-hook 'neo-enter-hook #'neotree-resize-window)
+
 
 ;;Awesome copy/paste!----------------------
 ;;My most used hack! If nothing is marked/highlighted, and you copy or cut
@@ -1424,7 +1522,7 @@ file to write to."
 
 (setq next-number 0)
 
-(define-key global-map [f1]
+(define-key global-map [S-f1]
   '(lambda nil (interactive)
      (print buffer-file-name (get-buffer "scratch"))
      ;;(format t "~%~A" buffer-file-name)(edebug)
@@ -2254,7 +2352,7 @@ by using nxml's indentation rules."
 (setq ad-redefinition-action 'accept)
 
 ;;No startup message
-  ;; Change the echo message
+  ;; Change     the echo message
 (defun display-startup-echo-area-message ()
   (message ""))
 
@@ -2269,3 +2367,58 @@ by using nxml's indentation rules."
                        iterm-brew-path)))
     (shell-command (concat "open -a " iterm-path " ."))))
 (global-set-key (kbd "C-x t") 'open-dir-in-iterm)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; GIT STUFF
+(use-package git-gutter+
+  :ensure t
+  :init (global-git-gutter+-mode)
+  :config (progn
+            (define-key git-gutter+-mode-map (kbd "C-x n") 'git-gutter+-next-hunk)
+            (define-key git-gutter+-mode-map (kbd "C-x p") 'git-gutter+-previous-hunk)
+            (define-key git-gutter+-mode-map (kbd "C-x v =") 'git-gutter+-show-hunk)
+            (define-key git-gutter+-mode-map (kbd "C-x r") 'git-gutter+-revert-hunks)
+            (define-key git-gutter+-mode-map (kbd "C-x t") 'git-gutter+-stage-hunks)
+            (define-key git-gutter+-mode-map (kbd "C-x c") 'git-gutter+-commit)
+            (define-key git-gutter+-mode-map (kbd "C-x C") 'git-gutter+-stage-and-commit)
+            (define-key git-gutter+-mode-map (kbd "C-x C-y") 'git-gutter+-stage-and-commit-whole-buffer)
+            (define-key git-gutter+-mode-map (kbd "C-x U") 'git-gutter+-unstage-whole-buffer))
+  :diminish (git-gutter+-mode . "gg"))
+
+(setq git-gutter+-hide-gutter t)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;; (display-time-mode)
+;; (require 'smart-mode-line)
+;; (require 'smart-mode-line-powerline-theme)
+;; (setq powerline-arrow-shape 'curve)
+;; (setq powerline-default-separator-dir '(right . left))
+;; (setq powerline-default-separator 'arrow)
+;; (setq sml/theme 'powerline)
+;; (setq sml/mode-width 0)
+;; (setq sml/name-width 20)
+;; (rich-minority-mode 1)
+;; (setf rm-blacklist "")
+;; (sml/setup)
+
+
+;;(require 'spaceline-config)
+;;(spaceline-spacemacs-theme)
+
+;;(require 'powerline)
+;;(powerline-default-theme)
+;;(powerline-center-theme)
+;; (powerline-center-evil-theme)
+;; (powerline-vim-theme)
+;; (powerline-nano-theme)
+;; (set-face-attribute 'mode-line nil
+;;                     :foreground "Black"
+;;                     :background "DarkOrange"
+;;                     :weight 'bold
+;;                     :box nil)
