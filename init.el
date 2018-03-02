@@ -1,4 +1,4 @@
-;;; Time-stamp: "2017-11-20 Mon 14:14 marcelbecker on beckermac.local"
+;;; Time-stamp: "2018-03-02 Fri 09:17 marcelbecker on dhcp220.kestrel.edu"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -112,11 +112,6 @@
      (null (getenv "LOGNAME")))
     (setenv "LOGNAME" (getenv "USER")))
 
-(if (null (getenv "SPECWARE4"))
-    (setenv "SPECWARE4"
-    (if running-ms-windows
-    "c:/src/Specware"
-      (expand-file-name "~/src/specware"))))
 
 
 (defvar missing-packages-list nil
@@ -196,12 +191,6 @@ of an error, just add the package to a list of missing packages."
 (arrange-frame 130 (get-default-height) 500 100)
 ;;(arrange-frame 130 (get-default-height) (get-default-x-frame-position) (get-default-y-frame-position))
 
-;; Needed to run Specware on Emacs24
-(setenv "SPECWARE_INIT_FORM" "NIL")
-
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -230,6 +219,12 @@ of an error, just add the package to a list of missing packages."
 ;;(package-refresh-contents))
 (package-initialize)
 
+
+;; (use-package benchmark-init
+;;   :ensure t
+;;   :config
+;;   ;; To disable collection of benchmark data after init is done.
+;;   (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 
 (setq my-elpa-packages
@@ -775,7 +770,7 @@ zonokai-theme
 
 
 (message "Loading org stuff")
-(use-package org)
+(use-package org  :defer t)
 ;;(use-package org-install)
 ;;(use-package ob-tangle)
 
@@ -1418,8 +1413,6 @@ file to write to."
 
 ;; change root automatically when running `projectile-switch-project`
 (setq projectile-switch-project-action 'neotree-projectile-action)
-
-(global-set-key [f8] 'neotree-toggle)
 
 (setq neo-theme (if window-system 'icons 'nerd)) ; 'classic, 'nerd, 'ascii, 'arrow
 
