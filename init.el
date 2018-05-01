@@ -1,4 +1,4 @@
-;;; Time-stamp: "2018-03-02 Fri 09:17 marcelbecker on dhcp220.kestrel.edu"
+;;; Time-stamp: "2018-05-01 Tue 11:15 marcelbecker on dhcp220.kestrel.edu"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -199,17 +199,17 @@ of an error, just add the package to a list of missing packages."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'package)
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
      ("marmalade" . "https://marmalade-repo.org/packages/")
      ;;("melpa" . "https://stable.melpa.org/packages/")
      ("melpas" . "https://melpa.org/packages/")
-     '("org" . "http://orgmode.org/elpa/")
+     ("org" . "http://orgmode.org/elpa/")
      ))
 
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-    (not (gnutls-available-p))))
-       (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
-  (add-to-list 'package-archives (cons "melpa" url) t))
+;; (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+;;     (not (gnutls-available-p))))
+;;        (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
+;;   (add-to-list 'package-archives (cons "melpa" url) t))
 
 
 (setq package-check-signature nil)
@@ -220,11 +220,11 @@ of an error, just add the package to a list of missing packages."
 (package-initialize)
 
 
-;; (use-package benchmark-init
-;;   :ensure t
-;;   :config
-;;   ;; To disable collection of benchmark data after init is done.
-;;   (add-hook 'after-init-hook 'benchmark-init/deactivate))
+ (use-package benchmark-init
+   :ensure t
+   :config
+   ;; To disable collection of benchmark data after init is done.
+   (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 
 (setq my-elpa-packages
@@ -238,19 +238,19 @@ ace-jump-mode
 ace-link
 ace-window
 adaptive-wrap
-afternoon-theme
+;;afternoon-theme
 aggressive-indent
-alect-themes
+;;alect-themes
 alert
 all-the-icons
 ample-regexps
-ample-theme
-ample-zen-theme
+;;ample-theme
+;;ample-zen-theme
 anaconda-mode
-anti-zenburn-theme
+;;anti-zenburn-theme
 anything
 anzu
-apropospriate-theme
+;;apropospriate-theme
 async
 auctex
 auto-compile
@@ -262,22 +262,22 @@ auto-yasnippet
 autopair
 autothemer
 avy
-badwolf-theme
+;;badwolf-theme
 bind-key
 bind-map
-birds-of-paradise-plus-theme
-browse-kill-ring+
-bubbleberry-theme
+;;birds-of-paradise-plus-theme
+browse-kill-ring
+;;bubbleberry-theme
 buffer-move
-busybee-theme
-cherry-blossom-theme
+;;busybee-theme
+;;cherry-blossom-theme
 cl-lib
 clean-aindent-mode
-clues-theme
+;;clues-theme
 coffee-mode
 color-theme
-color-theme-sanityinc-solarized
-color-theme-sanityinc-tomorrow
+;;color-theme-sanityinc-solarized
+;;color-theme-sanityinc-tomorrow
 ;;color-theme-tango
 column-enforce-mode
 company
@@ -289,24 +289,24 @@ company-tern
 counsel
 csv-mode
 ctable
-cyberpunk-theme
+;;cyberpunk-theme
 cython-mode
-dakrone-theme
-darkburn-theme
-darkmine-theme
-darkokai-theme
-darktooth-theme
+;;dakrone-theme
+;;darkburn-theme
+;;darkmine-theme
+;;darkokai-theme
+;;darktooth-theme
 dash
 dash-functional
 deferred
 define-word
 diff-hl
 diminish
-dired+
+;;dired+
 dired-atool
 dired-avfs
 dired-details
-dired-details+
+;;dired-details+
 dired-dups
 dired-efap
 dired-explorer
@@ -323,64 +323,64 @@ dired-quick-sort
 dired-rainbow
 dired-ranger
 dired-single
-dired-sort
-dired-sort-menu
-dired-sort-menu+
+;;dired-sort
+;;dired-sort-menu
+;;dired-sort-menu+
 dired-subtree
 dired-toggle
 dired-toggle-sudo
 diredful
 direx
 direx-grep
-django-theme
+;;django-theme
 dockerfile-mode
-doremi
-doremi-frm
-doremi-cmd
-dracula-theme
+;doremi
+;doremi-frm
+;doremi-cmd
+;dracula-theme
 dumb-jump
-;;el-get
+el-get
 elisp-slime-nav
 elpy
 ;;emacs-eclim
 epc
 epl
 escreen
-espresso-theme
+;;espresso-theme
 eval-sexp-fu
-evil
-evil-anzu
-evil-args
-evil-ediff
-evil-escape
-evil-exchange
-evil-iedit-state
-evil-indent-plus
-evil-indent-textobject
-evil-leader
-evil-lisp-state
-evil-magit
-evil-matchit
-evil-mc
-evil-nerd-commenter
-evil-numbers
-evil-search-highlight-persist
-evil-surround
-evil-tutor
-evil-unimpaired
-evil-visual-mark-mode
-evil-visualstar
+;; evil
+;; evil-anzu
+;; evil-args
+;; evil-ediff
+;; evil-escape
+;; evil-exchange
+;; evil-iedit-state
+;; evil-indent-plus
+;; evil-indent-textobject
+;; evil-leader
+;; evil-lisp-state
+;; evil-magit
+;; evil-matchit
+;; evil-mc
+;; evil-nerd-commenter
+;; evil-numbers
+;; evil-search-highlight-persist
+;; evil-surround
+;; evil-tutor
+;; evil-unimpaired
+;; evil-visual-mark-mode
+;; evil-visualstar
 exec-path-from-shell
 expand-region
 eyebrowse
 f
 fancy-battery
-farmhouse-theme
+;farmhouse-theme
 fill-column-indicator
 find-file-in-project
-firebelly-theme
-flatland-theme
-flatui-theme
+;firebelly-theme
+;flatland-theme
+;flatui-theme
 flx
 flx-ido
 flycheck
@@ -388,11 +388,11 @@ flycheck-pos-tip
 flymake
 flyspell-correct
 flyspell-correct-helm
-frame-cmds
-frame-fns
+;;frame-cmds
+;;frame-fns
 fringe-helper
 fuzzy
-gandalf-theme
+;;gandalf-theme
 gh-md
 git-commit
 git-gutter
@@ -409,13 +409,13 @@ gntp
 gnuplot
 golden-ratio
 google-translate
-gotham-theme
+;;gotham-theme
 goto-chg
 goto-last-change
-grandshell-theme
-gruber-darker-theme
-gruvbox-theme
-hc-zenburn-theme
+;;grandshell-theme
+;;gruber-darker-theme
+;;gruvbox-theme
+;;hc-zenburn-theme
 header2
 helm
 helm-ag
@@ -432,15 +432,15 @@ helm-helm-commands
 helm-ls-git
 helm-make
 helm-mode-manager
-helm-package
+;;helm-package
 helm-projectile
 helm-pydoc
 helm-spotify
 helm-swoop
 helm-themes
-help-fns+
-hemisu-theme
-heroku-theme
+;;help-fns+
+;;hemisu-theme
+;;heroku-theme
 hexrgb
 hide-comnt
 highlight
@@ -453,16 +453,16 @@ htmlize
 hungry-delete
 hy-mode
 hydra
-icicles
-ido-vertical-mode
-idomenu
+;;icicles
+;;ido-vertical-mode
+;;idomenu
 iedit
 indent-guide
-info+
-inkpot-theme
-ir-black-theme
-jazz-theme
-jbeans-theme
+;;info+
+;;inkpot-theme
+;;ir-black-theme
+;;jazz-theme
+;;jbeans-theme
 jedi
 jedi-core
 js-doc
@@ -475,47 +475,47 @@ json-rpc
 json-snatcher
 latex-preview-pane
 let-alist
-leuven-theme
-light-soap-theme
+;;leuven-theme
+;;light-soap-theme
 link-hint
 linum-relative
 livid-mode
 log4e
 lorem-ipsum
 lua-mode
-lush-theme
+;;lush-theme
 macrostep
-madhat2r-theme
+;;madhat2r-theme
 magit
 magit-gitflow
 magit-popup
-majapahit-theme
+;;majapahit-theme
 makey
 markdown-mode
 markdown-toc
-material-theme
-menu-bar+
-minimal-theme
+;;material-theme
+;;menu-bar+
+;;minimal-theme
 mmm-mode
-moe-theme
-molokai-theme
-monochrome-theme
-monokai-theme
+;;moe-theme
+;;molokai-theme
+;;monochrome-theme
+;;monokai-theme
 move-text
 multiple-cursors
-mustang-theme
+;;mustang-theme
 mwim
-naquadah-theme
+;;naquadah-theme
 neotree
 nginx-mode
-niflheim-theme
-noctilux-theme
+;;niflheim-theme
+;;noctilux-theme
 nose
 ;;nxml-mode
-obsidian-theme
-occidental-theme
-oldlace-theme
-omtose-phellack-theme
+;;obsidian-theme
+;;occidental-theme
+;;oldlace-theme
+;;omtose-phellack-theme
 open-junk-file
 org
 org-bullets
@@ -524,7 +524,7 @@ org-download
 org-pomodoro
 org-present
 org-projectile
-organic-green-theme
+;;organic-green-theme
 orgit
 package
 package-build
@@ -532,23 +532,23 @@ packed
 page-break-lines
 paradox
 parent-mode
-pastels-on-dark-theme
+;;pastels-on-dark-theme
 pcache
 pcre2el
 persp-mode
-phoenix-dark-mono-theme
-phoenix-dark-pink-theme
+;;phoenix-dark-mono-theme
+;;phoenix-dark-pink-theme
 pip-requirements
 pkg-info
-planet-theme
+;;planet-theme
 popup
 popup-kill-ring
 popwin
 pos-tip
 powerline
-professional-theme
+;;professional-theme
 projectile
-purple-haze-theme
+;;purple-haze-theme
 py-autopep8
 pycomplete
 pydoc
@@ -561,17 +561,17 @@ python-pep8
 pythonic
 pyvenv
 quelpa
-railscasts-theme
+;;railscasts-theme
 rainbow-delimiters
 rainbow-mode
 recentf-ext
-redo+
+;;redo+
 request
 restart-emacs
-reverse-theme
+;;reverse-theme
 s
 seq
-seti-theme
+;;seti-theme
 shell-command
 simple-httpd
 skewer-mode
@@ -582,13 +582,13 @@ smart-mode-line-powerline-theme
 smeargle
 smooth-scroll
 smooth-scrolling
-smyx-theme
-soft-charcoal-theme
-soft-morning-theme
-soft-stone-theme
-solarized-theme
-soothe-theme
-spacegray-theme
+;;smyx-theme
+;;soft-charcoal-theme
+;;soft-morning-theme
+;;soft-stone-theme
+;;solarized-theme
+;;soothe-theme
+;;spacegray-theme
 spaceline
 spaceline-all-the-icons
 ;;spaceline-segments
@@ -598,28 +598,28 @@ spinner
 spotify
 spray
 sr-speedbar
-subatomic-theme
-subatomic256-theme
-sublime-themes
-sunny-day-theme
+;;subatomic-theme
+;;subatomic256-theme
+;;sublime-themes
+;;sunny-day-theme
 swiper
 swiper-helm
 switch-window
 tabbar
-tango-2-theme
-tango-plus-theme
-tangotango-theme
-tao-theme
+;;tango-2-theme
+;;tango-plus-theme
+;;tangotango-theme
+;;tao-theme
 tern
 toc-org
-toxi-theme
-tronesque-theme
-twilight-anti-bright-theme
-twilight-bright-theme
-twilight-theme
-ujelly-theme
+;;toxi-theme
+;;tronesque-theme
+;;twilight-anti-bright-theme
+;;twilight-bright-theme
+;;twilight-theme
+;;ujelly-theme
 unbound
-underwater-theme
+;;underwater-theme
 undo-tree
 unfill
 use-package
@@ -638,17 +638,17 @@ with-editor
 ws-butler
 yaml-mode
 yasnippet
-zen-and-art-theme
-zenburn-theme
+;;zen-and-art-theme
+;;zenburn-theme
 zencoding-mode
-zonokai-theme
+;;zonokai-theme
 ))
 
 
 (dolist (p my-elpa-packages)
   (progn
     (when (not (package-installed-p p))
-      ( message "installing package %s" p)
+      (message "installing package %s" p)
       (package-install p))
     (message "loading package %s" p)
     ;;(require p nil :noerror)
@@ -666,27 +666,28 @@ zonokai-theme
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; To update el-get packages manually
 
-;; (let ((elget-lib (concat marcel-lisp-dir "/el-get/el-get")))
-;;   (if (file-exists-p elget-lib)
-;;       (add-to-list 'load-path elget-lib)))
+ (let ((elget-lib (concat marcel-lisp-dir "/el-get/el-get")))
+   (if (file-exists-p elget-lib)
+       (add-to-list 'load-path elget-lib)))
 
-;; (message "Loading el-get")
-;; (use-package el-get
-;;   :init
-;;   (with-current-buffer
-;;       (url-retrieve-synchronously
-;;        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-;;     (goto-char (point-max))
-;;     (eval-print-last-sexp)))
+ (message "Loading el-get")
+ (use-package el-get
+   ;; :init
+   ;; (with-current-buffer
+   ;;     (url-retrieve-synchronously
+   ;;      "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+   ;;   (goto-char (point-max))
+   ;;   (eval-print-last-sexp))
+   )
 
-;; (add-to-list 'el-get-recipe-path
-;;      (concat marcel-lisp-dir "/el-get/el-get/recipes"))
-;; (setq el-get-default-process-sync t
-;;       el-get-verbose t)
+ (add-to-list 'el-get-recipe-path
+      (concat marcel-lisp-dir "/el-get/el-get/recipes"))
+ (setq el-get-default-process-sync t
+       el-get-verbose t)
 
 
-;;(message "Loading el-get-elpa")
-;;(use-package el-get-elpa)
+(message "Loading el-get-elpa")
+(use-package el-get-elpa)
 ;;(el-get-emacswiki-build-local-recipes)
 ;;(el-get-elpa-build-local-recipes)
 
@@ -717,22 +718,32 @@ zonokai-theme
 ;;         (global-set-key (kbd "C-x C-/") 'goto-last-change)))))
 
 
-(setq my-el-get-packages
-      '(
-    diff+
-    dired-column-widths
-    ffap-
-    file-template
-    git-modes
-    pycomplete+
-    pylookup
-    recentf-buffer
-    ))
+ (setq my-el-get-packages
+        '(
+      diff+
+      dired-column-widths
+      ffap-
+      file-template
+      pycomplete+
+      ;;pylookup
+      recentf-buffer
+      menu-bar+
+      doremi
+      doremi-cmd
+      frame-fns
+      faces+
+      facemenu+
+      doremi-frm
+      doremi-mac
+      ring+
+      setup-keys
+      zoom-frm
+      ))
 
 
 ;; Install new packages and init already installed packages
-;;(message  "Initializing el-get packages")
-;;(el-get 'sync my-el-get-packages)
+(message  "Initializing el-get packages")
+(el-get 'sync my-el-get-packages)
 
 
 ;; (let ((fit-frame-lib (concat marcel-lisp-dir "/el-get/fit-frame")))
@@ -741,16 +752,16 @@ zonokai-theme
 
 
 ;; (dolist (p my-el-get-packages)
-;;   (progn
-;;     (when (not (package-installed-p p))
-;;      (message "installing package %s" p)
-;;      ;;(package-install p)
-;;      )
-;;     (when (featurep p)
-;;       (message "loading package %s" p)
-;;       (condition-case nil
-;;    (require p nil :noerror)
-;;  (error nil)))))
+;;    (progn
+;;      (when (not (package-installed-p p))
+;;       (message "installing package %s" p)
+;;       ;;(package-install p)
+;;       )
+;;      (when (featurep p)
+;;        (message "loading package %s" p)
+;;        (condition-case nil
+;;     (require p nil :noerror)
+;;   (error nil)))))
 
 
 ;; open my Emacs init file
@@ -1046,20 +1057,6 @@ file to write to."
     (global-anzu-mode +1)
     (set-face-attribute 'anzu-mode-line nil
         :foreground "yellow" :weight 'bold)))
-
-;; (custom-set-variables-old
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(anzu-deactivate-region t)
-;;  '(anzu-mode-lighter "")
-;;  '(anzu-replace-threshold 50)
-;;  '(anzu-replace-to-string-separator " => ")
-;;  '(anzu-search-threshold 1000)
-;;  '(package-selected-packages
-;;    (quote
-;;     (vi-tilde-fringe unbound spacemacs-theme shell-command rainbow-mode pydoc move-text gitconfig-mode gitattributes-mode gh-md fancy-battery clean-aindent-mode zoom-frm zonokai-theme zencoding-mode zenburn-theme zen-and-art-theme yaml-mode ws-butler winum window-numbering window-number which-key websocket web-beautify volatile-highlights vline virtualenvwrapper uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tabbar switch-window swiper sunny-day-theme sublime-themes subatomic256-theme subatomic-theme sr-speedbar spray spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smooth-scroll smartrep seti-theme reverse-theme restart-emacs redo+ recentf-ext rainbow-delimiters railscasts-theme python-pep8 python-mode pydoc-info pycomplete py-autopep8 purple-haze-theme professional-theme popwin popup-kill-ring planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pcache pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme nose noctilux-theme niflheim-theme nginx-mode neotree naquadah-theme mwim mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme menu-bar+ material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lua-mode lorem-ipsum livid-mode linum-relative link-hint light-soap-theme leuven-theme latex-preview-pane json-rpc json-mode js2-refactor js-doc jedi jbeans-theme jazz-theme ir-black-theme inkpot-theme info+ indent-guide idomenu ido-vertical-mode icicles hy-mode hungry-delete htmlize hlinum hl-todo highlight-parentheses hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-spotify helm-pydoc helm-projectile helm-package helm-mode-manager helm-make helm-ls-git helm-helm-commands helm-gitignore helm-git-files helm-git helm-flx helm-descbinds helm-company helm-c-yasnippet helm-anything helm-ag header2 hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme goto-last-change gotham-theme google-translate golden-ratio gnuplot git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gandalf-theme fuzzy flyspell-correct-helm flycheck-pos-tip flatui-theme flatland-theme firebelly-theme fill-column-indicator farmhouse-theme eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-leader evil-indent-textobject evil-indent-plus evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme escreen elpy elisp-slime-nav el-get dumb-jump dracula-theme doremi-frm doremi-cmd dockerfile-mode django-theme direx-grep diredful dired-toggle-sudo dired-toggle dired-subtree dired-sort-menu+ dired-sort dired-single dired-ranger dired-rainbow dired-quick-sort dired-open dired-nav-enhance dired-narrow dired-launch dired-imenu dired-filter dired-filetype-face dired-fdclone dired-explorer dired-efap dired-dups dired-details+ dired-avfs dired-atool dired+ diff-hl define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-tern company-statistics company-quickhelp company-jedi company-anaconda column-enforce-mode color-theme-tango color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode clues-theme cherry-blossom-theme centered-cursor-mode busybee-theme buffer-move bubbleberry-theme browse-kill-ring+ birds-of-paradise-plus-theme badwolf-theme autopair auto-yasnippet auto-highlight-symbol auto-dictionary auto-complete-latex auto-compile auctex apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme ample-regexps alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ace-flyspell ac-python ac-ispell ac-helm))))
 
 (define-key isearch-mode-map [remap isearch-query-replace]  #'anzu-isearch-query-replace)
 (define-key isearch-mode-map [remap isearch-query-replace-regexp] #'anzu-isearch-query-replace-regexp)
@@ -1998,9 +1995,10 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 
 (message "Loading doremi")
-(use-package doremi)
-(use-package doremi-frm)
-(use-package doremi-cmd)
+(require 'doremi)
+(require 'doremi-frm)
+(require 'doremi-cmd)
+
 
 
 ;;horizontal-to-vertical
@@ -2076,7 +2074,7 @@ frames with exactly two windows."
 (global-set-key (kbd "C-c /") 'my-window-vertical-to-horizontal)
 
 (message "menu-bar+")
-(use-package menu-bar+)
+(require 'menu-bar+)
 
 ;; (let ((menu-bar+-lib (concat marcel-lisp-dir "/el-get/menu-bar+")))
 ;;   (when (file-exists-p menu-bar+-lib)
@@ -2446,6 +2444,16 @@ by using nxml's indentation rules."
       (add-hook 'ediff-suspend-hook 'ediff-toggle-wide-display)))))
 
 
+(defun my-package-reinstall-activated ()
+  "Reinstall all activated packages."
+  (interactive)
+  (dolist (package-name package-activated-list)
+    (when (package-installed-p package-name)
+      (unless (ignore-errors                   ;some packages may fail to install
+                (package-reinstall package-name)
+                (warn "Package %s failed to reinstall" package-name))))))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -2481,3 +2489,13 @@ by using nxml's indentation rules."
 ;;                     :box nil)
 
 (my-load-helm)
+
+(use-package outline-magic)
+(add-hook 'outline-mode-hook
+           (lambda ()
+             (require 'outline-cycle)))
+
+ (add-hook 'outline-minor-mode-hook
+           (lambda ()
+             (require 'outline-magic)
+             (define-key outline-minor-mode-map [(f10)] 'outline-cycle)))

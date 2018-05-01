@@ -1,5 +1,5 @@
-                                        ;package-activated-list is a variable defined in `package.el'.
-                                        ;Its value is
+;;package-activated-list is a variable defined in `package.el'.
+;;Its value is
 
 (defvar running-ms-windows
   (eq system-type 'windows-nt))
