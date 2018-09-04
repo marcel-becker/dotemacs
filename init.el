@@ -1,4 +1,4 @@
-;;; Time-stamp: "2018-05-01 Tue 11:15 marcelbecker on dhcp220.kestrel.edu"
+;;; Time-stamp: "2018-09-04 Tue 13:01 marcelbecker on kestrelimac"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -53,18 +53,18 @@
 (unless (boundp 'marcel-lisp-dir)
   (defvar marcel-lisp-dir
     (if running-ms-windows ; Windows
-    (cond ((file-exists-p "C:/Dropbox/.emacs.d")
-       (setenv "HOME" "C:/Dropbox")
-       "C:/Dropbox/.emacs.d")
-      ((file-exists-p "D:/Dropbox/.emacs.d")
-       (setenv "HOME" "D:/Dropbox")
-       "D:/Dropbox/.emacs.d")
-      (t
-       (expand-file-name "~/.emacs.d")))
+        (cond ((file-exists-p "C:/Dropbox/.emacs.d")
+               (setenv "HOME" "C:/Dropbox")
+               "C:/Dropbox/.emacs.d")
+              ((file-exists-p "D:/Dropbox/.emacs.d")
+               (setenv "HOME" "D:/Dropbox")
+               "D:/Dropbox/.emacs.d")
+              (t
+               (expand-file-name "~/.emacs.d")))
       (cond ((file-exists-p  "~/Dropbox/.emacs.d")
-     "~/Dropbox/.emacs.d")
-    (t
-     (expand-file-name "~/.emacs.d"))))
+             "~/Dropbox/.emacs.d")
+            (t
+             (expand-file-name "~/.emacs.d"))))
     "Address of Marcel's lisp libraries."))
 
 ;;(load-file (expand-file-name "~/.spacemacs.d/init.el"))
@@ -98,18 +98,18 @@
 ;;   LOGNAME and USER are expected in many Emacs packages
 ;;   Check these environment variables.
 (if (and (null (getenv "USER"))
-     ;; Windows includes variable USERNAME, which is copied to
-     ;; LOGNAME and USER respectively.
-     (getenv "USERNAME"))
+         ;; Windows includes variable USERNAME, which is copied to
+         ;; LOGNAME and USER respectively.
+         (getenv "USERNAME"))
     (setenv "USER" (getenv "USERNAME")))
 
 (if (and (getenv "LOGNAME")
-     ;;  Bash shell defines only LOGNAME
-     (null (getenv "USER")))
+         ;;  Bash shell defines only LOGNAME
+         (null (getenv "USER")))
     (setenv "USER" (getenv "LOGNAME")))
 
 (if (and (getenv "USER")
-     (null (getenv "LOGNAME")))
+         (null (getenv "LOGNAME")))
     (setenv "LOGNAME" (getenv "USER")))
 
 
@@ -125,11 +125,11 @@ of an error, just add the package to a list of missing packages."
   (condition-case err
       ;; protected form
       (progn
-    (message "Checking for library `%s'..." feature)
-    (if (stringp feature)
-    (load-library feature)
-      (require feature))
-    (message "Checking for library `%s'... Found" feature))
+        (message "Checking for library `%s'..." feature)
+        (if (stringp feature)
+            (load-library feature)
+          (require feature))
+        (message "Checking for library `%s'... Found" feature))
     ;; error handler
     (file-error  ; condition
      (progn
@@ -138,15 +138,17 @@ of an error, just add the package to a list of missing packages."
      nil)))
 
 
+(tool-bar-mode -1)
+
 (set-frame-font
  (cond (running-ms-windows
-    "DejaVu Sans Mono 11")
+        "DejaVu Sans Mono 11")
        (running-macos
-    ;;"Source Code Pro 16")
-    "DejaVu Sans Mono 18")
+        ;;"Source Code Pro 16")
+        "DejaVu Sans Mono 18")
        ;;        "Geneva 13")
        ((not running-macos)
-    "DejaVu Sans Mono 13")))
+        "DejaVu Sans Mono 13")))
 
 ;;; Nice size for the default window
 (defun get-default-height ()
@@ -160,22 +162,43 @@ of an error, just add the package to a list of missing packages."
 
 (setq default-frame-alist
       '((cursor-color . "white")
-    (mouse-color . "white")
-    (foreground-color . "white")
-    (cursor-type . box)
-    (tool-bar-lines . 0)
-    ;;(top . 50)
-    ;;(left . 50)
-    (width . 130)
-    ))
+        (mouse-color . "white")
+        (foreground-color . "white")
+        (cursor-type . box)
+        (tool-bar-lines . 0)
+        ;;(top . 50)
+        ;;(left . 50)
+        (width . 130)
+        ))
+
+(setq initial-frame-alist
+      '((cursor-color . "white")
+        (mouse-color . "white")
+        (foreground-color . "white")
+        (cursor-type . box)
+        (tool-bar-lines . 0)
+        ;;(top . 50)
+        ;;(left . 50)
+        (width . 130)
+        ))
+
+
 
 (add-to-list 'default-frame-alist (cons 'height (get-default-height)))
 (add-to-list 'default-frame-alist
-     (if (eq (user-uid) 0)
-     '(background-color . "gray38")
-       '(background-color . "#09223F")
-       ;;'(background-color . "DodgerBlue4")
-       ))
+             (if (eq (user-uid) 0)
+                 '(background-color . "gray38")
+               '(background-color . "#09223F")
+               ;;'(background-color . "DodgerBlue4")
+               ))
+
+(add-to-list 'initial-frame-alist (cons 'height (get-default-height)))
+(add-to-list 'initial-frame-alist
+             (if (eq (user-uid) 0)
+                 '(background-color . "gray38")
+               '(background-color . "#09223F")
+               ;;'(background-color . "DodgerBlue4")
+               ))
 
 
 ;; Set Frame width/height
@@ -200,11 +223,18 @@ of an error, just add the package to a list of missing packages."
 
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-     ("marmalade" . "https://marmalade-repo.org/packages/")
-     ;;("melpa" . "https://stable.melpa.org/packages/")
-     ("melpas" . "https://melpa.org/packages/")
-     ("org" . "http://orgmode.org/elpa/")
-     ))
+                         ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ;;("melpa" . "https://stable.melpa.org/packages/")
+                         ("melpas" . "https://melpa.org/packages/")
+                         ("org" . "http://orgmode.org/elpa/")
+                         ))
+
+
+
+;; use
+;; brew install libressl
+(require 'gnutls)
+(add-to-list 'gnutls-trustfiles "/usr/local/etc/openssl/cert.pem")
 
 ;; (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
 ;;     (not (gnutls-available-p))))
@@ -212,437 +242,442 @@ of an error, just add the package to a list of missing packages."
 ;;   (add-to-list 'package-archives (cons "melpa" url) t))
 
 
+(message "Loading use-package")
 (setq package-check-signature nil)
 (setq package-user-dir (concat marcel-lisp-dir "/elpa"))
 (add-to-list 'load-path (concat marcel-lisp-dir "/elpa"))
 ;;(when (not package-archive-contents)
 ;;(package-refresh-contents))
-(package-initialize)
+(if (version< emacs-version "28.0")
+    (package-initialize))
 
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
 
- (use-package benchmark-init
-   :ensure t
-   :config
-   ;; To disable collection of benchmark data after init is done.
-   (add-hook 'after-init-hook 'benchmark-init/deactivate))
+(use-package benchmark-init
+  :ensure t
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 
 (setq my-elpa-packages
       '(
-ac-helm
-ac-ispell
-ac-python
-ace-flyspell
-ace-jump-helm-line
-ace-jump-mode
-ace-link
-ace-window
-adaptive-wrap
-;;afternoon-theme
-aggressive-indent
-;;alect-themes
-alert
-all-the-icons
-ample-regexps
-;;ample-theme
-;;ample-zen-theme
-anaconda-mode
-;;anti-zenburn-theme
-anything
-anzu
-;;apropospriate-theme
-async
-auctex
-auto-compile
-auto-complete
-auto-complete-auctex
-auto-dictionary
-auto-highlight-symbol
-auto-yasnippet
-autopair
-autothemer
-avy
-;;badwolf-theme
-bind-key
-bind-map
-;;birds-of-paradise-plus-theme
-browse-kill-ring
-;;bubbleberry-theme
-buffer-move
-;;busybee-theme
-;;cherry-blossom-theme
-cl-lib
-clean-aindent-mode
-;;clues-theme
-coffee-mode
-color-theme
-;;color-theme-sanityinc-solarized
-;;color-theme-sanityinc-tomorrow
-;;color-theme-tango
-column-enforce-mode
-company
-company-anaconda
-company-jedi
-company-quickhelp
-company-statistics
-company-tern
-counsel
-csv-mode
-ctable
-;;cyberpunk-theme
-cython-mode
-;;dakrone-theme
-;;darkburn-theme
-;;darkmine-theme
-;;darkokai-theme
-;;darktooth-theme
-dash
-dash-functional
-deferred
-define-word
-diff-hl
-diminish
-;;dired+
-dired-atool
-dired-avfs
-dired-details
-;;dired-details+
-dired-dups
-dired-efap
-dired-explorer
-dired-fdclone
-dired-filetype-face
-dired-filter
-dired-hacks-utils
-dired-imenu
-dired-launch
-dired-narrow
-;;dired-nav-enhance
-dired-open
-dired-quick-sort
-dired-rainbow
-dired-ranger
-dired-single
-;;dired-sort
-;;dired-sort-menu
-;;dired-sort-menu+
-dired-subtree
-dired-toggle
-dired-toggle-sudo
-diredful
-direx
-direx-grep
-;;django-theme
-dockerfile-mode
-;doremi
-;doremi-frm
-;doremi-cmd
-;dracula-theme
-dumb-jump
-el-get
-elisp-slime-nav
-elpy
-;;emacs-eclim
-epc
-epl
-escreen
-;;espresso-theme
-eval-sexp-fu
-;; evil
-;; evil-anzu
-;; evil-args
-;; evil-ediff
-;; evil-escape
-;; evil-exchange
-;; evil-iedit-state
-;; evil-indent-plus
-;; evil-indent-textobject
-;; evil-leader
-;; evil-lisp-state
-;; evil-magit
-;; evil-matchit
-;; evil-mc
-;; evil-nerd-commenter
-;; evil-numbers
-;; evil-search-highlight-persist
-;; evil-surround
-;; evil-tutor
-;; evil-unimpaired
-;; evil-visual-mark-mode
-;; evil-visualstar
-exec-path-from-shell
-expand-region
-eyebrowse
-f
-fancy-battery
-;farmhouse-theme
-fill-column-indicator
-find-file-in-project
-;firebelly-theme
-;flatland-theme
-;flatui-theme
-flx
-flx-ido
-flycheck
-flycheck-pos-tip
-flymake
-flyspell-correct
-flyspell-correct-helm
-;;frame-cmds
-;;frame-fns
-fringe-helper
-fuzzy
-;;gandalf-theme
-gh-md
-git-commit
-git-gutter
-git-gutter+
-git-gutter-fringe
-git-gutter-fringe+
-git-link
-git-messenger
-git-timemachine
-gitattributes-mode
-gitconfig-mode
-gitignore-mode
-gntp
-gnuplot
-golden-ratio
-google-translate
-;;gotham-theme
-goto-chg
-goto-last-change
-;;grandshell-theme
-;;gruber-darker-theme
-;;gruvbox-theme
-;;hc-zenburn-theme
-header2
-helm
-helm-ag
-helm-anything
-helm-c-yasnippet
-helm-company
-helm-core
-helm-descbinds
-helm-flx
-helm-git
-helm-git-files
-helm-gitignore
-helm-helm-commands
-helm-ls-git
-helm-make
-helm-mode-manager
-;;helm-package
-helm-projectile
-helm-pydoc
-helm-spotify
-helm-swoop
-helm-themes
-;;help-fns+
-;;hemisu-theme
-;;heroku-theme
-hexrgb
-hide-comnt
-highlight
-highlight-indentation
-highlight-numbers
-highlight-parentheses
-hl-todo
-hlinum
-htmlize
-hungry-delete
-hy-mode
-hydra
-;;icicles
-;;ido-vertical-mode
-;;idomenu
-iedit
-indent-guide
-;;info+
-;;inkpot-theme
-;;ir-black-theme
-;;jazz-theme
-;;jbeans-theme
-jedi
-jedi-core
-js-doc
-js2-mode
-js2-refactor
-json
-json-mode
-json-reformat
-json-rpc
-json-snatcher
-latex-preview-pane
-let-alist
-;;leuven-theme
-;;light-soap-theme
-link-hint
-linum-relative
-livid-mode
-log4e
-lorem-ipsum
-lua-mode
-;;lush-theme
-macrostep
-;;madhat2r-theme
-magit
-magit-gitflow
-magit-popup
-;;majapahit-theme
-makey
-markdown-mode
-markdown-toc
-;;material-theme
-;;menu-bar+
-;;minimal-theme
-mmm-mode
-;;moe-theme
-;;molokai-theme
-;;monochrome-theme
-;;monokai-theme
-move-text
-multiple-cursors
-;;mustang-theme
-mwim
-;;naquadah-theme
-neotree
-nginx-mode
-;;niflheim-theme
-;;noctilux-theme
-nose
-;;nxml-mode
-;;obsidian-theme
-;;occidental-theme
-;;oldlace-theme
-;;omtose-phellack-theme
-open-junk-file
-org
-org-bullets
-org-download
-;;org-plus-contrib
-org-pomodoro
-org-present
-org-projectile
-;;organic-green-theme
-orgit
-package
-package-build
-packed
-page-break-lines
-paradox
-parent-mode
-;;pastels-on-dark-theme
-pcache
-pcre2el
-persp-mode
-;;phoenix-dark-mono-theme
-;;phoenix-dark-pink-theme
-pip-requirements
-pkg-info
-;;planet-theme
-popup
-popup-kill-ring
-popwin
-pos-tip
-powerline
-;;professional-theme
-projectile
-;;purple-haze-theme
-py-autopep8
-pycomplete
-pydoc
-pydoc-info
-pyenv-mode
-pytest
-python-environment
-python-mode
-python-pep8
-pythonic
-pyvenv
-quelpa
-;;railscasts-theme
-rainbow-delimiters
-rainbow-mode
-recentf-ext
-;;redo+
-request
-restart-emacs
-;;reverse-theme
-s
-seq
-;;seti-theme
-shell-command
-simple-httpd
-skewer-mode
-smartparens
-smartrep
-smart-mode-line
-smart-mode-line-powerline-theme
-smeargle
-smooth-scroll
-smooth-scrolling
-;;smyx-theme
-;;soft-charcoal-theme
-;;soft-morning-theme
-;;soft-stone-theme
-;;solarized-theme
-;;soothe-theme
-;;spacegray-theme
-spaceline
-spaceline-all-the-icons
-;;spaceline-segments
-;;spaceline-config
-spacemacs-theme
-spinner
-spotify
-spray
-sr-speedbar
-;;subatomic-theme
-;;subatomic256-theme
-;;sublime-themes
-;;sunny-day-theme
-swiper
-swiper-helm
-switch-window
-tabbar
-;;tango-2-theme
-;;tango-plus-theme
-;;tangotango-theme
-;;tao-theme
-tern
-toc-org
-;;toxi-theme
-;;tronesque-theme
-;;twilight-anti-bright-theme
-;;twilight-bright-theme
-;;twilight-theme
-;;ujelly-theme
-unbound
-;;underwater-theme
-undo-tree
-unfill
-use-package
-uuidgen
-vi-tilde-fringe
-virtualenvwrapper
-vline
-volatile-highlights
-web-beautify
-websocket
-which-key
-window-number
-window-numbering
-winum
-with-editor
-ws-butler
-yaml-mode
-yasnippet
-;;zen-and-art-theme
-;;zenburn-theme
-zencoding-mode
-;;zonokai-theme
-))
+        ac-helm
+        ac-ispell
+        ac-python
+        ace-flyspell
+        ace-jump-helm-line
+        ace-jump-mode
+        ace-link
+        ace-window
+        adaptive-wrap
+        ;;afternoon-theme
+        aggressive-indent
+        ;;alect-themes
+        alert
+        all-the-icons
+        ample-regexps
+        ;;ample-theme
+        ;;ample-zen-theme
+        anaconda-mode
+        ;;anti-zenburn-theme
+        ;;anything
+        anzu
+        ;;apropospriate-theme
+        async
+        auctex
+        auto-compile
+        auto-complete
+        auto-complete-auctex
+        auto-dictionary
+        auto-highlight-symbol
+        auto-yasnippet
+        autopair
+        autothemer
+        avy
+        ;;badwolf-theme
+        bind-key
+        bind-map
+        ;;birds-of-paradise-plus-theme
+        browse-kill-ring
+        ;;bubbleberry-theme
+        buffer-move
+        ;;busybee-theme
+        ;;cherry-blossom-theme
+        cl-lib
+        clean-aindent-mode
+        ;;clues-theme
+        coffee-mode
+        color-theme
+        ;;color-theme-sanityinc-solarized
+        ;;color-theme-sanityinc-tomorrow
+        ;;color-theme-tango
+        column-enforce-mode
+        company
+        company-anaconda
+        company-jedi
+        company-quickhelp
+        company-statistics
+        company-tern
+        counsel
+        csv-mode
+        ctable
+        ;;cyberpunk-theme
+        cython-mode
+        ;;dakrone-theme
+        ;;darkburn-theme
+        ;;darkmine-theme
+        ;;darkokai-theme
+        ;;darktooth-theme
+        dash
+        dash-functional
+        deferred
+        define-word
+        diff-hl
+        diminish
+        ;;dired+
+        dired-atool
+        dired-avfs
+        ;;dired-details
+        ;;dired-details+
+        dired-dups
+        dired-efap
+        dired-explorer
+        dired-fdclone
+        dired-filetype-face
+        dired-filter
+        dired-hacks-utils
+        dired-imenu
+        dired-launch
+        dired-narrow
+        ;;dired-nav-enhance
+        dired-open
+        dired-quick-sort
+        dired-rainbow
+        dired-single
+        ;;dired-sort
+        ;;dired-sort-menu
+        ;;dired-sort-menu+
+        dired-subtree
+        dired-toggle
+        dired-toggle-sudo
+        diredful
+        direx
+        direx-grep
+        ;;django-theme
+        dockerfile-mode
+        ;;doremi
+        ;;doremi-frm
+        ;;doremi-cmd
+        ;;dracula-theme
+        dumb-jump
+        ;;el-get
+        elisp-slime-nav
+        elpy
+        ;;emacs-eclim
+        epc
+        epl
+        ;;escreen
+        ;;espresso-theme
+        eval-sexp-fu
+        ;; evil
+        ;; evil-anzu
+        ;; evil-args
+        ;; evil-ediff
+        ;; evil-escape
+        ;; evil-exchange
+        ;; evil-iedit-state
+        ;; evil-indent-plus
+        ;; evil-indent-textobject
+        ;; evil-leader
+        ;; evil-lisp-state
+        ;; evil-magit
+        ;; evil-matchit
+        ;; evil-mc
+        ;; evil-nerd-commenter
+        ;; evil-numbers
+        ;; evil-search-highlight-persist
+        ;; evil-surround
+        ;; evil-tutor
+        ;; evil-unimpaired
+        ;; evil-visual-mark-mode
+        ;; evil-visualstar
+        exec-path-from-shell
+        expand-region
+        eyebrowse
+        f
+        fancy-battery
+        ;;farmhouse-theme
+        fill-column-indicator
+        find-file-in-project
+        ;;firebelly-theme
+        ;;flatland-theme
+        ;;flatui-theme
+        flx
+        flx-ido
+        flycheck
+        flycheck-pos-tip
+        flymake
+        flyspell-correct
+        flyspell-correct-helm
+        ;;frame-cmds
+        ;;frame-fns
+        fringe-helper
+        fuzzy
+        ;;gandalf-theme
+        gh-md
+        git-commit
+        git-gutter
+        git-gutter+
+        git-gutter-fringe
+        git-gutter-fringe+
+        git-link
+        git-messenger
+        git-timemachine
+        gitattributes-mode
+        gitconfig-mode
+        gitignore-mode
+        gntp
+        gnuplot
+        golden-ratio
+        google-translate
+        ;;gotham-theme
+        goto-chg
+        goto-last-change
+        ;;grandshell-theme
+        ;;gruber-darker-theme
+        ;;gruvbox-theme
+        ;;hc-zenburn-theme
+        header2
+        helm
+        helm-ag
+        helm-c-yasnippet
+        helm-company
+        helm-core
+        helm-descbinds
+        helm-flx
+        helm-git
+        helm-git-files
+        helm-gitignore
+        helm-helm-commands
+        helm-ls-git
+        helm-make
+        helm-mode-manager
+        ;;helm-package
+        helm-projectile
+        helm-pydoc
+        helm-spotify
+        helm-swoop
+        helm-themes
+        ;;help-fns+
+        ;;hemisu-theme
+        ;;heroku-theme
+        ;;hexrgb
+        hide-comnt
+        highlight
+        highlight-indentation
+        highlight-numbers
+        highlight-parentheses
+        hl-todo
+        hlinum
+        htmlize
+        hungry-delete
+        hy-mode
+        hydra
+        ;;icicles
+        ;;ido-vertical-mode
+        ;;idomenu
+        iedit
+        indent-guide
+        ;;info+
+        ;;inkpot-theme
+        ;;ir-black-theme
+        ;;jazz-theme
+        ;;jbeans-theme
+        jedi
+        jedi-core
+        js-doc
+        js2-mode
+        js2-refactor
+        json
+        json-mode
+        json-reformat
+        json-rpc
+        json-snatcher
+        latex-preview-pane
+        let-alist
+        ;;leuven-theme
+        ;;light-soap-theme
+        link-hint
+        linum-relative
+        livid-mode
+        log4e
+        lorem-ipsum
+        lua-mode
+        ;;lush-theme
+        macrostep
+        ;;madhat2r-theme
+        magit
+        magit-gitflow
+        magit-popup
+        ;;majapahit-theme
+        makey
+        markdown-mode
+        markdown-toc
+        ;;material-theme
+        ;;menu-bar+
+        ;;minimal-theme
+        mmm-mode
+        ;;moe-theme
+        ;;molokai-theme
+        ;;monochrome-theme
+        ;;monokai-theme
+        move-text
+        multiple-cursors
+        ;;mustang-theme
+        mwim
+        ;;naquadah-theme
+        neotree
+        nginx-mode
+        ;;niflheim-theme
+        ;;noctilux-theme
+        nose
+        ;;nxml-mode
+        ;;obsidian-theme
+        ;;occidental-theme
+        ;;oldlace-theme
+        ;;omtose-phellack-theme
+        open-junk-file
+        org
+        org-bullets
+        org-download
+        ;;org-plus-contrib
+        org-pomodoro
+        org-present
+        org-projectile
+        ;;organic-green-theme
+        orgit
+        package
+        package-build
+        packed
+        page-break-lines
+        paradox
+        parent-mode
+        ;;pastels-on-dark-theme
+        pcache
+        pcre2el
+        persp-mode
+        ;;phoenix-dark-mono-theme
+        ;;phoenix-dark-pink-theme
+        pip-requirements
+        pkg-info
+        ;;planet-theme
+        popup
+        popup-kill-ring
+        popwin
+        pos-tip
+        powerline
+        ;;professional-theme
+        projectile
+        ;;purple-haze-theme
+        py-autopep8
+        pycomplete
+        pydoc
+        pydoc-info
+        pyenv-mode
+        pytest
+        python-environment
+        python-mode
+        python-pep8
+        pythonic
+        pyvenv
+        quelpa
+        ;;railscasts-theme
+        rainbow-delimiters
+        rainbow-mode
+        recentf-ext
+        ;;redo+
+        request
+        restart-emacs
+        ;;reverse-theme
+        s
+        seq
+        ;;seti-theme
+        shell-command
+        simple-httpd
+        skewer-mode
+        smartparens
+        smartrep
+        smart-mode-line
+        smart-mode-line-powerline-theme
+        smeargle
+        smooth-scroll
+        smooth-scrolling
+        ;;smyx-theme
+        ;;soft-charcoal-theme
+        ;;soft-morning-theme
+        ;;soft-stone-theme
+        ;;solarized-theme
+        ;;soothe-theme
+        ;;spacegray-theme
+        spaceline
+        spaceline-all-the-icons
+        ;;spaceline-segments
+        ;;spaceline-config
+        spacemacs-theme
+        spinner
+        spotify
+        spray
+        sr-speedbar
+        ;;subatomic-theme
+        ;;subatomic256-theme
+        ;;sublime-themes
+        ;;sunny-day-theme
+        swiper
+        swiper-helm
+        switch-window
+        tabbar
+        ;;tango-2-theme
+        ;;tango-plus-theme
+        ;;tangotango-theme
+        ;;tao-theme
+        tern
+        toc-org
+        ;;toxi-theme
+        ;;tronesque-theme
+        ;;twilight-anti-bright-theme
+        ;;twilight-bright-theme
+        ;;twilight-theme
+        ;;ujelly-theme
+        unbound
+        ;;underwater-theme
+        undo-tree
+        unfill
+        ;;use-package
+        use-package-el-get
+        uuidgen
+        vi-tilde-fringe
+        virtualenvwrapper
+        vline
+        volatile-highlights
+        web-beautify
+        websocket
+        which-key
+        window-number
+        ;;window-numbering
+        winum
+        with-editor
+        ws-butler
+        yaml-mode
+        yasnippet
+        ;;zen-and-art-theme
+        ;;zenburn-theme
+        zencoding-mode
+        ;;zonokai-theme
+        ))
 
 
 (dolist (p my-elpa-packages)
@@ -655,8 +690,8 @@ zencoding-mode
     ))
 
 ;;(package-initialize)
-(message "Loading use-package")
-(require 'use-package)
+;;(message "Loading use-package")
+;;(require 'use-package)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -666,28 +701,36 @@ zencoding-mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; To update el-get packages manually
 
- (let ((elget-lib (concat marcel-lisp-dir "/el-get/el-get")))
-   (if (file-exists-p elget-lib)
-       (add-to-list 'load-path elget-lib)))
+(let ((elget-lib (concat marcel-lisp-dir "/el-get/el-get")))
+  (if (file-exists-p elget-lib)
+      (add-to-list 'load-path elget-lib)))
 
- (message "Loading el-get")
- (use-package el-get
-   ;; :init
-   ;; (with-current-buffer
-   ;;     (url-retrieve-synchronously
-   ;;      "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-   ;;   (goto-char (point-max))
-   ;;   (eval-print-last-sexp))
-   )
+(message "Loading el-get")
+;; (use-package el-get
+;;    :init
+;;    (with-current-buffer
+;;        (url-retrieve-synchronously
+;;      "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+;;      (goto-char (point-max))
+;;      (eval-print-last-sexp))
+;;   )
 
- (add-to-list 'el-get-recipe-path
-      (concat marcel-lisp-dir "/el-get/el-get/recipes"))
- (setq el-get-default-process-sync t
-       el-get-verbose t)
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+
+(add-to-list 'el-get-recipe-path
+             (concat marcel-lisp-dir "/el-get/el-get/recipes"))
+(setq el-get-default-process-sync t
+      el-get-verbose t)
 
 
 (message "Loading el-get-elpa")
-(use-package el-get-elpa)
+;;(use-package el-get-elpa)
 ;;(el-get-emacswiki-build-local-recipes)
 ;;(el-get-elpa-build-local-recipes)
 
@@ -718,27 +761,35 @@ zencoding-mode
 ;;         (global-set-key (kbd "C-x C-/") 'goto-last-change)))))
 
 
- (setq my-el-get-packages
-        '(
-      diff+
-      dired-column-widths
-      ffap-
-      file-template
-      pycomplete+
-      ;;pylookup
-      recentf-buffer
-      menu-bar+
-      doremi
-      doremi-cmd
-      frame-fns
-      faces+
-      facemenu+
-      doremi-frm
-      doremi-mac
-      ring+
-      setup-keys
-      zoom-frm
-      ))
+(setq my-el-get-packages
+      '(
+        diff+
+        dired+
+        dired-column-widths
+        dired-details
+        dired-details+
+        dired-sort
+        dired-sort-menu
+        dired-sort-menu+
+        doremi
+        doremi-cmd
+        doremi-frm
+        doremi-mac
+        escreen
+        facemenu+
+        faces+
+        ffap-
+        file-template
+        frame-fns
+        helm-anything
+        help-fns+
+        menu-bar+
+        pycomplete+
+        recentf-buffer
+        ring+
+        setup-keys
+        zoom-frm
+        ))
 
 
 ;; Install new packages and init already installed packages
@@ -775,9 +826,9 @@ zencoding-mode
 (message "Loading auto-dim-other-buffers")
 (use-package auto-dim-other-buffers
   :init
-(add-hook 'after-init-hook (lambda ()
-  (when (fboundp 'auto-dim-other-buffers-mode)
-    (auto-dim-other-buffers-mode t)))))
+  (add-hook 'after-init-hook (lambda ()
+                               (when (fboundp 'auto-dim-other-buffers-mode)
+                                 (auto-dim-other-buffers-mode t)))))
 
 
 (message "Loading org stuff")
@@ -799,14 +850,14 @@ zencoding-mode
 
 
 (eval-after-load "org"
-    '(progn
-       (eval-after-load "cua-base"
-     '(progn
-    (defadvice org-call-for-shift-select (before org-call-for-shift-select-cua activate)
-      (if (and cua-mode
-       org-support-shift-select
-       (not (use-region-p)))
-      (cua-set-mark)))))))
+  '(progn
+     (eval-after-load "cua-base"
+       '(progn
+          (defadvice org-call-for-shift-select (before org-call-for-shift-select-cua activate)
+            (if (and cua-mode
+                     org-support-shift-select
+                     (not (use-region-p)))
+                (cua-set-mark)))))))
 
 
 
@@ -831,6 +882,14 @@ zencoding-mode
 (message "restart emacs")
 (use-package restart-emacs
   :commands restart-emacs)
+
+
+(use-package wgrep
+  :ensure t
+  )
+(use-package wgrep-ag
+:ensure t
+)
 
 
 ;; (use-package helm :ensure t)
@@ -890,7 +949,7 @@ zencoding-mode
 (defun my-load-python ()
   (interactive)
   (let* ((python-setup (concat marcel-lisp-dir  "/elpy-init.el"))
-     (anaconda-setup (concat marcel-lisp-dir  "/anaconda-init.el")))
+         (anaconda-setup (concat marcel-lisp-dir  "/anaconda-init.el")))
     (when (file-exists-p python-setup)
       (load-file python-setup))
     ;;(when (file-exists-p anaconda-setup)
@@ -904,6 +963,18 @@ zencoding-mode
       (load-file helm-setup))))
 
 
+(defun my-load-evil ()
+  (interactive)
+  (let* ((evil-setup (concat marcel-lisp-dir  "/evil-init.el")))
+    (when (file-exists-p evil-setup)
+      (load-file evil-setup))))
+
+(defun my-load-treemacs ()
+  (interactive)
+  (let* ((init-setup (concat marcel-lisp-dir  "/treemacs-init.el")))
+    (when (file-exists-p init-setup)
+      (load-file init-setup))))
+
 
 (setenv "WORKON_HOME" "~/PythonEnvs")
 ;;(add-hook 'python-mode-hook (function my-load-python))
@@ -915,23 +986,22 @@ zencoding-mode
       (add-to-list 'load-path slime-library)
       (use-package slime-autoloads)
       (eval-after-load "slime"
-    '(progn
-       (add-to-list 'load-path (concat marcel-lisp-dir "/slime/contrib"))
-       ;;(slime-setup '(slime-fancy slime-banner slime-repl slime-autodoc  slime-typeout-frame))
-       (slime-setup '(slime-repl))
-       (setq slime-complete-symbol*-fancy t)
-       (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
-       (global-set-key "\C-cs" 'slime-selector)
-       (setq inferior-lisp-program ; your Lisp system
-     (if running-ms-windows "sbcl.exe --noinform" "/usr/local/bin/sbcl --noinform"))
-       )))))
+        '(progn
+           (add-to-list 'load-path (concat marcel-lisp-dir "/slime/contrib"))
+           ;;(slime-setup '(slime-fancy slime-banner slime-repl slime-autodoc  slime-typeout-frame))
+           (slime-setup '(slime-repl))
+           (setq slime-complete-symbol*-fancy t)
+           (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
+           (global-set-key "\C-cs" 'slime-selector)
+           (setq inferior-lisp-program ; your Lisp system
+                 (if running-ms-windows "sbcl.exe --noinform" "/usr/local/bin/sbcl --noinform"))
+           )))))
 
 
 (message "Loading vline")
 (use-package vline)
 ;;(require 'col-highlight)
 ;;(require 'tabbar-extension)
-
 
 
 (message "Loading recentf")
@@ -941,13 +1011,14 @@ zencoding-mode
     (setq recentf-save-file (concat marcel-lisp-dir "/recentf-" machine-nickname))
     (setq recentf-auto-cleanup 'never)
     (recentf-mode 1)
-    (setq recentf-auto-cleanup 'never)
     (run-at-time nil (* 20 60) 'recentf-save-list)
     (setq recentf-max-saved-items 100)
     (setq recentf-max-menu-items 60)
     ;;(global-set-key [?\e ?\M-x] 'lacarte-execute-menu-command)
     ;;(global-set-key (kbd "C-x C-r") 'icicle-recent-file)
     (global-set-key (kbd "C-x C-r") 'recentf-open-files)
+    (add-to-list 'recentf-exclude (concat marcel-lisp-dir "/elpa"))
+    (add-to-list 'recentf-exclude  ".*-autoloads\\.el\\'")
     (use-package recentf-ext)
     ))
 
@@ -992,18 +1063,18 @@ Uses `recentf-list' as the list and `recentf-save-file' as the
 file to write to."
   (condition-case error
       (with-temp-buffer
-    (erase-buffer)
-    (set-buffer-file-coding-system recentf-save-file-coding-system)
-    (insert (format recentf-save-file-header (current-time-string)))
-    (recentf-dump-variable 'recentf-list recentf-max-saved-items)
-    (recentf-dump-variable 'recentf-filter-changer-current)
-    (insert "\n \n;;; Local Variables:\n"
-    (format ";;; coding: %s\n" recentf-save-file-coding-system)
-    ";;; End:\n")
-    (write-file (expand-file-name recentf-save-file))
-    (when recentf-save-file-modes
-      (set-file-modes recentf-save-file recentf-save-file-modes))
-    nil)
+        (erase-buffer)
+        (set-buffer-file-coding-system recentf-save-file-coding-system)
+        (insert (format recentf-save-file-header (current-time-string)))
+        (recentf-dump-variable 'recentf-list recentf-max-saved-items)
+        (recentf-dump-variable 'recentf-filter-changer-current)
+        (insert "\n \n;;; Local Variables:\n"
+                (format ";;; coding: %s\n" recentf-save-file-coding-system)
+                ";;; End:\n")
+        (write-file (expand-file-name recentf-save-file))
+        (when recentf-save-file-modes
+          (set-file-modes recentf-save-file recentf-save-file-modes))
+        nil)
     (error
      (warn "recentf mode: %s" (error-message-string error)))))
 
@@ -1030,14 +1101,11 @@ file to write to."
 (message "Loading saveplace")
 (use-package saveplace
   :init
-  (setq-default save-place t)
+  (save-place-mode 1)
   (setq save-place-forget-unreadable-files nil)
   (setq save-place-file (concat marcel-lisp-dir "/places-" machine-nickname)))
 
 
-;;(load-file (concat marcel-lisp-dir "/ido-init.el"))
-;;(load-file (concat marcel-lisp-dir "/helm-init.el"))
-;;(load-file (concat marcel-lisp-dir "/icicles-init.el"))
 
 (message "Loading yasnippet")
 (use-package yasnippet
@@ -1056,7 +1124,7 @@ file to write to."
   (progn
     (global-anzu-mode +1)
     (set-face-attribute 'anzu-mode-line nil
-        :foreground "yellow" :weight 'bold)))
+                        :foreground "yellow" :weight 'bold)))
 
 (define-key isearch-mode-map [remap isearch-query-replace]  #'anzu-isearch-query-replace)
 (define-key isearch-mode-map [remap isearch-query-replace-regexp] #'anzu-isearch-query-replace-regexp)
@@ -1099,8 +1167,8 @@ file to write to."
     that is 10% darker than the default face's background."
   (interactive)
   (set-face-attribute 'hl-line nil
-      :foreground nil
-      :background (color-darken-name (face-background 'default) 10)))
+                      :foreground nil
+                      :background (color-darken-name (face-background 'default) 10)))
 
 ;;(add-hook 'global-hl-line-mode-hook 'my-set-hl-line-color-based-on-theme)
 
@@ -1180,72 +1248,107 @@ file to write to."
 
 ;; numbered window shortcuts
 ;; (It numbers windows and you can switch them easily with `M-<number>').
-(use-package window-numbering
+;; (use-package window-numbering
+;;   :init
+;;   (progn
+;;     (window-numbering-mode 1)
+;;     (window-number-meta-mode 1)))
+
+
+(use-package winum
+  :ensure t
   :init
-  (progn
-    (window-numbering-mode 1)
-    (window-number-meta-mode 1)))
+  (setq winum-keymap
+        (let ((map (make-sparse-keymap)))
+          (define-key map (kbd "C-`") 'winum-select-window-by-number)
+          (define-key map (kbd "C-²") 'winum-select-window-by-number)
+          (define-key map (kbd "M-0") 'winum-select-window-0-or-10)
+          (define-key map (kbd "M-1") 'winum-select-window-1)
+          (define-key map (kbd "M-2") 'winum-select-window-2)
+          (define-key map (kbd "M-3") 'winum-select-window-3)
+          (define-key map (kbd "M-4") 'winum-select-window-4)
+          (define-key map (kbd "M-5") 'winum-select-window-5)
+          (define-key map (kbd "M-6") 'winum-select-window-6)
+          (define-key map (kbd "M-7") 'winum-select-window-7)
+          (define-key map (kbd "M-8") 'winum-select-window-8)
+          map))
+  (setq winum-auto-setup-mode-line nil)
+  :config
+  (defun winum-assign-0-to-neotree ()
+    (when (string-match-p (buffer-name) ".*\\*NeoTree\\*.*") 10))
+  (add-to-list 'winum-assign-functions #'winum-assign-0-to-neotree)
+  (set-face-attribute 'winum-face nil :weight 'bold)
+
+  (setq window-numbering-scope            'global
+        winum-reverse-frame-list          nil
+        winum-auto-assign-0-to-minibuffer t
+        winum-assign-func                 'my-winum-assign-func
+        winum-auto-setup-mode-line        t
+        winum-mode-line-position          1
+        winum-ignored-buffers             '(" *which-key*"))
+  (winum-mode))
 
 
-;;Quickly jump between windows using ace-window, I used it frequently and bind it F1.
-(message "Loading ace-windo")
+;; ;;Quickly jump between windows using ace-window, I used it frequently and bind it F1.
+(message "Loading ace-window")
 (use-package ace-window
   :init
   (global-set-key (kbd "<f1>") 'ace-window)
   (setq aw-scope 'frame))
 
-;; ----------------------------------------------------------[Window Number]
+;; ;; ;; ----------------------------------------------------------[Window Number]
 
 
-;;(use-package flycheck)
-;;(add-hook 'after-init-hook #'global-flycheck-mode)
+;; ;; ;;(use-package flycheck)
+;; ;; ;;(add-hook 'after-init-hook #'global-flycheck-mode)
 
-;; Line to indicate column limit for program lines
-(message "Loading fill-column-indicator")
-(use-package fill-column-indicator
-  :init
-  (progn
-    (setq fci-rule-column 140)
-    (setq fci-handle-truncate-lines nil)
-    (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-    (global-fci-mode 1)
-    (defun auto-fci-mode (&optional unused)
-      (if (> (window-width) fci-rule-column)
-          (fci-mode 1)
-        (fci-mode 0))
-      )
-    (add-hook 'after-change-major-mode-hook 'auto-fci-mode)
-    (add-hook 'window-configuration-change-hook 'auto-fci-mode)))
+;; ;; ;; Line to indicate column limit for program lines
+;; ;; (message "Loading fill-column-indicator")
+;; ;; (use-package fill-column-indicator
+;; ;;   :init
+;; ;;   (progn
+;; ;;     (setq fci-rule-column 140)
+;; ;;     (setq fci-handle-truncate-lines nil)
+;; ;;     (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+;; ;;     (global-fci-mode 1)
+;; ;;     (defun auto-fci-mode (&optional unused)
+;; ;;       (if (> (window-width) fci-rule-column)
+;; ;;           (fci-mode 1)
+;; ;;         (fci-mode 0))
+;; ;;       )
+;; ;;     (add-hook 'after-change-major-mode-hook 'auto-fci-mode)
+;; ;;     (add-hook 'window-configuration-change-hook 'auto-fci-mode)))
 
 
-;; which-key is a minor mode for Emacs that displays the key
-;; bindings following your currently entered incomplete command (a
-;; prefix) in a popup. For example, after enabling the minor mode if
-;; you enter C-x and wait for the default of 1 second the minibuffer
-;; will expand with all of the available key bindings that follow
-;; C-x (or as many as space allows given your settings).
+;; ;; ;; which-key is a minor mode for Emacs that displays the key
+;; ;; ;; bindings following your currently entered incomplete command (a
+;; ;; ;; prefix) in a popup. For example, after enabling the minor mode if
+;; ;; ;; you enter C-x and wait for the default of 1 second the minibuffer
+;; ;; ;; will expand with all of the available key bindings that follow
+;; ;; ;; C-x (or as many as space allows given your settings).
 (message "Loading which-key")
 (use-package which-key
   :init
-(which-key-mode))
+  (which-key-mode))
 
 
-;;smex - A smarter M-x compleation ------------
-(message "Loading smex")
-(use-package smex
-  :init
-  (progn
-      (smex-initialize)
-      (global-set-key (kbd "M-x") 'smex)
-      (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-      (setq smex-save-file (concat marcel-lisp-dir "/smex-items-" machine-nickname)))         ; don't save state to "~/.smex-items"
-  ;;(icomplete-mode t)
-  );---------------------------------------------
+;; ;; ;;smex - A smarter M-x completion ------------
+;; ;; ;; (message "Loading smex")
+;; ;; ;; (use-package smex
+;; ;; ;;   :init
+;; ;; ;;   (progn
+;; ;; ;;       (smex-initialize)
+;; ;; ;;       (global-set-key (kbd "M-x") 'smex)
+;; ;; ;;       (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; ;; ;;       (setq smex-save-file (concat marcel-lisp-dir "/smex-items-" machine-nickname)))         ; don't save state to "~/.smex-items"
+;; ;; ;;   ;;(icomplete-mode t)
+;; ;; ;;   )
+;; ;; ;;---------------------------------------------
 
 
 
-;; don't let the cursor go into minibuffer prompt
-(setq minibuffer-prompt-properties (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
+;; ;; ;; don't let the cursor go into minibuffer prompt
+;; ;; (setq minibuffer-prompt-properties (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
 
 (defun stop-using-minibuffer ()
   "kill the minibuffer"
@@ -1254,8 +1357,8 @@ file to write to."
 
 (add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
 
-;;(use-package autopair)
-;;(autopair-global-mode) ;; to enable in all buffers
+;; ;; ;;(use-package autopair)
+;; ;; ;;(autopair-global-mode) ;; to enable in all buffers
 
 
 (message "Loading rainbow-delimiters")
@@ -1263,18 +1366,19 @@ file to write to."
   :init
   (rainbow-delimiters-mode-enable))
 
-;;Rectangular markings-----------------------
-;;COOL! C-RET gives rectangular marking for copy/paste, extremely useful
-;;for tables. NOTE, second line needed for rectangle, but also gives
-;; (transient-mark-mode t) = visualize C-SPC-marking (i.e. highlight)
-(setq cua-enable-cua-keys nil) ;;only for rectangle, don't use C-x/c/v for copy/paste
-(cua-mode t)                   ;;gives rectangle + same as "(pc-selection-mode)" (=shift+arrow highlights)
-;;--------------------------------------------
+;; ;; ;;Rectangular markings-----------------------
+;; ;; ;;COOL! C-RET gives rectangular marking for copy/paste, extremely useful
+;; ;; ;;for tables. NOTE, second line needed for rectangle, but also gives
+;; ;; ;; (transient-mark-mode t) = visualize C-SPC-marking (i.e. highlight)
+;; ;; (setq cua-enable-cua-keys nil) ;;only for rectangle, don't use C-x/c/v for copy/paste
+;; ;; (cua-mode t)                   ;;gives rectangle + same as "(pc-selection-mode)" (=shift+arrow highlights)
+;; ;; ;;--------------------------------------------
 
-;; Clipboard
-;; Use the clipboard, pretty please, so that copy/paste "works"
+;; ;; ;; Clipboard
+;; ;; ;; Use the clipboard, pretty please, so that copy/paste "works"
 (setq x-select-enable-clipboard t)
-; Merge system's and Emacs' clipboard
+
+;; Merge system's and Emacs' clipboard
 (setq select-enable-clipboard t)
 ;; Save whatever’s in the current (system) clipboard before
 ;; replacing it with the Emacs’ text.
@@ -1284,32 +1388,32 @@ file to write to."
 
 
 
-;; Navigate windows with M-<arrows>
-(windmove-default-keybindings 'meta)
-(setq windmove-wrap-around t)
+;; ;; ;; Navigate windows with M-<arrows>
+;; ;; (windmove-default-keybindings 'meta)
+;; ;; (setq windmove-wrap-around t)
 
-;; winner-mode provides C-<left> to get back to previous window layout
-(winner-mode 1)
+;; ;; ;; winner-mode provides C-<left> to get back to previous window layout
+;; ;; (winner-mode 1)
 
 
 (setq linum-format " %d ")
-;; To make emacs use spaces instead of tabs (Added by Art Lee on 2/19/2008)
+;; ;; ;; To make emacs use spaces instead of tabs (Added by Art Lee on 2/19/2008)
 (setq-default indent-tabs-mode nil)
-(setq mail-default-reply-to "becker@kestrel.edu")
+;; ;; (setq mail-default-reply-to "becker@kestrel.edu")
 (display-time)
 (add-hook 'before-save-hook 'time-stamp)
 (setq minibuffer-max-depth nil)
 
 (add-hook 'json-mode-hook
-      (lambda ()
-    (setq js-indent-level 2)))
+          (lambda ()
+            (setq js-indent-level 2)))
 
-;;;Answer y or n instead of yes or no at minibar prompts.
+;; ;; ;;;Answer y or n instead of yes or no at minibar prompts.
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (defun newline-indents ()
-  "Bind Return to `newline-and-indent' in the local keymap."
-  (local-set-key "\C-m" 'newline-and-indent))
+   "Bind Return to `newline-and-indent' in the local keymap."
+   (local-set-key "\C-m" 'newline-and-indent))
 
 
 ;; scrolling like gos-emacs
@@ -1332,7 +1436,7 @@ file to write to."
 (defun fullscreen ()
   (interactive)
   (set-frame-parameter nil 'fullscreen
-       (if (frame-parameter nil 'fullscreen) nil 'fullboth)))
+                       (if (frame-parameter nil 'fullscreen) nil 'fullboth)))
 
 
 (global-set-key [f6] 'line-to-top-of-window)
@@ -1354,12 +1458,12 @@ file to write to."
 
 
 (message "Loading swiper")
- (use-package swiper)
- (use-package ivy)
- (ivy-mode 1)
- (setq ivy-use-virtual-buffers t)
- (global-set-key (kbd "C-c C-s") 'swiper-helm)
- (global-set-key (kbd "C-c C-r") 'ivy-resume)
+(use-package swiper)
+(use-package ivy)
+(ivy-mode 1)
+(setq ivy-use-virtual-buffers t)
+(global-set-key (kbd "C-c C-s") 'swiper-helm)
+(global-set-key (kbd "C-c C-r") 'ivy-resume)
 ;; (global-set-key (kbd "M-x") 'counsel-M-x)
 ;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
 ;; (global-set-key (kbd "<f1> f") 'counsel-describe-function)
@@ -1380,60 +1484,67 @@ file to write to."
 (global-auto-revert-mode 1)
 
 
-
-; Iterate through CamelCase words
+;; Iterate through CamelCase words
 (global-subword-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; neotree
 (message "Loading and configuring neotree")
 
-(use-package neotree)
 (use-package all-the-icons)
-(global-set-key [f8] 'neotree-toggle)
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+(use-package neotree)
 
-  (defun neotree-project-dir ()
-    "Open NeoTree using the git root."
-    (interactive)
-    (let ((project-dir (ffip-project-root))
-      (file-name (buffer-file-name)))
-      (if project-dir
-      (progn
-    (neotree-dir project-dir)
-    (neotree-find file-name))
-    (message "Could not find git project root."))))
+(global-set-key [f8] 'neotree-toggle)
+
+
+(defun neotree-project-dir ()
+  "Open NeoTree using the git root."
+  (interactive)
+  (let ((project-dir (ffip-project-root))
+        (file-name (buffer-file-name)))
+    (if project-dir
+        (progn
+          (neotree-dir project-dir)
+          (neotree-find file-name))
+      (message "Could not find git project root."))))
 
 (global-set-key (kbd "C-c C-p") 'neotree-project-dir)
 ;; every time when the neotree window is  opened, it will try to find current
 ;; file and jump to node.
 (setq-default neo-smart-open t)
-
 ;; change root automatically when running `projectile-switch-project`
 (setq projectile-switch-project-action 'neotree-projectile-action)
-
 (setq neo-theme (if window-system 'icons 'nerd)) ; 'classic, 'nerd, 'ascii, 'arrow
-
 (setq neo-vc-integration '(face char))
-
 (setq neo-show-hidden-files t)
-
 (setq neo-toggle-window-keep-p t)
-
 (setq neo-force-change-root t)
 (setq neo-window-fixed-size nil)
+(setq neo-window-width 50)
 
 (add-hook 'neotree-mode-hook (lambda () (setq-local mode-line-format nil)))
 
- (defun neotree-resize-window (&rest _args)
-    "Resize neotree window.
+(defun neotree-resize-window (&rest _args)
+  "Resize neotree window.
 https://github.com/jaypei/emacs-neotree/pull/110"
-    (interactive)
-    (neo-buffer--with-resizable-window
-     (let ((fit-window-to-buffer-horizontally t))
-       (fit-window-to-buffer))))
+  (interactive)
+  (neo-buffer--with-resizable-window
+   (let ((fit-window-to-buffer-horizontally t))
+     (fit-window-to-buffer))))
 
-  (add-hook 'neo-change-root-hook #'neotree-resize-window)
-  (add-hook 'neo-enter-hook #'neotree-resize-window)
+(add-hook 'neo-change-root-hook #'neotree-resize-window)
+(add-hook 'neo-enter-hook #'neotree-resize-window)
+
+
+;; (defun set-window-number-0 ()
+;;   "Custom number assignment for special buffers."
+;;   (mapc (lambda (w)
+;;           (when (and (boundp 'neo-global--window)
+;;                      (eq w neo-global--window))
+;;             (window-numbering-assign w 0)))
+;;         (window-list)))
+;; (add-hook 'window-numbering-before-hook 'set-window-number-0)
+;; (setq window-numbering-auto-assign-0-to-minibuffer nil)
+;; (set-window-number-0)
 
 
 ;;Awesome copy/paste!----------------------
@@ -1445,14 +1556,14 @@ https://github.com/jaypei/emacs-neotree/pull/110"
    (if mark-active (list (region-beginning) (region-end))
      (message "Copied line")
      (list (line-beginning-position)
-       (line-beginning-position 2)))))
+           (line-beginning-position 2)))))
 
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
   (interactive
    (if mark-active (list (region-beginning) (region-end))
      (list (line-beginning-position)
-       (line-beginning-position 2)))))
+           (line-beginning-position 2)))))
 ;;--------------------------------------------
 
 
@@ -1495,9 +1606,9 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (autoload 'c-mode    "cc-mode" "C Editing Mode" t)
 (autoload 'objc-mode "cc-mode" "Objective-C Editing Mode" t)
 
-    ;(use-package python)
-    ;(autoload 'python-mode "python-mode" "Python editing mode." t)
-    ;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
+                                        ;(use-package python)
+                                        ;(autoload 'python-mode "python-mode" "Python editing mode." t)
+                                        ;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
 
 ;; set tab distance to something, so it doesn't change randomly and confuse people
 (setq c-basic-offset 4)
@@ -1520,39 +1631,39 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;; This is how emacs tells the file type by the file suffix.
 (setq auto-mode-alist
       (append '(("\\.mss$" . scribe-mode))
-      '(("\\.bib$" . bibtex-mode))
-      '(("\\.tex$" . latex-mode))
-      '(("\\.obj$" . lisp-mode))
-      '(("\\.st$"  . smalltalk-mode))
-      '(("\\.Z$"   . uncompress-while-visiting))
-      '(("\\.cs$"  . indented-text-mode))
-      '(("\\.C$"   . c++-mode))
-      '(("\\.cc$"  . c++-mode))
-      '(("\\.icc$" . c++-mode))
-      '(("\\.h$"   . c++-mode))
-      '(("\\.c$"   . c-mode))
-      '(("\\.y$"   . c-mode))
-      '(("\\.py$"  . python-mode))
-      '(("\\.sl\\'" . slang-mode))
-      '(("\\.sml$" . sml-mode))
-      '(("\\.sig$" . sml-mode))
-      '(("\\.ML$"  . sml-mode))
-      '(("\\.cm\\'" . sml-cm-mode))
-      '(("\\.grm\\'" . sml-yacc-mode))
-      '(("\\.g\\'" . antlr-mode))
-      '(("\\.scala$" . scala-mode))
-      auto-mode-alist))
+              '(("\\.bib$" . bibtex-mode))
+              '(("\\.tex$" . latex-mode))
+              '(("\\.obj$" . lisp-mode))
+              '(("\\.st$"  . smalltalk-mode))
+              '(("\\.Z$"   . uncompress-while-visiting))
+              '(("\\.cs$"  . indented-text-mode))
+              '(("\\.C$"   . c++-mode))
+              '(("\\.cc$"  . c++-mode))
+              '(("\\.icc$" . c++-mode))
+              '(("\\.h$"   . c++-mode))
+              '(("\\.c$"   . c-mode))
+              '(("\\.y$"   . c-mode))
+              '(("\\.py$"  . python-mode))
+              '(("\\.sl\\'" . slang-mode))
+              '(("\\.sml$" . sml-mode))
+              '(("\\.sig$" . sml-mode))
+              '(("\\.ML$"  . sml-mode))
+              '(("\\.cm\\'" . sml-cm-mode))
+              '(("\\.grm\\'" . sml-yacc-mode))
+              '(("\\.g\\'" . antlr-mode))
+              '(("\\.scala$" . scala-mode))
+              auto-mode-alist))
 
 ;;  html-mode
 (add-hook 'html-mode-hook
-      '(lambda ()
-     (auto-fill-mode 1)
-     (define-key html-mode-map [(<)] 'self-insert-command)
-     (define-key html-mode-map [(>)] 'self-insert-command)
-     (define-key html-mode-map [(&)] 'self-insert-command)
-     (define-key html-mode-map [(control c) (<)] 'html-less-than)
-     (define-key html-mode-map [(control c) (>)] 'html-greater-than)
-     (define-key html-mode-map [(control c) (&)] 'html-ampersand)))
+          '(lambda ()
+             (auto-fill-mode 1)
+             (define-key html-mode-map [(<)] 'self-insert-command)
+             (define-key html-mode-map [(>)] 'self-insert-command)
+             (define-key html-mode-map [(&)] 'self-insert-command)
+             (define-key html-mode-map [(control c) (<)] 'html-less-than)
+             (define-key html-mode-map [(control c) (>)] 'html-greater-than)
+             (define-key html-mode-map [(control c) (&)] 'html-ampersand)))
 
 (setq next-number 0)
 
@@ -1561,8 +1672,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
      (print buffer-file-name (get-buffer "scratch"))
      ;;(format t "~%~A" buffer-file-name)(edebug)
      (if (string= (file-name-extension buffer-file-name) "lisp")
-     (insert
-      ";;;-*- Mode: common-lisp ; Package: USER ; Base: 10; Syntax: lisp  -*-
+         (insert
+          ";;;-*- Mode: common-lisp ; Package: USER ; Base: 10; Syntax: lisp  -*-
 ;;;-------------------------------------------------------------------------
 ;;;               Copyright (C) 2012 by Kestrel Technology
 ;;;                          All Rights Reserved
@@ -1578,8 +1689,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;;;
 ")
        (if (string= (file-name-extension buffer-file-name) "sl")
-       (insert
-    "%%%-*- Mode: slang-mode ; Package: USER ; Base: 10; Syntax: slang  -*-
+           (insert
+            "%%%-*- Mode: slang-mode ; Package: USER ; Base: 10; Syntax: slang  -*-
 %%%-------------------------------------------------------------------------
 %%%               Copyright (C) 2012 by Kestrel Technology
 %%%                          All Rights Reserved
@@ -1593,11 +1704,11 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 %%%
 %%%
 "
-    )))))
+            )))))
 
 
-(autoload 'auto-make-header "header2")
-(require 'my-python-header)
+;; ;; (autoload 'auto-make-header "header2")
+;; ;; (require 'my-python-header)
 
 ;; Load the font-lock package.
 ;;(use-package font-lock)
@@ -1608,15 +1719,11 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 (tool-bar-mode -1)
 
-(setenv "GS_LIB" "C:/Program Files/gs/gs9.05/lib;C:/Program Files/gs/gs9.05/fonts")
-(setq ps-lpr-command "C:/Program Files/gs/gs9.05/bin/gswin32c")
-(setq ps-lpr-switches '("-q" "-dNOPAUSE" "-dBATCH" "-sDEVICE=mswinprn"))
-(setq ps-printer-name t)
 
 (autoload 'sgml-mode "psgml" "Major mode to edit SGML files." t)
 (autoload 'xml-mode "psgml" "Major mode to edit XML files." t)
 
-(setq semantic-load-turn-everything-on t)
+;;(setq semantic-load-turn-everything-on t)
 
 
 (defconst my-speedbar-buffer-name " SPEEDBAR")
@@ -1661,35 +1768,35 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;;                                   (height . 60)
 ;;                                   (unsplittable . t)))
 
-    ;(use-package graphene)
-    ;(use-package project-persist-drawer)
-    ;(use-package ppd-sr-speedbar) ;; or another adaptor
-    ;(project-persist-drawer-mode t)
+;;(use-package graphene)
+;;(use-package project-persist-drawer)
+;;(use-package ppd-sr-speedbar) ;; or another adaptor
+;;(project-persist-drawer-mode t)
 
-(message "Loading sr-speedbar")
-;(use-package sr-speedbar)
-;(setq speedbar-use-images t)
-;(global-set-key [C-f4] 'sr-speedbar-toggle)
-;(global-set-key (kbd "<f4>") 'sr-speedbar-select-window)
-;(setq speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'")
-;(setq speedbar-directory-unshown-regexp  "^\\(\\.*\\)\\'")
+;;(message "Loading sr-speedbar")
+;;(use-package sr-speedbar)
+;;(setq speedbar-use-images t)
+;;(global-set-key [C-f4] 'sr-speedbar-toggle)
+;;(global-set-key (kbd "<f4>") 'sr-speedbar-select-window)
+;;(setq speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'")
+;;(setq speedbar-directory-unshown-regexp  "^\\(\\.*\\)\\'")
 
 (setq-default ispell-program-name
-      (cond (running-ms-windows
-     ;;"c:/Program Files/Aspell6/x64/bin/aspell.exe"
-     "aspell")
-    (running-macos
-     "/usr/local/bin/aspell")
-    (t
-     (if (file-executable-p "/usr/bin/hunspell")
-     "/usr/bin/hunspell"
-       "/usr/bin/aspell"))))
+              (cond (running-ms-windows
+                     ;;"c:/Program Files/Aspell6/x64/bin/aspell.exe"
+                     "aspell")
+                    (running-macos
+                     "/usr/local/bin/aspell")
+                    (t
+                     (if (file-executable-p "/usr/bin/hunspell")
+                         "/usr/bin/hunspell"
+                       "/usr/bin/aspell"))))
 
 (setq ediff-diff-program ; your Lisp system
       (cond (running-ms-windows
-     "c:/cygwin/bin/diff")
-    (t
-     "diff")))
+             "c:/cygwin/bin/diff")
+            (t
+             "diff")))
 
 (setq grep-command "grep -i -nH -e -r ")
 
@@ -1703,7 +1810,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;; ;; load-path and the following into your ~/.emacs:
 (autoload 'antlr-mode "antlr-mode" nil t)
 (add-hook 'speedbar-load-hook		; would be too late in antlr-mode.el
-      (lambda () (speedbar-add-supported-extension ".g")))
+          (lambda () (speedbar-add-supported-extension ".g")))
 
 ;; If you edit ANTLR's source files, you might also want to use
 (autoload 'antlr-set-tabs "antlr-mode")
@@ -1747,8 +1854,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (when running-ms-windows
     (let ((explicit-shell-file-name "C:/cygwin/bin/bash"))
       (use-package cygwin-mount
-    :init
-    (cygwin-mount-activate))
+        :init
+        (cygwin-mount-activate))
       (setq binary-process-input t)
       (setq w32-quote-process-args ?\")
       ;; (setenv "PATH"
@@ -1825,22 +1932,27 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (defadvice kill-buffer (around kill-buffer-around-advice activate)
   (let ((buffer-to-kill (ad-get-arg 0)))
     (if (equal buffer-to-kill "*scratch*")
-    (bury-buffer)
+        (bury-buffer)
       ad-do-it)))
 
 
 (set-default 'mode-line-buffer-identification
-     (list (concat "Emacs[" machine-nickname "]: %17b")))
+             (list (concat "Emacs[" machine-nickname "]: %17b")))
 
-(load-file (concat marcel-lisp-dir  "/becker-mode-line.el"))
-(load-file (concat marcel-lisp-dir  "/header-line.el"))
+
+(message "Loading mode line")
+;;(load-file (concat marcel-lisp-dir  "/becker-mode-line-evil-mode.el"))
+(message "Loading header line")
+;;(load-file (concat marcel-lisp-dir  "/header-line.el"))
+(winum--install-mode-line)
+
 
 (setq frame-title-format
       '("EMACS: [" (:eval (getenv "USERNAME")) "@"
-    (:eval (downcase (system-name))) "]: "
-    (:eval (if (buffer-file-name)
-       (abbreviate-file-name (buffer-file-name))
-     "%b")) " [%*]"))
+        (:eval (downcase (system-name))) "]: "
+        (:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b")) " [%*]"))
 
 
 
@@ -1872,8 +1984,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;[Latex/Tex]
 (message "Loading tex")
-;(use-package tex)
-;(use-package latex)
+;;(use-package tex)
+;;(use-package latex)
 (use-package auto-complete-auctex)
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
@@ -1896,29 +2008,29 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 (setq TeX-view-program-list
       '(;;("SumatraPDF" "\"C:/Program Files (x86)/SumatraPDF/SumatraPDF.exe\" -reuse-instance %o")
-    ;;("Okular" "okular --unique %o#src:%n%b")
-    ("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+        ;;("Okular" "okular --unique %o#src:%n%b")
+        ("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
 ;;("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline %q")))
 
 
 (add-hook 'LaTeX-mode-hook
-(lambda ()
-  (push
-   '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
-     :help "Run latexmk on file")
-    TeX-command-list)))
+          (lambda ()
+            (push
+             '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+               :help "Run latexmk on file")
+             TeX-command-list)))
 (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
 
 
 (setq TeX-view-program-selection
       (cond (running-ms-windows
-     '((output-pdf "SumatraPDF")
-       (output-dvi "Yap")))
-    (running-linux
-     '((output-pdf "Okular")
-       (output-dvi "Okular")))
-    (running-macos
-     '((output-pdf "Skim")))))
+             '((output-pdf "SumatraPDF")
+               (output-dvi "Yap")))
+            (running-linux
+             '((output-pdf "Okular")
+               (output-dvi "Okular")))
+            (running-macos
+             '((output-pdf "Skim")))))
 
 
 (defun my-load-latex ()
@@ -1963,35 +2075,35 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (setq exec-path (append exec-path '("/Library/TeX/texbin")))
   (setq exec-path (append exec-path '("/usr/local/bin"))))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;[ACL2.0 Stuff]
+;; ;; ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;[ACL2.0 Stuff]
 
-(setq *acl2-interface-dir* "D:/ACL2-4.3/acl2-sources/interface/emacs/")
-(setq inferior-acl2-program "sbcl --core d:/ACL2-4.3/acl2-sources/saved_acl2.core")
-(autoload 'run-acl2 ;;emacs 19.27 only at this time
-  (concat *acl2-interface-dir* "top-start-inferior-acl2")
-  "Begin ACL2 in an inferior ACL2 mode buffer."
-  t)
-
-
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; [ CTAGS ]
-
-;;(use-package ctags-update)
-;;(ctags-update-minor-mode 1)
-(setq path-to-ctags
-      (if running-ms-windows
-      "etags.exe"
-    "etags"))
-
-(setq default-tags-file
-      (if running-ms-windows "D:/Source/TAGS" (expand-file-name "~/src/TAGS")))
+;; ;; (setq *acl2-interface-dir* "D:/ACL2-4.3/acl2-sources/interface/emacs/")
+;; ;; (setq inferior-acl2-program "sbcl --core d:/ACL2-4.3/acl2-sources/saved_acl2.core")
+;; ;; (autoload 'run-acl2 ;;emacs 19.27 only at this time
+;; ;;   (concat *acl2-interface-dir* "top-start-inferior-acl2")
+;; ;;   "Begin ACL2 in an inferior ACL2 mode buffer."
+;; ;;   t)
 
 
-(defun create-tags (dir-name)
-  "Create tags file."
-  (interactive "DDirectory: ")
-  (shell-command
-   (format "%s --append -f %s -R %s" path-to-ctags default-tags-file (directory-file-name dir-name))))
+
+;; ;; ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; [ CTAGS ]
+
+;; ;; ;;(use-package ctags-update)
+;; ;; ;;(ctags-update-minor-mode 1)
+;; ;; (setq path-to-ctags
+;; ;;       (if running-ms-windows
+;; ;;           "etags.exe"
+;; ;;         "etags"))
+
+;; ;; (setq default-tags-file
+;; ;;       (if running-ms-windows "D:/Source/TAGS" (expand-file-name "~/src/TAGS")))
+
+
+;; ;; (defun create-tags (dir-name)
+;; ;;   "Create tags file."
+;; ;;   (interactive "DDirectory: ")
+;; ;;   (shell-command
+;; ;;    (format "%s --append -f %s -R %s" path-to-ctags default-tags-file (directory-file-name dir-name))))
 
 
 (message "Loading doremi")
@@ -2007,7 +2119,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   "Switches from a horizontal split to a vertical split."
   (interactive)
   (let ((one-buf (window-buffer (selected-window)))
-    (buf-point (point)))
+        (buf-point (point)))
     (other-window 1)
     (delete-other-windows)
     (split-window-horizontally)
@@ -2020,7 +2132,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   "Switches from a vertical split to a horizontal split."
   (interactive)
   (let ((one-buf (window-buffer (selected-window)))
-    (buf-point (point)))
+        (buf-point (point)))
     (other-window 1)
     (delete-other-windows)
     (split-window-vertically)
@@ -2035,26 +2147,26 @@ frames with exactly two windows."
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
-     (next-win-buffer (window-buffer (next-window)))
-     (this-win-edges (window-edges (selected-window)))
-     (next-win-edges (window-edges (next-window)))
-     (this-win-2nd (not (and (<= (car this-win-edges)
-     (car next-win-edges))
-     (<= (cadr this-win-edges)
-     (cadr next-win-edges)))))
-     (splitter
-      (if (= (car this-win-edges)
-     (car (window-edges (next-window))))
-      'split-window-horizontally
-    'split-window-vertically)))
-    (delete-other-windows)
-    (let ((first-win (selected-window)))
-      (funcall splitter)
-      (if this-win-2nd (other-window 1))
-      (set-window-buffer (selected-window) this-win-buffer)
-      (set-window-buffer (next-window) next-win-buffer)
-      (select-window first-win)
-      (if this-win-2nd (other-window 1))))))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
 
 (setq split-height-threshold 0)
 (setq split-width-threshold nil)
@@ -2096,10 +2208,10 @@ frames with exactly two windows."
   "Insert a time stamp."
   (interactive "*")
   (insert (format "%s %s %s %s"
-      comment-start
-      (format-time-string "%Y-%m-%d %a %H:%M")
-      (user-login-name)
-      comment-end)))
+                  comment-start
+                  (format-time-string "%Y-%m-%d %a %H:%M")
+                  (user-login-name)
+                  comment-end)))
 
 (defun my-insert-date (prefix)
   "Insert the current date in ISO format. With prefix-argument,
@@ -2107,37 +2219,19 @@ add day of week. With two prefix arguments, add day of week and
 time."
   (interactive "P")
   (let ((format (cond ((not prefix) "%Y-%m-%d")
-      ((equal prefix '(4)) "%Y-%m-%d %a")
-      ((equal prefix '(16)) "%Y-%m-%d %a %H:%M"))))
+                      ((equal prefix '(4)) "%Y-%m-%d %a")
+                      ((equal prefix '(16)) "%Y-%m-%d %a %H:%M"))))
     (insert (format-time-string format))))
 
 
-(load "load-specware")
 
-;;  (push "C:/acl90express/eli" load-path)
-;;  (load "fi-site-init.el")
-
-;;  (setq fi:common-lisp-image-name "C:/acl90express/allegro-express.exe")
-;;  (setq fi:common-lisp-image-file "C:/acl90express/allegro-express.dxl")
-;;  (setq fi:common-lisp-directory "C:/src/Specware")
-;; (setq fi:lisp-mode-hook
-;;       (function
-;;        (lambda ()
-;;   (let ((map (current-local-map)))
-;;     (define-key map "\C-c."	'find-tag)
-;;     (define-key map "\C-c,"	'tags-loop-continue)
-;;     (define-key map "\e."	'fi:lisp-find-definition)
-;;     (define-key map "\e,"	'fi:lisp-find-next-definition)))))
-
-
-
-(let ((lilypond-lib "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"))
-  (when (file-exists-p lilypond-lib)
-    (add-to-list 'load-path lilypond-lib)
-    (autoload 'LilyPond-mode "lilypond-mode" "LilyPond Editing Mode" t)
-    (add-to-list 'auto-mode-alist '("\\.ly$" . LilyPond-mode))
-    (add-to-list 'auto-mode-alist '("\\.ily$" . LilyPond-mode))
-    (add-hook 'LilyPond-mode-hook (lambda () (turn-on-font-lock)))))
+;; ;; (let ((lilypond-lib "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"))
+;; ;;   (when (file-exists-p lilypond-lib)
+;; ;;     (add-to-list 'load-path lilypond-lib)
+;; ;;     (autoload 'LilyPond-mode "lilypond-mode" "LilyPond Editing Mode" t)
+;; ;;     (add-to-list 'auto-mode-alist '("\\.ly$" . LilyPond-mode))
+;; ;;     (add-to-list 'auto-mode-alist '("\\.ily$" . LilyPond-mode))
+;; ;;     (add-hook 'LilyPond-mode-hook (lambda () (turn-on-font-lock)))))
 
 
 
@@ -2169,21 +2263,21 @@ by using nxml's indentation rules."
     (c-comment-only-line-offset . (0 . 0))
     ;; the following preserves Javadoc starter lines
     (c-offsets-alist . ((inline-open . 0)
-    (topmost-intro-cont    . +)
-    (statement-block-intro . +)
-    (knr-argdecl-intro     . 5)
-    (substatement-open     . +)
-    (substatement-label    . +)
-    (label                 . +)
-    (statement-case-open   . +)
-    (statement-cont        . +)
-    (arglist-intro  . c-lineup-arglist-intro-after-paren)
-    (arglist-close  . c-lineup-arglist)
-    (access-label   . 0)
-    (inher-cont     . c-lineup-java-inher)
-    (func-decl-cont . c-lineup-java-throws)
-    (arglist-cont-nonempty . ++)
-    )))
+                        (topmost-intro-cont    . +)
+                        (statement-block-intro . +)
+                        (knr-argdecl-intro     . 5)
+                        (substatement-open     . +)
+                        (substatement-label    . +)
+                        (label                 . +)
+                        (statement-case-open   . +)
+                        (statement-cont        . +)
+                        (arglist-intro  . c-lineup-arglist-intro-after-paren)
+                        (arglist-close  . c-lineup-arglist)
+                        (access-label   . 0)
+                        (inher-cont     . c-lineup-java-inher)
+                        (func-decl-cont . c-lineup-java-throws)
+                        (arglist-cont-nonempty . ++)
+                        )))
   "Eclipse Java Programming Style")
 (c-add-style "ECLIPSE" eclipse-java-style)
 (customize-set-variable 'c-default-style (quote ((java-mode . "eclipse") (awk-mode . "awk") (other . "gnu"))))
@@ -2234,9 +2328,9 @@ by using nxml's indentation rules."
 ;; This line is not necessary, if lua-mode.el is already on your load-path
 
 
-(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+;; ;; (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+;; ;; (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+;; ;; (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
 (message "Loading docker-mode")
 (use-package dockerfile-mode)
@@ -2247,62 +2341,117 @@ by using nxml's indentation rules."
   (interactive "sEnter a modifier string:")
   (with-output-to-temp-buffer "*Key table*"
     (let* ((i 0)
-       (keys (list "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
-       "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
-       "<return>" "<down>" "<up>" "<right>" "<left>"
-       "<home>" "<end>" "<f1>" "<f2>" "<f3>" "<f4>" "<f5>"
-       "<f6>" "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
-       "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
-       "`" "~" "!" "@" "#" "$" "%" "^" "&" "*" "(" ")" "-"
-       "_" "=" "+" "\\" "|" "{" "[" "]" "}" ";" "'" ":"
-       "\"" "<" ">" "," "." "/" "?"))
-       (n (length keys))
-       (modifiers (list "" "S-" "C-" "M-" "M-C-"))
-       (k))
+           (keys (list "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
+                       "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
+                       "<return>" "<down>" "<up>" "<right>" "<left>"
+                       "<home>" "<end>" "<f1>" "<f2>" "<f3>" "<f4>" "<f5>"
+                       "<f6>" "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
+                       "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
+                       "`" "~" "!" "@" "#" "$" "%" "^" "&" "*" "(" ")" "-"
+                       "_" "=" "+" "\\" "|" "{" "[" "]" "}" ";" "'" ":"
+                       "\"" "<" ">" "," "." "/" "?"))
+           (n (length keys))
+           (modifiers (list "" "S-" "C-" "M-" "M-C-"))
+           (k))
       (or (string= arg "") (setq modifiers (list arg)))
       (setq k (length modifiers))
       (princ (format " %-10.10s |" "Key"))
       (let ((j 0))
-    (while (< j k)
-      (princ (format " %-28.28s |" (nth j modifiers)))
-      (setq j (1+ j))))
+        (while (< j k)
+          (princ (format " %-28.28s |" (nth j modifiers)))
+          (setq j (1+ j))))
       (princ "\n")
       (princ (format "_%-10.10s_|" "__________"))
       (let ((j 0))
-    (while (< j k)
-      (princ (format "_%-28.28s_|"
-     "_______________________________"))
-      (setq j (1+ j))))
+        (while (< j k)
+          (princ (format "_%-28.28s_|"
+                         "_______________________________"))
+          (setq j (1+ j))))
       (princ "\n")
       (while (< i n)
-    (princ (format " %-10.10s |" (nth i keys)))
-    (let ((j 0))
-      (while (< j k)
-    (let* ((binding
-    (key-binding (read-kbd-macro (concat (nth j modifiers)
-     (nth i keys)))))
-       (binding-string "_"))
-      (when binding
-    (if (eq binding 'self-insert-command)
-    (setq binding-string (concat "'" (nth i keys) "'"))
-      (setq binding-string (format "%s" binding))))
-      (setq binding-string
-    (substring binding-string 0 (min (length
-      binding-string) 28)))
-      (princ (format " %-28.28s |" binding-string))
-      (setq j (1+ j)))))
-    (princ "\n")
-    (setq i (1+ i)))
+        (princ (format " %-10.10s |" (nth i keys)))
+        (let ((j 0))
+          (while (< j k)
+            (let* ((binding
+                    (key-binding (read-kbd-macro (concat (nth j modifiers)
+                                                         (nth i keys)))))
+                   (binding-string "_"))
+              (when binding
+                (if (eq binding 'self-insert-command)
+                    (setq binding-string (concat "'" (nth i keys) "'"))
+                  (setq binding-string (format "%s" binding))))
+              (setq binding-string
+                    (substring binding-string 0 (min (length
+                                                      binding-string) 28)))
+              (princ (format " %-28.28s |" binding-string))
+              (setq j (1+ j)))))
+        (princ "\n")
+        (setq i (1+ i)))
       (princ (format "_%-10.10s_|" "__________"))
       (let ((j 0))
-    (while (< j k)
-      (princ (format "_%-28.28s_|"
-     "_______________________________"))
-      (setq j (1+ j))))))
+        (while (< j k)
+          (princ (format "_%-28.28s_|"
+                         "_______________________________"))
+          (setq j (1+ j))))))
   (delete-window)
   (hscroll-mode)
   (setq truncate-lines t))
 
+;;; https://emacs.stackexchange.com/questions/653/how-can-i-find-out-in-which-keymap-a-key-is-bound
+(defun my-locate-key-binding (key)
+  "Determine in which keymap KEY is defined."
+  (interactive "kPress key: ")
+  (let ((ret
+         (list
+          (key-binding-at-point key)
+          (minor-mode-key-binding key)
+          (local-key-binding key)
+          (global-key-binding key))))
+    (when (called-interactively-p 'any)
+      (message "At Point: %s\nMinor-mode: %s\nLocal: %s\nGlobal: %s"
+               (or (nth 0 ret) "")
+               (or (mapconcat (lambda (x) (format "%s: %s" (car x) (cdr x)))
+                              (nth 1 ret) "\n             ")
+                   "")
+               (or (nth 2 ret) "")
+               (or (nth 3 ret) "")))
+    ret))
+
+(defun key-binding-at-point (key)
+  (mapcar (lambda (keymap) (when (keymapp keymap)
+                             (lookup-key keymap key)))
+          (list
+           ;; More likely
+           (get-text-property (point) 'keymap)
+           (mapcar (lambda (overlay)
+                     (overlay-get overlay 'kleymap))
+                   (overlays-at (point)))
+           ;; Less likely
+           (get-text-property (point) 'local-map)
+           (mapcar (lambda (overlay)
+                     (overlay-get overlay 'local-map))
+                   (overlays-at (point))))))
+
+(defun my-keymaps-at-point ()
+  "List entire keymaps present at point."
+  (interactive)
+  (let ((map-list
+         (list
+          (mapcar (lambda (overlay)
+                    (overlay-get overlay 'keymap))
+                  (overlays-at (point)))
+          (mapcar (lambda (overlay)
+                    (overlay-get overlay 'local-map))
+                  (overlays-at (point)))
+          (get-text-property (point) 'keymap)
+          (get-text-property (point) 'local-map))))
+    (apply #'message
+           (concat
+            "Overlay keymap: %s\n"
+            "Overlay local-map: %s\n"
+            "Text-property keymap: %s\n"
+            "Text-property local-map: %s")
+           map-list)))
 
 
 ;;; Buffer scrolling
@@ -2314,8 +2463,8 @@ by using nxml's indentation rules."
 (setq  scroll-conservatively 10000)
 (setq  scroll-preserve-screen-position 1)
 (setq auto-window-vscroll nil)
-    ;(setq  smooth-scroll/vscroll-step-size 1)
-    ;(smooth-scroll-mode 1)
+                                        ;(setq  smooth-scroll/vscroll-step-size 1)
+                                        ;(smooth-scroll-mode 1)
 
 
 (message "Loading rainbow-delimiters")
@@ -2323,35 +2472,35 @@ by using nxml's indentation rules."
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 
-;;; init.el ends here
-(message "Loading tramp")
-(use-package tramp)
-(defun my-connect-remote ()
-  (interactive)
-  (dired "/ubuntu@10.130.2.77:/home/ubuntu/src")
-  ;;(dired "/becker-openstack:/home/ubuntu/src")
-  )
+;; ;; ;;; init.el ends here
+;; ;; (message "Loading tramp")
+;; ;; (use-package tramp)
+;; ;; (defun my-connect-remote ()
+;; ;;   (interactive)
+;; ;;   (dired "/ubuntu@10.130.2.77:/home/ubuntu/src")
+;; ;;   ;;(dired "/becker-openstack:/home/ubuntu/src")
+;; ;;   )
 
-(defun my-connect-ptt ()
-  (interactive)
-  (dired "/DoD_Admin@50.225.83.4#422:/home/DoD_Admin/becker")
-  )
+;; ;; (defun my-connect-ptt ()
+;; ;;   (interactive)
+;; ;;   (dired "/DoD_Admin@50.225.83.4#422:/home/DoD_Admin/becker")
+;; ;;   )
 
 
-(setq tramp-default-method "ssh")
+;; ;; (setq tramp-default-method "ssh")
 
 
 (message "Loading browse-kill-ring")
 (use-package browse-kill-ring
   :init
   (progn
-  (browse-kill-ring-default-keybindings))
+    (browse-kill-ring-default-keybindings))
   (global-set-key "\C-cy" '(lambda ()
-                 (interactive)
-                 (popup-menu 'yank-menu))))
+                             (interactive)
+                             (popup-menu 'yank-menu))))
 
-;;(message "Loading hexgrb")
-;;(use-package hexrgb)
+;; ;; (message "Loading hexgrb")
+(use-package hexrgb)
 ;;(message "Loading one-key")
 ;;(use-package one-key)
 ;;(message "Loading one-key-dir")
@@ -2359,7 +2508,7 @@ by using nxml's indentation rules."
 ;;(message "Loading one-key-yas")
 ;;(use-package one-key-yas)
 ;;(use-package one-key-bmkp)
-;(global-set-key (kbd "C-<f5>") 'one-key-open-associated-menu-set)
+;;(global-set-key (kbd "C-<f5>") 'one-key-open-associated-menu-set)
 
 (message "Loading find-file-in-project")
 (use-package find-file-in-project)
@@ -2368,9 +2517,7 @@ by using nxml's indentation rules."
 ;;(use-package spacemacs-dark-theme)
 ;; (use-package powerline)
 
-
-
-(message "Loading custom file")
+;; "Loading custom file")
 (setq custom-file (concat marcel-lisp-dir "/custom.el"))
 (load custom-file 'noerror)
 
@@ -2378,14 +2525,13 @@ by using nxml's indentation rules."
 
 
 ;;No bells and no visible “bell” either!
-
 (setq visible-bell nil) ;; The default
 (setq ring-bell-function 'ignore)
 ;; Silence warnings generated by a function's being redefine by =defadvice=.
 (setq ad-redefinition-action 'accept)
 
 ;;No startup message
-  ;; Change     the echo message
+;; Change     the echo message
 (defun display-startup-echo-area-message ()
   (message ""))
 
@@ -2394,10 +2540,10 @@ by using nxml's indentation rules."
   "Open the current directory of the buffer in iTerm."
   (interactive)
   (let* ((iterm-app-path "/Applications/iTerm.app")
-     (iterm-brew-path "/opt/homebrew-cask/Caskroom/iterm2/2.1.4/iTerm.app")
-     (iterm-path (if (file-directory-p iterm-app-path)
-     iterm-app-path
-       iterm-brew-path)))
+         (iterm-brew-path "/opt/homebrew-cask/Caskroom/iterm2/2.1.4/iTerm.app")
+         (iterm-path (if (file-directory-p iterm-app-path)
+                         iterm-app-path
+                       iterm-brew-path)))
     (shell-command (concat "open -a " iterm-path " ."))))
 (global-set-key (kbd "C-x t") 'open-dir-in-iterm)
 
@@ -2409,15 +2555,15 @@ by using nxml's indentation rules."
   :ensure t
   :init (global-git-gutter+-mode)
   :config (progn
-    (define-key git-gutter+-mode-map (kbd "C-x n") 'git-gutter+-next-hunk)
-    (define-key git-gutter+-mode-map (kbd "C-x p") 'git-gutter+-previous-hunk)
-    (define-key git-gutter+-mode-map (kbd "C-x v =") 'git-gutter+-show-hunk)
-    (define-key git-gutter+-mode-map (kbd "C-x r") 'git-gutter+-revert-hunks)
-    (define-key git-gutter+-mode-map (kbd "C-x t") 'git-gutter+-stage-hunks)
-    (define-key git-gutter+-mode-map (kbd "C-x c") 'git-gutter+-commit)
-    (define-key git-gutter+-mode-map (kbd "C-x C") 'git-gutter+-stage-and-commit)
-    (define-key git-gutter+-mode-map (kbd "C-x C-y") 'git-gutter+-stage-and-commit-whole-buffer)
-    (define-key git-gutter+-mode-map (kbd "C-x U") 'git-gutter+-unstage-whole-buffer))
+            (define-key git-gutter+-mode-map (kbd "C-x n") 'git-gutter+-next-hunk)
+            (define-key git-gutter+-mode-map (kbd "C-x p") 'git-gutter+-previous-hunk)
+            (define-key git-gutter+-mode-map (kbd "C-x v =") 'git-gutter+-show-hunk)
+            (define-key git-gutter+-mode-map (kbd "C-x r") 'git-gutter+-revert-hunks)
+            (define-key git-gutter+-mode-map (kbd "C-x t") 'git-gutter+-stage-hunks)
+            (define-key git-gutter+-mode-map (kbd "C-x c") 'git-gutter+-commit)
+            (define-key git-gutter+-mode-map (kbd "C-x C") 'git-gutter+-stage-and-commit)
+            (define-key git-gutter+-mode-map (kbd "C-x C-y") 'git-gutter+-stage-and-commit-whole-buffer)
+            (define-key git-gutter+-mode-map (kbd "C-x U") 'git-gutter+-unstage-whole-buffer))
   :diminish (git-gutter+-mode . "gg"))
 
 (setq git-gutter+-hide-gutter t)
@@ -2432,16 +2578,16 @@ by using nxml's indentation rules."
       (autoload 'ediff-files "ediff")
       (autoload 'ediff-buffers "ediff")
 
-       (eval-after-load "ediff" '(progn
-      (message "doing ediff customisation")
-      (setq diff-switches               "-u"
-    ediff-custom-diff-options   "-U3"
-    ediff-split-window-function 'split-window-horizontally
-    ediff-window-setup-function 'ediff-setup-windows-plain)
+      (eval-after-load "ediff" '(progn
+                                  (message "doing ediff customisation")
+                                  (setq diff-switches               "-u"
+                                        ediff-custom-diff-options   "-U3"
+                                        ediff-split-window-function 'split-window-horizontally
+                                        ediff-window-setup-function 'ediff-setup-windows-plain)
 
-      (add-hook 'ediff-startup-hook 'ediff-toggle-wide-display)
-      (add-hook 'ediff-cleanup-hook 'ediff-toggle-wide-display)
-      (add-hook 'ediff-suspend-hook 'ediff-toggle-wide-display)))))
+                                  (add-hook 'ediff-startup-hook 'ediff-toggle-wide-display)
+                                  (add-hook 'ediff-cleanup-hook 'ediff-toggle-wide-display)
+                                  (add-hook 'ediff-suspend-hook 'ediff-toggle-wide-display)))))
 
 
 (defun my-package-reinstall-activated ()
@@ -2492,10 +2638,15 @@ by using nxml's indentation rules."
 
 (use-package outline-magic)
 (add-hook 'outline-mode-hook
-           (lambda ()
-             (require 'outline-cycle)))
+          (lambda ()
+            (require 'outline-cycle)))
 
- (add-hook 'outline-minor-mode-hook
-           (lambda ()
-             (require 'outline-magic)
-             (define-key outline-minor-mode-map [(f10)] 'outline-cycle)))
+(add-hook 'outline-minor-mode-hook
+          (lambda ()
+            (require 'outline-magic)
+            (define-key outline-minor-mode-map [(f10)] 'outline-cycle)))
+
+
+
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
+(setq mouse-wheel-progressive-speed nil)

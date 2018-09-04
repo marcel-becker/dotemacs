@@ -1,4 +1,4 @@
-(package-initialize)
+;;(package-initialize)
 
 (use-package helm :ensure t)
 (require 'helm-config)
@@ -6,12 +6,12 @@
 (require 'helm-grep)
 
 (use-package    helm-ag :ensure t)
-(use-package    helm-anything :ensure t)
+;;(use-package    helm-anything :ensure t)
 (use-package    helm-c-yasnippet :ensure t)
 (use-package    helm-company :ensure t)
 (use-package    helm-descbinds :ensure t)
 (use-package    helm-gitignore :ensure t)
-(use-package    helm-make :ensure t)
+;;(use-package    helm-make :ensure t)
 (use-package    helm-mode-manager :ensure t)
 (use-package    helm-projectile :ensure t)
 (use-package    helm-pydoc :ensure t)
@@ -21,7 +21,7 @@
 ;(use-package    helm-ls-git :ensure t)
 (use-package    helm-git-files :ensure t)
 (use-package    helm-helm-commands :ensure t)
-(use-package    helm-projectile :ensure t)
+
 
 (autoload 'helm-descbinds      "helm-descbinds" t)
 (autoload 'helm-eshell-history "helm-eshell"    t)
@@ -132,7 +132,7 @@
 (setq helm-projectile-sources-list (cons 'helm-source-projectile-files-list
                                          (remove 'helm-source-projectile-files-list
                                                  helm-projectile-sources-list)))
-(projectile-global-mode)
+(projectile-mode)
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
 
@@ -147,5 +147,10 @@
 
 ;(add-to-list 'helm-completing-read-handlers-alist '(find-file))
 ;(add-to-list 'helm-completing-read-handlers-alist '(find-file-other-window))
+
+
+(projectile-mode)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
 
 (helm-mode 1)
