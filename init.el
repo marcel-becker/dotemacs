@@ -1,4 +1,4 @@
-;;; Time-stamp: "2018-09-04 Tue 13:01 marcelbecker on kestrelimac"
+;;; Time-stamp: "2018-09-07 Fri 10:50 marcelbecker on kestrelimac"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -45,8 +45,12 @@
   (setq mac-allow-anti-aliasing t)
   (setq mac-option-modifier 'alt)
   (setq mac-right-option-modifier 'super)
+;;  (setq mac-right-command-modifier 'super)
   (setq mac-command-modifier 'meta)
-  (global-set-key [kp-delete] 'delete-char)) ;; sets fn-delete to be right-delete
+  (global-set-key [kp-delete] 'delete-char)
+  (setq ns-use-srgb-colorspace nil)
+  (setq powerline-image-apple-rgb t)
+  ) ;; sets fn-delete to be right-delete
 
 
 ;; add everything under ~/.emacs.d to it
@@ -114,51 +118,85 @@
 
 
 
-(defvar missing-packages-list nil
-  "List of packages that `try-require' can't find.")
+;; (defvar missing-packages-list nil
+;;   "List of packages that `try-require' can't find.")
 
-;; attempt to load a feature/library, failing silently
-(defun try-require (feature)
-  "Attempt to load a library or module. Return true if the
-library given as argument is successfully loaded. If not, instead
-of an error, just add the package to a list of missing packages."
-  (condition-case err
-      ;; protected form
-      (progn
-        (message "Checking for library `%s'..." feature)
-        (if (stringp feature)
-            (load-library feature)
-          (require feature))
-        (message "Checking for library `%s'... Found" feature))
-    ;; error handler
-    (file-error  ; condition
-     (progn
-       (message "Checking for library `%s'... Missing" feature)
-       (add-to-list 'missing-packages-list feature 'append))
-     nil)))
+;; ;; attempt to load a feature/library, failing silently
+;; (defun try-require (feature)
+;;   "Attempt to load a library or module. Return true if the
+;; library given as argument is successfully loaded. If not, instead
+;; of an error, just add the package to a list of missing packages."
+;;   (condition-case err
+;;       ;; protected form
+;;       (progn
+;;         (message "Checking for library `%s'..." feature)
+;;         (if (stringp feature)
+;;             (load-library feature)
+;;           (require feature))
+;;         (message "Checking for library `%s'... Found" feature))
+;;     ;; error handler
+;;     (file-error  ; condition
+;;      (progn
+;;        (message "checking for library `%s'... Missing" feature)
+;;        (add-to-list 'missing-packages-list feature 'append))
+;;      nil)))
 
 
 (tool-bar-mode -1)
 
-(set-frame-font
- (cond (running-ms-windows
-        "DejaVu Sans Mono 11")
-       (running-macos
-        ;;"Source Code Pro 16")
-        "DejaVu Sans Mono 18")
-       ;;        "Geneva 13")
-       ((not running-macos)
-        "DejaVu Sans Mono 13")))
+;; use C-u C-x = to describe face at point.
+(setq default-frame-font
+      (cond (running-ms-windows
+             "DejaVu Sans Mono 11")
+            (running-macos
+             ;;"Source Code Pro 16")
+             "DejaVu Sans Mono 18")
+            ;;        "Geneva 13")
+            ((not running-macos)
+             "DejaVu Sans Mono 13")))
+
+(set-frame-font default-frame-font)
 
 ;;; Nice size for the default window
 (defun get-default-height ()
   (min 60 (/ (- (display-pixel-height) 200) (frame-char-height))))
+
+
 
 (defun get-default-x-frame-position ()
   (- (/ (display-pixel-width) 2) 400))
 
 (defun get-default-y-frame-position ()
   (- (/ (display-pixel-height) 2) (/ (get-default-height) 2)))
+
+
+;; workarea -- Position and size of the work area in pixels in the
+;;             form of (X Y WIDTH HEIGHT)
+;;
+;; Use (display-monitor-attributes-list) to get monitor info
+;;
+;; (- (elt (window-pixel-edges) 3)
+;;   (elt (window-inside-pixel-edges) 3))
+;;
+;; 2/3 of the workarea height
+(defun my-get-default-frame-height ()
+  (let* ((workarea (frame-monitor-workarea))
+         (height (nth 3 workarea)))
+    (floor  (- height 200) (frame-char-height))))
+
+
+(defun my-get-default-x-frame-position ()
+  (let* ((workarea (frame-monitor-workarea))
+         (width (nth 2 workarea))
+         (display-x (nth 0 workarea)))
+  (+ (floor width 6) display-x)))
+
+(defun my-get-default-y-frame-position ()
+ (let* ((workarea (frame-monitor-workarea))
+         (width (nth 3 workarea))
+         (display-y (nth 1 workarea)))
+  (+ 100 display-y)))
+
 
 (setq default-frame-alist
       '((cursor-color . "white")
@@ -168,7 +206,7 @@ of an error, just add the package to a list of missing packages."
         (tool-bar-lines . 0)
         ;;(top . 50)
         ;;(left . 50)
-        (width . 130)
+        ;;(width . 180)
         ))
 
 (setq initial-frame-alist
@@ -179,26 +217,8 @@ of an error, just add the package to a list of missing packages."
         (tool-bar-lines . 0)
         ;;(top . 50)
         ;;(left . 50)
-        (width . 130)
+        ;;(width . 180)
         ))
-
-
-
-(add-to-list 'default-frame-alist (cons 'height (get-default-height)))
-(add-to-list 'default-frame-alist
-             (if (eq (user-uid) 0)
-                 '(background-color . "gray38")
-               '(background-color . "#09223F")
-               ;;'(background-color . "DodgerBlue4")
-               ))
-
-(add-to-list 'initial-frame-alist (cons 'height (get-default-height)))
-(add-to-list 'initial-frame-alist
-             (if (eq (user-uid) 0)
-                 '(background-color . "gray38")
-               '(background-color . "#09223F")
-               ;;'(background-color . "DodgerBlue4")
-               ))
 
 
 ;; Set Frame width/height
@@ -211,9 +231,46 @@ of an error, just add the package to a list of missing packages."
 
 
 
-(arrange-frame 130 (get-default-height) 500 100)
-;;(arrange-frame 130 (get-default-height) (get-default-x-frame-position) (get-default-y-frame-position))
+(let* ((frame-font (cons 'font default-frame-font))
+       (default-height (my-get-default-frame-height))
+       (frame-height (cons 'height default-height))
+       (frame-width (cons 'width 180))
+       (frame-top (cons 'top (my-get-default-y-frame-position)))
+       (frame-left (cons 'left (my-get-default-x-frame-position)))
+       (frame-background-color (if (eq (user-uid) 0)
+                                   '(background-color . "gray38")
+                                 '(background-color . "#09223F")
+                                 )))
+(add-to-list 'default-frame-alist frame-font)
+(add-to-list 'initial-frame-alist frame-font) ;;(cons 'font default-frame-font))
 
+(add-to-list 'default-frame-alist frame-height);;(cons 'height (get-default-height)))
+(add-to-list 'initial-frame-alist frame-height);; (cons 'height (get-default-height)))
+
+(add-to-list 'default-frame-alist frame-background-color)
+;; (if (eq (user-uid) 0)
+;;     '(background-color . "gray38")
+;;   '(background-color . "#09223F")
+;;               ))
+(add-to-list 'initial-frame-alist frame-background-color)
+
+(add-to-list 'default-frame-alist frame-width)
+(add-to-list 'initial-frame-alist frame-width) ;;(cons 'font default-frame-font))
+
+(add-to-list 'default-frame-alist frame-top)
+(add-to-list 'initial-frame-alist frame-top) ;;(cons 'font default-frame-font))
+
+(add-to-list 'default-frame-alist frame-left)
+(add-to-list 'initial-frame-alist frame-left) ;;(cons 'font default-frame-font))
+
+(message  "Frame alist %s" initial-frame-alist)
+             ;; (if (eq (user-uid) 0)
+             ;;     '(background-color . "gray38")
+             ;;   '(background-color . "#09223F")
+             ;;   ))
+;;(arrange-frame 180 default-height 500 100))
+(arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -255,6 +312,7 @@ of an error, just add the package to a list of missing packages."
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+(setq use-package-always-ensure t)
 
 (use-package benchmark-init
   :ensure t
@@ -290,8 +348,8 @@ of an error, just add the package to a list of missing packages."
         async
         auctex
         auto-compile
-        auto-complete
-        auto-complete-auctex
+        ;;auto-complete
+        ;;auto-complete-auctex
         auto-dictionary
         auto-highlight-symbol
         auto-yasnippet
@@ -680,18 +738,20 @@ of an error, just add the package to a list of missing packages."
         ))
 
 
-(dolist (p my-elpa-packages)
-  (progn
-    (when (not (package-installed-p p))
-      (message "installing package %s" p)
-      (package-install p))
-    (message "loading package %s" p)
-    ;;(require p nil :noerror)
-    ))
+;; (dolist (p my-elpa-packages)
+;;   (progn
+;;     (when (not (package-installed-p p))
+;;       (message "installing package %s" p)
+;;       (package-install p))
+;;     ;;(message "loading package %s" p)
+;;     ;;(use-package (eval 'p))
+;;     ))
 
 ;;(package-initialize)
 ;;(message "Loading use-package")
 ;;(require 'use-package)
+
+(use-package diminish :ensure t :diminish "")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -825,6 +885,7 @@ of an error, just add the package to a list of missing packages."
 
 (message "Loading auto-dim-other-buffers")
 (use-package auto-dim-other-buffers
+  :diminish "DIM"
   :init
   (add-hook 'after-init-hook (lambda ()
                                (when (fboundp 'auto-dim-other-buffers-mode)
@@ -832,22 +893,22 @@ of an error, just add the package to a list of missing packages."
 
 
 (message "Loading org stuff")
-(use-package org  :defer t)
-;;(use-package org-install)
-;;(use-package ob-tangle)
-
-;; make org mode allow eval of some langs
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (clojure . t)
-   (python . t)
-   (ruby . t)))
-;; stop emacs asking for confirmation
-(setq org-confirm-babel-evaluate nil)
-(setq org-src-fontify-natively t)
-(setq org-support-shift-select t)
-
+(use-package org  :defer t
+  ;;(use-package org-install)
+  ;;(use-package ob-tangle)
+  :config
+  ;; make org mode allow eval of some langs
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (clojure . t)
+     (python . t)
+     (ruby . t)))
+  ;; stop emacs asking for confirmation
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-src-fontify-natively t)
+  (setq org-support-shift-select t)
+)
 
 (eval-after-load "org"
   '(progn
@@ -870,8 +931,8 @@ of an error, just add the package to a list of missing packages."
 (global-set-key (kbd "<M-S-f3>") 'my-open-notes)
 
 
-(message "Loading diminish")
-(use-package diminish)  ;; if you use :diminish
+;;(message "Loading diminish")
+;;(use-package diminish)  ;; if you use :diminish
 
 (message "Loading bind-key")
 (use-package bind-key)  ;; if you use any :bind variant
@@ -1031,6 +1092,7 @@ of an error, just add the package to a list of missing packages."
 ;;Graphical undo
 (use-package undo-tree
   :commands (undo-tree-undo undo-tree-visualize)
+  :diminish "UNDO"
   :init
   ;; (global-undo-tree-mode)
   (setq undo-tree-visualizer-timestamps t)
@@ -1109,6 +1171,7 @@ file to write to."
 
 (message "Loading yasnippet")
 (use-package yasnippet
+  :diminish (yas-minor-mode . "")
   :init
   ;; (setq yas-snippet-dirs
   ;;       (list (concat marcel-lisp-dir "/el-get/yasnippet/snippets")
@@ -1116,7 +1179,8 @@ file to write to."
   ;;             (concat marcel-lisp-dir "/el-get/yasnippets")
   ;;             (concat marcel-lisp-dir "/snippets")
   ;;             ))
-  (yas-global-mode 1))
+  (yas-global-mode 1)
+  )
 
 (message "Loading anzu")
 (use-package anzu
@@ -1180,6 +1244,7 @@ file to write to."
 ;;Line wrap
 (global-visual-line-mode)
 (setq line-move-visual t) ;; move via visual lines
+(diminish 'visual-line-mode "")
 
 
 (message "Loading hlinum")
@@ -1221,12 +1286,20 @@ file to write to."
 
 (setq suggest-key-bindings 10)
 
-;;(use-package auto-complete-config)
-(ac-config-default)
-(defadvice auto-complete-mode (around disable-auto-complete-for-python)
-  (unless (eq major-mode 'python-mode) ad-do-it))
+(use-package company
+  :ensure t
+  :diminish "CY"
+  :config
+  (global-company-mode)
+  (add-hook 'after-init-hook 'global-company-mode))
 
-(ad-activate 'auto-complete-mode)
+;;(use-package auto-complete-config)
+;;(ac-config-default)
+;;(defadvice auto-complete-mode (around disable-auto-complete-for-python)
+;;  (unless (eq major-mode 'python-mode) ad-do-it))
+;;(ad-activate 'auto-complete-mode)
+
+
 
 ;; ----------------------------------------------------------[Window Number]
 
@@ -1244,7 +1317,9 @@ file to write to."
 
 (use-package window-number
   :init
-  (window-number-mode 1))
+  (window-number-mode 1)
+  :diminish "WN"
+  )
 
 ;; numbered window shortcuts
 ;; (It numbers windows and you can switch them easily with `M-<number>').
@@ -1459,7 +1534,7 @@ file to write to."
 
 (message "Loading swiper")
 (use-package swiper)
-(use-package ivy)
+(use-package ivy :diminish "")
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
 (global-set-key (kbd "C-c C-s") 'swiper-helm)
@@ -1486,7 +1561,7 @@ file to write to."
 
 ;; Iterate through CamelCase words
 (global-subword-mode 1)
-
+(diminish 'subword-mode)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; neotree
 (message "Loading and configuring neotree")
 
@@ -1512,6 +1587,7 @@ file to write to."
 ;; file and jump to node.
 (setq-default neo-smart-open t)
 ;; change root automatically when running `projectile-switch-project`
+(use-package projectile :ensure t :diminish projectile-mode)
 (setq projectile-switch-project-action 'neotree-projectile-action)
 (setq neo-theme (if window-system 'icons 'nerd)) ; 'classic, 'nerd, 'ascii, 'arrow
 (setq neo-vc-integration '(face char))
@@ -1566,7 +1642,56 @@ https://github.com/jaypei/emacs-neotree/pull/110"
            (line-beginning-position 2)))))
 ;;--------------------------------------------
 
+;; https://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs
+(defun duplicate-line (arg)
+  "Duplicate current line, leaving point in lower line."
+  (interactive "*p")
+  ;; save the point for undo
+  (setq buffer-undo-list (cons (point) buffer-undo-list))
+  ;; local variables for start and end of line
+  (let ((bol (save-excursion (beginning-of-line) (point)))
+        eol)
+    (save-excursion
+      ;; don't use forward-line for this, because you would have
+      ;; to check whether you are at the end of the buffer
+      (end-of-line)
+      (setq eol (point))
+      ;; store the line and disable the recording of undo information
+      (let ((line (buffer-substring bol eol))
+            (buffer-undo-list t)
+            (count arg))
+        ;; insert the line arg times
+        (while (> count 0)
+          (newline)         ;; because there is no newline in 'line'
+          (insert line)
+          (setq count (1- count))))
+      ;; create the undo information
+      (setq buffer-undo-list (cons (cons eol (point)) buffer-undo-list)))
+    ) ; end-of-let
+  ;; put the point in the lowest line and return
+  (next-line arg))
 
+;; http://emacsredux.com/blog/2013/04/02/move-current-line-up-or-down/
+(defun move-line-up ()
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+;; http://emacsredux.com/blog/2013/04/02/move-current-line-up-or-down/
+(defun move-line-down ()
+  "Move down the current line."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+(global-set-key (kbd "M-A-<up>") 'duplicate-line)
+(global-set-key (kbd "M-A-<down>") 'duplicate-line)
+(global-set-key (kbd "A-<up>") 'move-line-up)
+(global-set-key (kbd "A-<down>") 'move-line-down)
 
 (defun set-case ()
   "Sets case-sensitive search mode"
@@ -1606,9 +1731,9 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (autoload 'c-mode    "cc-mode" "C Editing Mode" t)
 (autoload 'objc-mode "cc-mode" "Objective-C Editing Mode" t)
 
-                                        ;(use-package python)
-                                        ;(autoload 'python-mode "python-mode" "Python editing mode." t)
-                                        ;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
+;;(use-package python)
+;;(autoload 'python-mode "python-mode" "Python editing mode." t)
+;;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
 
 ;; set tab distance to something, so it doesn't change randomly and confuse people
 (setq c-basic-offset 4)
@@ -1803,7 +1928,10 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (autoload 'flyspell-mode "flyspell" "On-the-fly spelling checker." t)
 (autoload 'flyspell-delay-command "flyspell" "Delay on command." t)
 (autoload 'tex-mode-flyspell-verify "flyspell" "" t)
-
+(use-package flyspell
+  :ensure t
+  :defer t
+  :diminish "")
 
 
 ;; ;; If antlr-mode is not part of your distribution, put this file into your
@@ -1940,11 +2068,17 @@ https://github.com/jaypei/emacs-neotree/pull/110"
              (list (concat "Emacs[" machine-nickname "]: %17b")))
 
 
+(defun my-load-modeline ()
+  (message "Loading telephone line mode line")
+  ;;(load-file (concat marcel-lisp-dir  "/becker-mode-line-evil-mode.el"))
+  (load-file (concat marcel-lisp-dir  "/telephone-line-mode-line.el"))
+  (message "Loading header line")
+  (load-file (concat marcel-lisp-dir  "/header-line.el"))
+  ;;(winum--install-mode-line)
+  )
+
 (message "Loading mode line")
-;;(load-file (concat marcel-lisp-dir  "/becker-mode-line-evil-mode.el"))
-(message "Loading header line")
-;;(load-file (concat marcel-lisp-dir  "/header-line.el"))
-(winum--install-mode-line)
+(my-load-modeline)
 
 
 (setq frame-title-format
@@ -1986,7 +2120,9 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (message "Loading tex")
 ;;(use-package tex)
 ;;(use-package latex)
-(use-package auto-complete-auctex)
+;;(use-package auctex)
+;;(use-package auto-complete-auctex :defer t)
+(use-package company-auctex :defer t)
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 ;; the default flyspell behaviour
@@ -2195,7 +2331,8 @@ frames with exactly two windows."
 
 
 (message "Loading time-stamp")
-(when (try-require 'time-stamp)
+(use-package time-stamp
+  :config
   ;; format of the string inserted by `M-x time-stamp'
   (setq time-stamp-format "%Y-%02m-%02d %3a %02H:%02M %u on %s")
   ;; `YYYY-MM-DD Weekday HH:MM user on system'
@@ -2333,7 +2470,7 @@ by using nxml's indentation rules."
 ;; ;; (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
 (message "Loading docker-mode")
-(use-package dockerfile-mode)
+(use-package dockerfile-mode :ensure t :defer t)
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 
 (defun my-keytable (arg)
@@ -2352,6 +2489,68 @@ by using nxml's indentation rules."
                        "\"" "<" ">" "," "." "/" "?"))
            (n (length keys))
            (modifiers (list "" "S-" "C-" "M-" "M-C-"))
+           (k))
+      (or (string= arg "") (setq modifiers (list arg)))
+      (setq k (length modifiers))
+      (princ (format " %-10.10s |" "Key"))
+      (let ((j 0))
+        (while (< j k)
+          (princ (format " %-28.28s |" (nth j modifiers)))
+          (setq j (1+ j))))
+      (princ "\n")
+      (princ (format "_%-10.10s_|" "__________"))
+      (let ((j 0))
+        (while (< j k)
+          (princ (format "_%-28.28s_|"
+                         "_______________________________"))
+          (setq j (1+ j))))
+      (princ "\n")
+      (while (< i n)
+        (princ (format " %-10.10s |" (nth i keys)))
+        (let ((j 0))
+          (while (< j k)
+            (let* ((binding
+                    (key-binding (read-kbd-macro (concat (nth j modifiers)
+                                                         (nth i keys)))))
+                   (binding-string "_"))
+              (when binding
+                (if (eq binding 'self-insert-command)
+                    (setq binding-string (concat "'" (nth i keys) "'"))
+                  (setq binding-string (format "%s" binding))))
+              (setq binding-string
+                    (substring binding-string 0 (min (length
+                                                      binding-string) 28)))
+              (princ (format " %-28.28s |" binding-string))
+              (setq j (1+ j)))))
+        (princ "\n")
+        (setq i (1+ i)))
+      (princ (format "_%-10.10s_|" "__________"))
+      (let ((j 0))
+        (while (< j k)
+          (princ (format "_%-28.28s_|"
+                         "_______________________________"))
+          (setq j (1+ j))))))
+  (delete-window)
+  (hscroll-mode)
+  (setq truncate-lines t))
+
+
+(defun my-extended-keytable (arg)
+  "Print the key bindings in a tabular form."
+  (interactive "sEnter a modifier string:")
+  (with-output-to-temp-buffer "*Key table*"
+    (let* ((i 0)
+           (keys (list "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
+                       "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
+                       "<return>" "<down>" "<up>" "<right>" "<left>"
+                       "<home>" "<end>" "<f1>" "<f2>" "<f3>" "<f4>" "<f5>"
+                       "<f6>" "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
+                       "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
+                       "`" "~" "!" "@" "#" "$" "%" "^" "&" "*" "(" ")" "-"
+                       "_" "=" "+" "\\" "|" "{" "[" "]" "}" ";" "'" ":"
+                       "\"" "<" ">" "," "." "/" "?"))
+           (n (length keys))
+           (modifiers (list "" "S-" "s-" "C-" "C-S-" "M-" "M-C-" "M-S-" "A-"))
            (k))
       (or (string= arg "") (setq modifiers (list arg)))
       (setq k (length modifiers))
@@ -2468,7 +2667,7 @@ by using nxml's indentation rules."
 
 
 (message "Loading rainbow-delimiters")
-(use-package rainbow-delimiters)
+(use-package rainbow-delimiters :ensure t :diminish nil)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 
@@ -2564,7 +2763,7 @@ by using nxml's indentation rules."
             (define-key git-gutter+-mode-map (kbd "C-x C") 'git-gutter+-stage-and-commit)
             (define-key git-gutter+-mode-map (kbd "C-x C-y") 'git-gutter+-stage-and-commit-whole-buffer)
             (define-key git-gutter+-mode-map (kbd "C-x U") 'git-gutter+-unstage-whole-buffer))
-  :diminish (git-gutter+-mode . "gg"))
+  :diminish (git-gutter+-mode . "GUT"))
 
 (setq git-gutter+-hide-gutter t)
 
@@ -2650,3 +2849,19 @@ by using nxml's indentation rules."
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
 (setq mouse-wheel-progressive-speed nil)
+
+
+(diminish 'eldoc-mode "")
+
+
+;; Use this to print all fonts
+(defun my-print-all-fonts ()
+  (let ((str "The quick brown fox jumps over the lazy dog ´`''\"\"1lI|¦!Ø0Oo{[()]}.,:; ")
+        (font-families (cl-remove-duplicates
+                        (sort (font-family-list)
+                              (lambda(x y) (string< (upcase x) (upcase y))))
+                        :test 'string=)))
+    (dolist (ff font-families)
+      (insert
+       (propertize str 'font-lock-face `(:family ,ff))               ff "\n"
+       (propertize str 'font-lock-face `(:family ,ff :slant italic)) ff "\n"))))

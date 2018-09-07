@@ -1,12 +1,15 @@
 ;; Mode line setup
 
+(if running-macos
+    (setq ns-use-srgb-colorspace nil)
+  (setq powerline-image-apple-rgb t)
+  )
+
 (defvar modeline-selected-window nil)
 (add-function :before pre-redisplay-function
               (lambda (_wins) (setq modeline-selected-window (selected-window))))
 ;;(defun modeline-record-selected-window ()
 ;; (setq modeline-selected-window (selected-window)))
-
-
 
 (defun modeline-selected-window-active ()
   "Return whether the current window is active."
@@ -19,12 +22,34 @@
       '((propertize (concat "TIME: " 24-hours ":" minutes " " am-pm))))
 
 
+(defface my-powerline-active1 '((t (:background "blue2" :foreground "white" :inherit mode-line)))
+  "Powerline face 1."
+  :group 'powerline)
+
+(defface my-powerline-active2 '((t (:background "Orange" :foreground "white" :inherit mode-line)))
+  "Powerline face 2."
+  :group 'powerline)
+
+
+(setq face1  'my-powerline-active1
+      face2  'my-powerline-active2
+      separator-right (powerline-arrow-right face2 face1)
+      separator-left (powerline-arrow-left face1 face2))
+
+
 (setq
  marcel-mode-line-format
  '(
-   (:propertize  " " 'face 'mode-line-face);; 'display '((space :width 1 :align-to left-fringe)))
-   (:eval (my/evil-mode-state))
+   ;;(:propertize  " " 'face 'mode-line-face);; 'display '((space :width 1 :align-to left-fringe)))
 
+   (:eval  (propertize " " 'display separator-right))
+   " "
+   (:eval (get-window-number))
+   " "
+  ;; (:eval  (propertize " " 'display separator-right))
+   (:eval  (propertize " " 'display separator-left))
+
+   (:eval (my/evil-mode-state))
    ;; read-only or modified status
    (:eval
     (cond (buffer-read-only
@@ -68,6 +93,7 @@
    ;; nyan-mode uses nyan cat as an alternative to %p
    ;;(:eval (when nyan-mode (list (nyan-create))))
    ))
+
 
 (setq-default mode-line-format marcel-mode-line-format)
 (setq  mode-line-format marcel-mode-line-format)
@@ -141,6 +167,42 @@
     (when path
       (setq output (concat ".../" output)))
     output))
+
+
+(setq spaceline-window-numbers-unicode t)
+
+(defun get-window-number ()
+  "The current window number.
+Requires either `winum-mode' or `window-numbering-mode' to be enabled."
+  (let* ((num (cond
+               ((bound-and-true-p winum-mode)
+                (winum-get-number))
+               ((bound-and-true-p window-numbering-mode)
+                (window-numbering-get-number))
+               (t nil)))
+         (str (when num (int-to-string num))))
+    (when num
+      (if spaceline-window-numbers-unicode
+          (spaceline--unicode-number str)
+        (propertize str 'face 'bold)))))
+
+
+;; from https://github.com/TheBB/spaceline/blob/master/spaceline-segments.el
+(defun spaceline--unicode-number (str)
+  "Return a nice unicode representation of a single-digit number STR."
+  (cond
+   ((string= "1" str) "➊")
+   ((string= "2" str) "➋")
+   ((string= "3" str) "➌")
+   ((string= "4" str) "➍")
+   ((string= "5" str) "➎")
+   ((string= "6" str) "➏")
+   ((string= "7" str) "➐")
+   ((string= "8" str) "➑")
+   ((string= "9" str) "➒")
+   ((string= "10" str) "➓")
+   (t str)))
+
 
 ;; Extra mode line faces
 (make-face 'mode-line-read-only-face)
@@ -351,13 +413,14 @@ static char * arrow_right[] = {
 
 (defvar mode-line-show-minor-modes nil)
 
-;; (let* ((color1 "RoyalBlue") ;; "#777777")
-;;        (color2 "Blue")) ;; "#555555"))
+(setq color1 "Red") ;; "#777777")
+(setq color2 "Orange") ;; "#555555"))
+(setq scale-factor 10.0
 
-;;   (setq arrow-right-1 (create-image (arrow-right-xpm color1 color2) 'xpm t :ascent 'center))
-;;   (setq arrow-right-2 (create-image (arrow-right-xpm color2 "None") 'xpm t :ascent 'center))
-;;   (setq arrow-left-1  (create-image (arrow-left-xpm color2 color1) 'xpm t :ascent 'center))
-;;   (setq arrow-left-2  (create-image (arrow-left-xpm "None" color2) 'xpm t :ascent 'center))
+      arrow-right-1 (create-image (arrow-right-xpm color1 color2) 'xpm t :ascent 'center :scale scale-factor)
+      arrow-right-2 (create-image (arrow-right-xpm color2 "None") 'xpm t :ascent 'center :scale scale-factor)
+      arrow-left-1  (create-image (arrow-left-xpm color2 color1) 'xpm t :ascent 'center :scale scale-factor)
+      arrow-left-2  (create-image (arrow-left-xpm "None" color2) 'xpm t :ascent 'center :scale scale-factor))
 
 ;;   (setq-default mode-line-format
 ;;                 (list  '(:eval (concat (propertize " %* %I %b" 'face 'mode-line-color-1)

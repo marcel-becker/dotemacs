@@ -1,6 +1,6 @@
 ;;(package-initialize)
 
-(use-package helm :ensure t)
+(use-package helm :ensure t :diminish "H")
 (require 'helm-config)
 (require 'helm-color)
 (require 'helm-grep)
@@ -152,5 +152,11 @@
 (projectile-mode)
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
+
+
+
+(define-key company-mode-map (kbd "C-:") 'helm-company)
+(define-key company-active-map (kbd "C-:") 'helm-company)
+
 
 (helm-mode 1)

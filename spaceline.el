@@ -21,12 +21,34 @@
     ;; (setq powerline-utf-8-separator-left 9687
     ;;       powerline-utf-8-separator-right 9686)
 
+
+    (defun powerline-buffer-id (&optional face pad)
+      (powerline-raw
+       (format-mode-line
+        (concat " " (propertize
+                     ;;              (format-mode-line mode-line-buffer-identification)
+                     (if buffer-file-name
+                         (concat (shorten-directory default-directory 30)
+                                 (file-name-nondirectory buffer-file-name)
+                                 )
+                       (buffer-name))
+                     'face face
+                     'mouse-face 'mode-line-highlight
+                     'help-echo "Buffer name\n\ mouse-1: Previous buffer\n\ mouse-3: Next buffer"
+                     'local-map (let ((map (make-sparse-keymap)))
+                                  (define-key map [mode-line mouse-1] 'mode-line-previous-buffer)
+                                  (define-key map [mode-line mouse-3] 'mode-line-next-buffer)
+                                  map))))
+       face pad))
+
     ;; slant (requires srbg support)
     (setq-default powerline-default-separator 'arrow
                    powerline-height 30)
     (setq spaceline-separator-dir-left '(left . left))
     (setq spaceline-separator-dir-right '(right . right))
     (setq winum-auto-setup-mode-line nil)
+    (setq powerline-image-apple-rgb t)
+
 
     ;; fancy git icon for the modeline
     (defadvice vc-mode-line (after strip-backend () activate)
@@ -35,15 +57,15 @@
             (setq vc-mode gitlogo)))))
   :config
   (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main))))
-  ;;  (require 'spaceline-config)
-  ;;(spaceline-toggle-buffer-size-off)
   (spaceline-helm-mode 1)
   (spaceline-spacemacs-theme)
   (setq spaceline-buffer-encoding-abbrev-p nil
         spaceline-window-numbers-unicode t
         spaceline-line-column-p nil
-        ;;spaceline-buffer-id-p nil
-        spaceline-minor-modes-separator nil))
+        spaceline-buffer-id-p t
+        spaceline-buffer-modified-p t
+        spaceline-buffer-size-p nil
+        spaceline-minor-modes-separator "|"))
 
 ;;Spaceline All The Icons
 ;;Pretty icons for spaceline using all-the-icons.el. This is a nice package but still a bit buggy. Also adds a couple seconds to the load time.

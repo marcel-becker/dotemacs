@@ -2,8 +2,7 @@
 
 (use-package  evil
   :ensure t
-  :init
-  (setq evil-want-integration nil)
+
   :config
   (evil-mode 1))
 (use-package  evil-anzu)
@@ -115,7 +114,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;   (spaceline-emacs-theme)
 ;; )
 
-;;(use-package powerline)
+(use-package powerline)
+
 ;;(powerline-default-theme)
 ;;(powerline-center-evil-theme)
 
@@ -125,8 +125,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  ;;     (powerline-evil-center-color-theme))
 
 
-
-
+(force-mode-line-update t)
 
 (setq evil-disable-insert-state-bindings t)
 

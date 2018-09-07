@@ -1,14 +1,27 @@
-(require 'eclim)
+(use-package eclim)
 (global-eclim-mode)
 
-(require 'eclimd)
+
+(setq eclimd-autostart t)
+
+(defun my-java-mode-hook ()
+    (eclim-mode t))
+
+(add-hook 'java-mode-hook 'my-java-mode-hook)
+
+(custom-set-variables
+  '(eclim-eclipse-dirs '("~/eclipse"))
+  '(eclim-executable "/home/becker/eclipse/plugins/org.eclim_2.8.0/bin/eclim"))
+
+
+;;(use-package  eclimd)
 
 (setq help-at-pt-display-when-idle t)
 (setq help-at-pt-timer-delay 0.1)
 (help-at-pt-set-timer)
 
-(require 'company)
-(require 'company-emacs-eclim)
+(use-package company)
+(use-package company-emacs-eclim)
 (company-emacs-eclim-setup)
 (global-company-mode t)
 (setq company-emacs-eclim-ignore-case t)
@@ -18,13 +31,20 @@
 
 
 ;; regular auto-complete initialization
-(require 'auto-complete-config)
-(ac-config-default)
+;;(require 'auto-complete-config)
+;;(ac-config-default)
 ;; add the emacs-eclim source
-(require 'ac-emacs-eclim-source)
-(ac-emacs-eclim-config)
+;;(require 'ac-emacs-eclim-source)
+;;(ac-emacs-eclim-config)
 
-(require 'flymake)
+
+
+
+
+
+
+
+(use-package flymake)
 (defun my-flymake-init ()
   (list "my-java-flymake-checks"
   (list (flymake-init-create-temp-buffer-copy
