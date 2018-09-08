@@ -1,4 +1,4 @@
-;;; Time-stamp: "2018-09-07 Fri 10:50 marcelbecker on kestrelimac"
+;;; Time-stamp: "2018-09-07 Fri 12:30 marcelbecker on kestrelimac"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -50,6 +50,7 @@
   (global-set-key [kp-delete] 'delete-char)
   (setq ns-use-srgb-colorspace nil)
   (setq powerline-image-apple-rgb t)
+  (setq mac-allow-anti-aliasing t)
   ) ;; sets fn-delete to be right-delete
 
 
@@ -1404,7 +1405,31 @@ file to write to."
 (message "Loading which-key")
 (use-package which-key
   :init
-  (which-key-mode))
+  (which-key-mode)
+  :config
+
+  ;; copied from which-key.el to turn off header-line
+  (defun which-key--init-buffer ()
+  "Initialize which-key buffer"
+  (unless (buffer-live-p which-key--buffer)
+    (setq which-key--buffer (get-buffer-create which-key-buffer-name))
+    (with-current-buffer which-key--buffer
+      ;; suppress confusing minibuffer message
+      (let (message-log-max)
+        (toggle-truncate-lines 1)
+        (message ""))
+      (setq-local cursor-type nil)
+      (setq-local cursor-in-non-selected-windows nil)
+      (setq-local mode-line-format nil)
+      (setq-local header-line-format nil)
+      (setq-local word-wrap nil)
+      (setq-local show-trailing-whitespace nil)
+      (run-hooks 'which-key-init-buffer-hook))))
+
+  (setq which-key-side-window-max-height 0.5
+        which-key-show-prefix 'modeline
+        which-key-min-display-lines 5)
+  )
 
 
 ;; ;; ;;smex - A smarter M-x completion ------------
@@ -2069,6 +2094,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 
 (defun my-load-modeline ()
+  (interactive)
   (message "Loading telephone line mode line")
   ;;(load-file (concat marcel-lisp-dir  "/becker-mode-line-evil-mode.el"))
   (load-file (concat marcel-lisp-dir  "/telephone-line-mode-line.el"))

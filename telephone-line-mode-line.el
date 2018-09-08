@@ -5,6 +5,22 @@
   (unicode-fonts-setup)
 )
 
+
+
+(defvar my-font-height-modifier 10
+  "Default value to increment the size by when jacking into a monitor.")
+(defun my-increase-modeline-font ()
+  (interactive)
+  (set-face-attribute 'mode-line nil :height (+ (face-attribute 'mode-line :height)
+                                                my-font-height-modifier)))
+
+(defun my-decrease-modeline-font ()
+  (interactive)
+  (set-face-attribute 'mode-line nil :height (- (face-attribute 'mode-line :height)
+                                                my-font-height-modifier)))
+
+
+
 ;; specify font for all unicode characters
 (when (member "DejaVu Sans Mono for Powerline" (font-family-list))
   (set-fontset-font t 'unicode "DejaVu Sans Mono for Powerline" nil 'prepend))
@@ -21,15 +37,17 @@
                     :background "Blue2"
                     :inverse-video nil
                     :weight 'bold
+                   ;; :height (* (window-font-height) 10)
                     :box '(:line-width 6 :color "orange" :style nil))
 
-;; (set-face-attribute 'mode-line-inactive nil
+ (set-face-attribute 'mode-line-inactive nil
 ;;                     ;;:foreground "Orange" ;;Yellow"
 ;;                     :background "gray22"
 ;;                     :inverse-video nil
 ;;                     ;;:weight 'bold
 ;;                     ;;:box '(:line-width 6 :color "orange" :style nil)
-;;                     )
+                     :box nil
+                     )
 
 
 
@@ -55,7 +73,7 @@
                     :weight 'bold)
 
 (set-face-attribute 'mode-line-filename-face nil
-                    :inherit 'mode-line-mode-face
+                    :inherit 'mode-line
                     :foreground "#eab700"
                     :weight 'extra-bold)
 
@@ -115,9 +133,17 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
 
 
 
+;; (defface my-winnum-face
+;;   '((t ((:inherit mode-line :height (* (window-font-height) 20)))))
+;;   "Face for the window number in the mode line"
+;;   :group 'telephone-line
+;;   )
+;; (set-face-attribute 'my-winnum-face nil
+;;                     :height 1000);; (* (window-font-height) 60))
+
 (telephone-line-defsegment my-telephone-line-window-number-segment (&optional in-unicode)
   (when (bound-and-true-p winum-mode)
-        (propertize (get-window-number) 'face `winum-face)))
+        (propertize (get-window-number) 'face 'winum-face)))
 
 
 
