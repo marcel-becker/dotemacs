@@ -140,7 +140,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq insert-state-foreground "white")
 
 
-(setq visual-state-background "orange")
+(setq visual-state-background "light sea green")
 (setq emacs-state-background "violet")
 (setq replace-state-background "red")
 

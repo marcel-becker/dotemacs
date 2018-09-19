@@ -1,4 +1,4 @@
-;;; Time-stamp: "2018-09-07 Fri 12:30 marcelbecker on kestrelimac"
+;;; Time-stamp: "2018-09-19 Wed 10:54 marcelbecker on dhcp220.kestrel.edu"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -45,7 +45,7 @@
   (setq mac-allow-anti-aliasing t)
   (setq mac-option-modifier 'alt)
   (setq mac-right-option-modifier 'super)
-;;  (setq mac-right-command-modifier 'super)
+  ;;  (setq mac-right-command-modifier 'super)
   (setq mac-command-modifier 'meta)
   (global-set-key [kp-delete] 'delete-char)
   (setq ns-use-srgb-colorspace nil)
@@ -190,13 +190,13 @@
   (let* ((workarea (frame-monitor-workarea))
          (width (nth 2 workarea))
          (display-x (nth 0 workarea)))
-  (+ (floor width 6) display-x)))
+    (+ (floor width 6) display-x)))
 
 (defun my-get-default-y-frame-position ()
- (let* ((workarea (frame-monitor-workarea))
+  (let* ((workarea (frame-monitor-workarea))
          (width (nth 3 workarea))
          (display-y (nth 1 workarea)))
-  (+ 100 display-y)))
+    (+ 100 display-y)))
 
 
 (setq default-frame-alist
@@ -242,36 +242,36 @@
                                    '(background-color . "gray38")
                                  '(background-color . "#09223F")
                                  )))
-(add-to-list 'default-frame-alist frame-font)
-(add-to-list 'initial-frame-alist frame-font) ;;(cons 'font default-frame-font))
+  (add-to-list 'default-frame-alist frame-font)
+  (add-to-list 'initial-frame-alist frame-font) ;;(cons 'font default-frame-font))
 
-(add-to-list 'default-frame-alist frame-height);;(cons 'height (get-default-height)))
-(add-to-list 'initial-frame-alist frame-height);; (cons 'height (get-default-height)))
+  (add-to-list 'default-frame-alist frame-height);;(cons 'height (get-default-height)))
+  (add-to-list 'initial-frame-alist frame-height);; (cons 'height (get-default-height)))
 
-(add-to-list 'default-frame-alist frame-background-color)
-;; (if (eq (user-uid) 0)
-;;     '(background-color . "gray38")
-;;   '(background-color . "#09223F")
-;;               ))
-(add-to-list 'initial-frame-alist frame-background-color)
+  (add-to-list 'default-frame-alist frame-background-color)
+  ;; (if (eq (user-uid) 0)
+  ;;     '(background-color . "gray38")
+  ;;   '(background-color . "#09223F")
+  ;;               ))
+  (add-to-list 'initial-frame-alist frame-background-color)
 
-(add-to-list 'default-frame-alist frame-width)
-(add-to-list 'initial-frame-alist frame-width) ;;(cons 'font default-frame-font))
+  (add-to-list 'default-frame-alist frame-width)
+  (add-to-list 'initial-frame-alist frame-width) ;;(cons 'font default-frame-font))
 
-(add-to-list 'default-frame-alist frame-top)
-(add-to-list 'initial-frame-alist frame-top) ;;(cons 'font default-frame-font))
+  (add-to-list 'default-frame-alist frame-top)
+  (add-to-list 'initial-frame-alist frame-top) ;;(cons 'font default-frame-font))
 
-(add-to-list 'default-frame-alist frame-left)
-(add-to-list 'initial-frame-alist frame-left) ;;(cons 'font default-frame-font))
+  (add-to-list 'default-frame-alist frame-left)
+  (add-to-list 'initial-frame-alist frame-left) ;;(cons 'font default-frame-font))
 
-(message  "Frame alist %s" initial-frame-alist)
-             ;; (if (eq (user-uid) 0)
-             ;;     '(background-color . "gray38")
-             ;;   '(background-color . "#09223F")
-             ;;   ))
-;;(arrange-frame 180 default-height 500 100))
-(arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
-)
+  (message  "Frame alist %s" initial-frame-alist)
+  ;; (if (eq (user-uid) 0)
+  ;;     '(background-color . "gray38")
+  ;;   '(background-color . "#09223F")
+  ;;   ))
+  ;;(arrange-frame 180 default-height 500 100))
+  (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -909,7 +909,7 @@
   (setq org-confirm-babel-evaluate nil)
   (setq org-src-fontify-natively t)
   (setq org-support-shift-select t)
-)
+  )
 
 (eval-after-load "org"
   '(progn
@@ -950,8 +950,8 @@
   :ensure t
   )
 (use-package wgrep-ag
-:ensure t
-)
+  :ensure t
+  )
 
 
 ;; (use-package helm :ensure t)
@@ -1024,6 +1024,11 @@
     (when (file-exists-p helm-setup)
       (load-file helm-setup))))
 
+(defun my-load-bookmarks ()
+  (interactive)
+  (let* ((helm-setup (concat marcel-lisp-dir  "/visual-bookmarks-init.el")))
+    (when (file-exists-p helm-setup)
+      (load-file helm-setup))))
 
 (defun my-load-evil ()
   (interactive)
@@ -1081,6 +1086,10 @@
     (global-set-key (kbd "C-x C-r") 'recentf-open-files)
     (add-to-list 'recentf-exclude (concat marcel-lisp-dir "/elpa"))
     (add-to-list 'recentf-exclude  ".*-autoloads\\.el\\'")
+    (add-to-list 'recentf-exclude ".cache")
+    (add-to-list 'recentf-exclude ".cask")
+    (add-to-list 'recentf-exclude "bookmarks")
+    (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
     (use-package recentf-ext)
     ))
 
@@ -1155,8 +1164,104 @@ file to write to."
 ;; find convenient unbound keystrokes
 (use-package unbound)                  ; `M-x describe-unbound-keys'
 (message "Loading switch-window")
-(use-package switch-window)
+(use-package switch-window
+  :custom-face
+  (switch-window-label ((t (:inherit font-lock-keyword-face :height 3.0))))
+  :config
+  ;; (setq switch-window-shortcut-style 'qwerty)
+  (setq switch-window-minibuffer-shortcut ?0)
+  (setq switch-window-multiple-frames t)
+  (with-eval-after-load 'ivy
+    (setq switch-window-preferred 'ivy))
+  (unless (display-graphic-p)
+    (setq switch-window-shortcut-appearance 'asciiart)))
 ;;(use-package lacarte)
+
+
+;; Easy window config switching
+(use-package eyebrowse
+  :hook (after-init . eyebrowse-mode))
+
+(use-package popwin
+  :commands popwin-mode
+  :hook (after-init . popwin-mode)
+  :config
+  (bind-key "C-z" popwin:keymap)
+
+  ;; don't use default value but manage it ourselves
+  (setq popwin:special-display-config
+        '(;; Emacs
+          ("*Help*" :dedicated t :position bottom :stick t :noselect t)
+          ("*compilation*" :dedicated t :position bottom :stick t :noselect t :height 0.4)
+          ("*Compile-Log*" :dedicated t :position bottom :stick t :noselect t :height 0.4)
+          ("*Warnings*" :dedicated t :position bottom :stick t :noselect t)
+          ("*Completions*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*Pp Eval Output*" :dedicated t :position bottom :stick t :noselect t)
+          ("*Shell Command Output*" :dedicated t :position bottom :stick t :noselect nil)
+          ("\*Async Shell Command\*.+" :regexp t :position bottom :stick t :noselect nil)
+          ("^*Man.+*$" :regexp t :position bottom :stick t :noselect t :height 0.4)
+          ("^*WoMan.+*$" :regexp t :position bottom)
+          ("^*Backtrace.+*$" :regexp t :dedicated t :position bottom :stick t :noselect nil)
+          ("^*helpful .+*$" :regexp t :position bottom :stick t :noselect t :height 0.4)
+
+          ;; Kill Ring
+          ("*Kill Ring*" :dedicated t :position bottom)
+
+          ;; Org
+          ("*Org todo*" :dedicated t :position bottom :stick t :noselect nil :height 0.2)
+
+          ;; Flycheck
+          ("\*flycheck errors\*.+*$" :regexp t :position bottom :stick t :noselect nil)
+
+          ;; Youdao dict
+          ("*Youdao Dictionary*" :dedicated t :position bottom)
+
+          ;; Paradox
+          ("*Paradox Report*" :dedicated t :position bottom :noselect nil)
+
+          ;; List
+          ("*Colors*" :dedicated t :position bottom)
+          ("*Process List*" :dedicated t :position bottom)
+          ("*Process-Environment*" :dedicated t :position bottom)
+
+          ;; undo-tree
+          (" *undo-tree*" :dedicated t :position right :stick t :noselect nil :width 60)
+
+          ;; Search
+          ("*grep*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*ag search*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*rg*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*pt-search*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*Occur*" :dedicated t :position bottom :stick t :noselect nil)
+          ("\*ivy-occur.+*$" :regexp t :position bottom :stick t :noselect nil)
+          ;; ("*xref*" :dedicated t :position bottom :stick t :noselect nil)
+
+          ;; VC
+          ("*vc-diff*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*vc-change-log*" :dedicated t :position bottom :stick t :noselect nil)
+
+          ;; Magit
+          ;; (magit-status-mode :dedicated t :position bottom :stick t :height 0.5)
+          ;; (magit-diff-mode :dedicated t :position bottom :stick t :noselect t :height 0.5)
+
+          ;; Script
+          ("*eshell*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*shell*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*Python*" :dedicated t :position bottom :stick t :noselect t)
+          ("*Ruby*" :dedicated t :position bottom :stick t :noselect t)
+          ("*quickrun*" :dedicated t :position bottom :stick t :noselect t)
+
+          ;; Go
+          ("^*godoc.+*$" :regexp t :position bottom :stick nil :noselect nil)
+          ("*golint*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*govet*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*go-guru-output*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*Gofmt Errors*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*Go Test*" :dedicated t :position bottom :stick t :noselect nil)
+
+          ;; Test
+          ("*ert*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*nosetests*" :dedicated t :position bottom :stick t :noselect nil))))
 
 
 
@@ -1286,13 +1391,51 @@ file to write to."
 
 
 (setq suggest-key-bindings 10)
-
+(setq tab-always-indent 'complete)  ;; use 't when company is disabled
 (use-package company
   :ensure t
-  :diminish "CY"
+  :diminish "CMP"
+  :bind (("A-." . company-complete)
+         ("C-c C-y" . company-yasnippet)
+         :map company-active-map
+         ("<escape>" . company-abort)
+         ("C-p" . company-select-previous)
+         ("C-n" . company-select-next)
+         ("TAB" . company-complete-common-or-cycle)
+         ("<tab>" . company-complete-common-or-cycle)
+         ("S-TAB" . company-select-previous)
+         ("<backtab>" . company-select-previous)
+         :map company-search-map
+         ("C-p" . company-select-previous)
+         ("C-n" . company-select-next))
+  :hook (after-init . global-company-mode)
   :config
+  (setq company-tooltip-align-annotations t ; aligns annotation to the right
+        company-tooltip-limit 12            ; bigger popup window
+        company-idle-delay .2               ; decrease delay before autocompletion popup shows
+        company-echo-delay 0                ; remove annoying blinking
+        company-minimum-prefix-length 2
+        company-require-match nil
+        company-dabbrev-ignore-case nil
+        company-show-numbers t
+        company-dabbrev-downcase nil)
+  (add-hook 'after-init-hook 'global-company-mode)
   (global-company-mode)
-  (add-hook 'after-init-hook 'global-company-mode))
+  ;; Popup documentation for completion candidates
+  (when (display-graphic-p)
+    (use-package company-quickhelp
+      :bind (:map company-active-map
+                  ("M-h" . company-quickhelp-manual-begin))
+      :hook (global-company-mode . company-quickhelp-mode)
+      :config (setq company-quickhelp-delay 0.8))))
+
+
+
+;; Replace Strings with Regexes
+(use-package visual-regexp
+    :bind (("A-%" . vr/replace)
+           ("M-%" . vr/query-replace)))
+
 
 ;;(use-package auto-complete-config)
 ;;(ac-config-default)
@@ -1410,21 +1553,21 @@ file to write to."
 
   ;; copied from which-key.el to turn off header-line
   (defun which-key--init-buffer ()
-  "Initialize which-key buffer"
-  (unless (buffer-live-p which-key--buffer)
-    (setq which-key--buffer (get-buffer-create which-key-buffer-name))
-    (with-current-buffer which-key--buffer
-      ;; suppress confusing minibuffer message
-      (let (message-log-max)
-        (toggle-truncate-lines 1)
-        (message ""))
-      (setq-local cursor-type nil)
-      (setq-local cursor-in-non-selected-windows nil)
-      (setq-local mode-line-format nil)
-      (setq-local header-line-format nil)
-      (setq-local word-wrap nil)
-      (setq-local show-trailing-whitespace nil)
-      (run-hooks 'which-key-init-buffer-hook))))
+    "Initialize which-key buffer"
+    (unless (buffer-live-p which-key--buffer)
+      (setq which-key--buffer (get-buffer-create which-key-buffer-name))
+      (with-current-buffer which-key--buffer
+        ;; suppress confusing minibuffer message
+        (let (message-log-max)
+          (toggle-truncate-lines 1)
+          (message ""))
+        (setq-local cursor-type nil)
+        (setq-local cursor-in-non-selected-windows nil)
+        (setq-local mode-line-format nil)
+        (setq-local header-line-format nil)
+        (setq-local word-wrap nil)
+        (setq-local show-trailing-whitespace nil)
+        (run-hooks 'which-key-init-buffer-hook))))
 
   (setq which-key-side-window-max-height 0.5
         which-key-show-prefix 'modeline
@@ -1512,8 +1655,8 @@ file to write to."
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (defun newline-indents ()
-   "Bind Return to `newline-and-indent' in the local keymap."
-   (local-set-key "\C-m" 'newline-and-indent))
+  "Bind Return to `newline-and-indent' in the local keymap."
+  (local-set-key "\C-m" 'newline-and-indent))
 
 
 ;; scrolling like gos-emacs
@@ -1537,6 +1680,81 @@ file to write to."
   (interactive)
   (set-frame-parameter nil 'fullscreen
                        (if (frame-parameter nil 'fullscreen) nil 'fullboth)))
+
+
+;; An all-in-one comment command to rule them all
+(use-package comment-dwim-2
+  :bind ("M-;" . comment-dwim-2))
+
+;; Drag stuff (lines, words, region, etc...) around
+(use-package drag-stuff
+  :ensure t
+  :diminish "DRG"
+  :commands drag-stuff-define-keys
+  :hook (after-init . drag-stuff-global-mode)
+  :config
+  (add-to-list 'drag-stuff-except-modes 'org-mode)
+  (drag-stuff-global-mode 1)
+  (drag-stuff-define-keys))
+
+
+;; Edit multiple regions in the same way simultaneously
+(use-package iedit
+  :defines desktop-minor-mode-table
+  :bind (("C-;" . iedit-mode)
+         ("C-x r RET" . iedit-rectangle-mode)
+         :map isearch-mode-map ("C-;" . iedit-mode-from-isearch)
+         :map esc-map ("C-;" . iedit-execute-last-modification)
+         :map help-map ("C-;" . iedit-mode-toggle-on-function))
+  :config
+  ;; Avoid restoring `iedit-mode'
+  (with-eval-after-load 'desktop
+    (add-to-list 'desktop-minor-mode-table
+                 '(iedit-mode nil))))
+
+;; Multiple cursors
+(use-package multiple-cursors
+  :bind (("C-S-c C-S-c"   . mc/edit-lines)
+         ("C->"           . mc/mark-next-like-this)
+         ("C-<"           . mc/mark-previous-like-this)
+         ("C-c C-<"       . mc/mark-all-like-this)
+         ("C-M->"         . mc/skip-to-next-like-this)
+         ("C-M-<"         . mc/skip-to-previous-like-this)
+         ("s-<mouse-1>"   . mc/add-cursor-on-click)
+         ("C-S-<mouse-1>" . mc/add-cursor-on-click)
+         :map mc/keymap
+         ("C-|" . mc/vertical-align-with-space)))
+
+;; Smartly select region, rectangle, multi cursors
+(use-package smart-region
+  :hook (after-init . smart-region-on))
+
+;; Goto last change
+(use-package goto-chg
+  :bind ("C-," . goto-last-change))
+
+
+;; Framework for mode-specific buffer indexes
+(use-package imenu
+  :ensure nil
+  :bind (("C-." . imenu)))
+
+;; Windows-scroll commands
+;;( use-package pager
+;;  :bind (("\C-v"   . pager-page-down)
+;;         ([next]   . pager-page-down)
+;;         ("\ev"    . pager-page-up)
+;;         ([prior]  . pager-page-up)
+;;         ([M-up]   . pager-row-up)
+;;         ([M-kp-8] . pager-row-up)
+;;         ([M-down] . pager-row-down)
+;;         ([M-kp-2] . pager-row-down))
+;;)
+
+;; Discover key bindings and their meaning for the current Emacs major mode
+(use-package discover-my-major
+  :bind (("C-h M-m" . discover-my-major)
+         ("C-h M-M" . discover-my-mode)))
 
 
 (global-set-key [f6] 'line-to-top-of-window)
@@ -1755,6 +1973,10 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (autoload 'c++-mode  "cc-mode" "C++ Editing Mode" t)
 (autoload 'c-mode    "cc-mode" "C Editing Mode" t)
 (autoload 'objc-mode "cc-mode" "Objective-C Editing Mode" t)
+(autoload 'sgml-mode "psgml" "Major mode to edit SGML files." t)
+(autoload 'xml-mode "psgml" "Major mode to edit XML files." t)
+
+
 
 ;;(use-package python)
 ;;(autoload 'python-mode "python-mode" "Python editing mode." t)
@@ -1870,8 +2092,6 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (tool-bar-mode -1)
 
 
-(autoload 'sgml-mode "psgml" "Major mode to edit SGML files." t)
-(autoload 'xml-mode "psgml" "Major mode to edit XML files." t)
 
 ;;(setq semantic-load-turn-everything-on t)
 
@@ -2683,7 +2903,7 @@ by using nxml's indentation rules."
 (message "Loading smooth-scroll")
 (use-package smooth-scroll)
 (setq redisplay-dont-pause t)
-(setq  scroll-margin 1)
+(setq  scroll-margin 3)
 (setq  scroll-step 1)
 (setq  scroll-conservatively 10000)
 (setq  scroll-preserve-screen-position 1)
@@ -2693,8 +2913,15 @@ by using nxml's indentation rules."
 
 
 (message "Loading rainbow-delimiters")
+;; Highlight brackets according to their depth
 (use-package rainbow-delimiters :ensure t :diminish nil)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
+
+;; Colorize color names in buffers
+(use-package rainbow-mode
+  :diminish "RNB")
+
 
 
 ;; ;; ;;; init.el ends here
@@ -2860,6 +3087,8 @@ by using nxml's indentation rules."
 ;;                     :box nil)
 
 (my-load-helm)
+(my-load-treemacs)
+(my-load-bookmarks)
 
 (use-package outline-magic)
 (add-hook 'outline-mode-hook
@@ -2891,3 +3120,27 @@ by using nxml's indentation rules."
       (insert
        (propertize str 'font-lock-face `(:family ,ff))               ff "\n"
        (propertize str 'font-lock-face `(:family ,ff :slant italic)) ff "\n"))))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; visible mark - show where mark is                                      ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defface visible-mark-active ;; put this before (require 'visible-mark)
+  '((((type tty) (class mono)))
+    (t (:background "magenta"))) "")
+(use-package visible-mark
+  :ensure t
+  :config
+  (global-visible-mark-mode 1) ;; or add (visible-mark-mode) to specific hooks
+  (setq visible-mark-max 2)
+  (setq visible-mark-faces `(visible-mark-face1 visible-mark-face2)))
+
+
+(use-package interaction-log
+  :config
+  (interaction-log-mode +1)
+  (defun open-interaction-log ()
+    (interactive)
+    (display-buffer ilog-buffer-name))
+  (bind-key "A-l" 'open-interaction-log))

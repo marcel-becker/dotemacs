@@ -58,6 +58,11 @@
                     :weight 'bold
                     :box '(:line-width 6 :color "orange" :style nil))
 
+(set-face-attribute 'telephone-line-evil-visual nil :background "light sea green")
+                   
+                   
+ 
+
 (make-face 'mode-line-mode-face)
 (make-face 'mode-line-folder-face)
 (make-face 'mode-line-filename-face)

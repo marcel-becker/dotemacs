@@ -53,9 +53,9 @@
         ("A-t 1"   . treemacs-delete-other-windows)
         ("A-t t"   . treemacs)
        ;; ("S-f8"   . treemacs)
-        ;;("C-x t B"   . treemacs-bookmark)
-        ;;("C-x t C-t" . treemacs-find-file)
-        ;;("C-x t M-t" . treemacs-find-tag)
+        ("A-t B"   . treemacs-bookmark)
+        ("A-t C-t" . treemacs-find-file)
+        ("A-t M-t" . treemacs-find-tag)
         ))
 
 (use-package treemacs-evil
@@ -64,4 +64,7 @@
 
 (use-package treemacs-projectile
   :after treemacs projectile
-  :ensure t)
+  :ensure t
+  :bind (([M-f8] . treemacs-projectile)
+         :map projectile-command-map
+         ("h" . treemacs-projectile)))

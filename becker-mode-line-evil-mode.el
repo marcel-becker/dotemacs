@@ -312,7 +312,7 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
 (set-face-attribute 'mode-line-evil-visual-face nil
                     :inherit 'mode-line-mode-face
                     :foreground "black"
-                    :background "orange"
+                    :background "light sea green"
                     :weight 'bold)
 
 (set-face-attribute 'mode-line-evil-replace-face nil

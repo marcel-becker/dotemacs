@@ -1,26 +1,30 @@
 ;;(package-initialize)
 
 (use-package helm :ensure t :diminish "H")
-(require 'helm-config)
-(require 'helm-color)
-(require 'helm-grep)
+(use-package helm-config :ensure helm :demand t :diminish "H")
 
 (use-package    helm-ag :ensure t)
-;;(use-package    helm-anything :ensure t)
 (use-package    helm-c-yasnippet :ensure t)
 (use-package    helm-company :ensure t)
 (use-package    helm-descbinds :ensure t)
 (use-package    helm-gitignore :ensure t)
-;;(use-package    helm-make :ensure t)
 (use-package    helm-mode-manager :ensure t)
 (use-package    helm-projectile :ensure t)
 (use-package    helm-pydoc :ensure t)
 (use-package    helm-swoop :ensure t)
 (use-package    helm-themes :ensure t)
-;(use-package    helm-package :ensure t)
+
 ;(use-package    helm-ls-git :ensure t)
 (use-package    helm-git-files :ensure t)
 (use-package    helm-helm-commands :ensure t)
+
+(use-package helm-flx
+  :ensure t
+  :init
+  (setq helm-flx-for-helm-find-files nil)
+  (helm-flx-mode 1))
+
+
 
 
 (autoload 'helm-descbinds      "helm-descbinds" t)
@@ -30,6 +34,8 @@
 (setq
  helm-adaptive-history-file (concat marcel-lisp-dir "/helm-history")
  helm-buffers-fuzzy-matching t  ; fuzzy matching buffer names when non-nil useful in helm-mini that lists buffers
+ helm-recentf-fuzzy-match t
+ helm-M-x-fuzzy-match t
  helm-candidate-number-limit 500 ; limit the number of displayed candidates
  helm-ff-auto-update-initial-value      t
  helm-ff-file-name-history-use-recentf t
@@ -43,7 +49,7 @@
                              helm-source-recentf
                              helm-source-bookmarks
                              helm-source-buffer-not-found)
- ;; Save buffer when helm-multi-swoop-edit complete
+ ;; Save buffer when helm-multi-swoop-edit completeo
  helm-multi-swoop-edit-save t
  ;; If this value is t, split window inside the current window
  helm-swoop-split-with-multiple-windows t
@@ -96,6 +102,13 @@
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
 (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+(define-key helm-map (kbd "C-p")   'helm-previous-line)
+(define-key helm-map (kbd "C-n")   'helm-next-line)
+(define-key helm-map (kbd "C-M-n") 'helm-next-source)
+(define-key helm-map (kbd "C-M-p") 'helm-previous-source)
+(define-key helm-map (kbd "M-N")   'helm-next-source)
+(define-key helm-map (kbd "M-P")   'helm-previous-source)
+
 
 (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
 (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
