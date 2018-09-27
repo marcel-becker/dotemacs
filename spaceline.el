@@ -116,7 +116,7 @@
 
    ;; (spaceline-toggle-all-the-icons-weather-on)
    ;; (spaceline-toggle-all-the-icons-time-off)
-)
+   )
 
 
 ;; Fancy Battery

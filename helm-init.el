@@ -24,7 +24,10 @@
   (setq helm-flx-for-helm-find-files nil)
   (helm-flx-mode 1))
 
-
+(use-package helm-etags-plus
+  :ensure t
+  :config
+ (global-set-key (kbd "M-.") 'helm-etags-plus-select))
 
 
 (autoload 'helm-descbinds      "helm-descbinds" t)
@@ -145,9 +148,7 @@
 (setq helm-projectile-sources-list (cons 'helm-source-projectile-files-list
                                          (remove 'helm-source-projectile-files-list
                                                  helm-projectile-sources-list)))
-(projectile-mode)
-(setq projectile-completion-system 'helm)
-(helm-projectile-on)
+
 
 (define-key projectile-mode-map (kbd "C-c p /")
   #'(lambda ()

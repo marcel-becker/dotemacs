@@ -1,4 +1,4 @@
-;;; Time-stamp: "2018-09-19 Wed 10:54 marcelbecker on dhcp220.kestrel.edu"
+;;; Time-stamp: "2018-09-27 Thu 11:53 marcelbecker on kestrelimac"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -85,7 +85,7 @@
 
 
 ;;; ADD Marcel'S LISP LIBRARY TO `load-path'.
-(add-to-list 'load-path  (concat marcel-lisp-dir "/"))
+;;(add-to-list 'load-path marcel-lisp-dir )
 
 
 (defun reduce-hostname (name suffixes)
@@ -243,33 +243,25 @@
                                  '(background-color . "#09223F")
                                  )))
   (add-to-list 'default-frame-alist frame-font)
-  (add-to-list 'initial-frame-alist frame-font) ;;(cons 'font default-frame-font))
+  (add-to-list 'initial-frame-alist frame-font)
 
-  (add-to-list 'default-frame-alist frame-height);;(cons 'height (get-default-height)))
-  (add-to-list 'initial-frame-alist frame-height);; (cons 'height (get-default-height)))
+  (add-to-list 'default-frame-alist frame-height)
+  (add-to-list 'initial-frame-alist frame-height)
 
   (add-to-list 'default-frame-alist frame-background-color)
-  ;; (if (eq (user-uid) 0)
-  ;;     '(background-color . "gray38")
-  ;;   '(background-color . "#09223F")
-  ;;               ))
+
   (add-to-list 'initial-frame-alist frame-background-color)
 
   (add-to-list 'default-frame-alist frame-width)
-  (add-to-list 'initial-frame-alist frame-width) ;;(cons 'font default-frame-font))
+  (add-to-list 'initial-frame-alist frame-width)
 
   (add-to-list 'default-frame-alist frame-top)
-  (add-to-list 'initial-frame-alist frame-top) ;;(cons 'font default-frame-font))
+  (add-to-list 'initial-frame-alist frame-top)
 
   (add-to-list 'default-frame-alist frame-left)
-  (add-to-list 'initial-frame-alist frame-left) ;;(cons 'font default-frame-font))
+  (add-to-list 'initial-frame-alist frame-left)
 
   (message  "Frame alist %s" initial-frame-alist)
-  ;; (if (eq (user-uid) 0)
-  ;;     '(background-color . "gray38")
-  ;;   '(background-color . "#09223F")
-  ;;   ))
-  ;;(arrange-frame 180 default-height 500 100))
   (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
   )
 
@@ -302,8 +294,8 @@
 
 (message "Loading use-package")
 (setq package-check-signature nil)
-(setq package-user-dir (concat marcel-lisp-dir "/elpa"))
-(add-to-list 'load-path (concat marcel-lisp-dir "/elpa"))
+(setq package-user-dir (concat marcel-lisp-dir "elpa"))
+(add-to-list 'load-path (concat marcel-lisp-dir "elpa"))
 ;;(when (not package-archive-contents)
 ;;(package-refresh-contents))
 (if (version< emacs-version "28.0")
@@ -347,7 +339,7 @@
         anzu
         ;;apropospriate-theme
         async
-        auctex
+        ;;auctex
         auto-compile
         ;;auto-complete
         ;;auto-complete-auctex
@@ -515,10 +507,10 @@
         helm-ag
         helm-c-yasnippet
         helm-company
-        helm-core
+        ;;helm-core
         helm-descbinds
         helm-flx
-        helm-git
+        ;;helm-git
         helm-git-files
         helm-gitignore
         helm-helm-commands
@@ -575,7 +567,7 @@
         livid-mode
         log4e
         lorem-ipsum
-        lua-mode
+        ;;lua-mode
         ;;lush-theme
         macrostep
         ;;madhat2r-theme
@@ -619,8 +611,8 @@
         org-projectile
         ;;organic-green-theme
         orgit
-        package
-        package-build
+        ;;package
+        ;;package-build
         packed
         page-break-lines
         paradox
@@ -643,7 +635,7 @@
         projectile
         ;;purple-haze-theme
         py-autopep8
-        pycomplete
+        ;;pycomplete
         pydoc
         pydoc-info
         pyenv-mode
@@ -686,7 +678,7 @@
         spaceline-all-the-icons
         ;;spaceline-segments
         ;;spaceline-config
-        spacemacs-theme
+        ;;spacemacs-theme
         spinner
         spotify
         spray
@@ -716,7 +708,7 @@
         undo-tree
         unfill
         ;;use-package
-        use-package-el-get
+        ;;use-package-el-get
         uuidgen
         vi-tilde-fringe
         virtualenvwrapper
@@ -744,9 +736,10 @@
 ;;     (when (not (package-installed-p p))
 ;;       (message "installing package %s" p)
 ;;       (package-install p))
-;;     ;;(message "loading package %s" p)
-;;     ;;(use-package (eval 'p))
+;;     (message "loading package %s" p)
+;;     (require p)
 ;;     ))
+
 
 ;;(package-initialize)
 ;;(message "Loading use-package")
@@ -762,7 +755,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; To update el-get packages manually
 
-(let ((elget-lib (concat marcel-lisp-dir "/el-get/el-get")))
+(let ((elget-lib (concat marcel-lisp-dir "el-get/el-get")))
   (if (file-exists-p elget-lib)
       (add-to-list 'load-path elget-lib)))
 
@@ -785,7 +778,7 @@
 
 
 (add-to-list 'el-get-recipe-path
-             (concat marcel-lisp-dir "/el-get/el-get/recipes"))
+             (concat marcel-lisp-dir "el-get/el-get/recipes"))
 (setq el-get-default-process-sync t
       el-get-verbose t)
 
@@ -841,6 +834,7 @@
         faces+
         ffap-
         file-template
+        frame-cmds
         frame-fns
         helm-anything
         help-fns+
@@ -880,7 +874,7 @@
 (defun my-open-dot-emacs ()
   "Opening `~/.emacs.d/init.el'"
   (interactive)
-  (find-file (concat marcel-lisp-dir "/init.el")))
+  (find-file (concat marcel-lisp-dir "init.el")))
 (global-set-key (kbd "<S-f3>") 'my-open-dot-emacs)
 
 
@@ -888,9 +882,10 @@
 (use-package auto-dim-other-buffers
   :diminish "DIM"
   :init
-  (add-hook 'after-init-hook (lambda ()
-                               (when (fboundp 'auto-dim-other-buffers-mode)
-                                 (auto-dim-other-buffers-mode t)))))
+  (add-hook 'after-init-hook
+            (lambda ()
+              (when (fboundp 'auto-dim-other-buffers-mode)
+                (auto-dim-other-buffers-mode t)))))
 
 
 (message "Loading org stuff")
@@ -954,64 +949,17 @@
   )
 
 
-;; (use-package helm :ensure t)
-;; (use-package    helm-ag :ensure t)
-;; (use-package    helm-anything :ensure t)
-;; (use-package    helm-c-yasnippet :ensure t)
-;; (use-package    helm-descbinds :ensure t)
-;; (use-package    helm-gitignore :ensure t)
-;; (use-package    helm-make :ensure t)
-;; (use-package    helm-mode-manager :ensure t)
-;; (use-package    helm-projectile :ensure t)
-;; (use-package    helm-pydoc :ensure t)
-;; (use-package    helm-swoop :ensure t)
-;; (use-package    helm-themes :ensure t)
-;; (use-package    helm-package :ensure t)
-;; (use-package    helm-ls-git :ensure t)
-;; (use-package    helm-git-files :ensure t)
-;; (use-package    helm-helm-commands :ensure t)
-
-;; (let ((subl-lib (concat marcel-lisp-dir "/sublimity")))
-;;    (if (file-exists-p subl-lib)
-;;        (add-to-list 'load-path subl-lib)))
 ;; (use-package sublimity)
 ;; (use-package sublimity-scroll)
 ;; (use-package sublimity-map)
 ;;(use-package sublimity-attractive)
 
 
-;;
-;; Some recipes require extra tools to be installed
-;;
-;; Note: el-get-install requires git, so we know we have at least that.
-;;
-;;(when (el-get-executable-find "cvs")
-;;  (add-to-list 'my:el-get-packages 'emacs-goodies-el)) ; the debian addons for emacs
-
-;; (when (el-get-executable-find "svn")
-;;   (loop for p in '(psvn          ; M-x svn-status
-;;                    yasnippet		; powerful snippet mode
-;;         )
-;;  do (add-to-list 'my:el-get-packages p)))
-
-;; (setq my:el-get-packages
-;;       (append
-;;        my:el-get-packages
-;;        (loop for src in el-get-sources collect (el-get-source-name src))))
-
-
-
-
-;; (let* ((ecb-library
-;;         (concat marcel-lisp-dir "/ecb-cvs/ecb")))
-;;   (when (file-exists-p ecb-library)
-;;     (add-to-list 'load-path ecb-library)))
-
 
 (defun my-load-python ()
   (interactive)
-  (let* ((python-setup (concat marcel-lisp-dir  "/elpy-init.el"))
-         (anaconda-setup (concat marcel-lisp-dir  "/anaconda-init.el")))
+  (let* ((python-setup (concat marcel-lisp-dir  "elpy-init.el"))
+         (anaconda-setup (concat marcel-lisp-dir  "anaconda-init.el")))
     (when (file-exists-p python-setup)
       (load-file python-setup))
     ;;(when (file-exists-p anaconda-setup)
@@ -1020,25 +968,25 @@
 
 (defun my-load-helm ()
   (interactive)
-  (let* ((helm-setup (concat marcel-lisp-dir  "/helm-init.el")))
+  (let* ((helm-setup (concat marcel-lisp-dir  "helm-init.el")))
     (when (file-exists-p helm-setup)
       (load-file helm-setup))))
 
 (defun my-load-bookmarks ()
   (interactive)
-  (let* ((helm-setup (concat marcel-lisp-dir  "/visual-bookmarks-init.el")))
+  (let* ((helm-setup (concat marcel-lisp-dir  "visual-bookmarks-init.el")))
     (when (file-exists-p helm-setup)
       (load-file helm-setup))))
 
 (defun my-load-evil ()
   (interactive)
-  (let* ((evil-setup (concat marcel-lisp-dir  "/evil-init.el")))
+  (let* ((evil-setup (concat marcel-lisp-dir  "evil-init.el")))
     (when (file-exists-p evil-setup)
       (load-file evil-setup))))
 
 (defun my-load-treemacs ()
   (interactive)
-  (let* ((init-setup (concat marcel-lisp-dir  "/treemacs-init.el")))
+  (let* ((init-setup (concat marcel-lisp-dir  "treemacs-init.el")))
     (when (file-exists-p init-setup)
       (load-file init-setup))))
 
@@ -1048,13 +996,13 @@
 
 (defun my-load-slime ()
   (interactive)
-  (let* ((slime-library (concat marcel-lisp-dir  "/slime/")))
+  (let* ((slime-library (concat marcel-lisp-dir  "slime/")))
     (when (file-exists-p slime-library)
       (add-to-list 'load-path slime-library)
       (use-package slime-autoloads)
       (eval-after-load "slime"
         '(progn
-           (add-to-list 'load-path (concat marcel-lisp-dir "/slime/contrib"))
+           (add-to-list 'load-path (concat marcel-lisp-dir "slime/contrib"))
            ;;(slime-setup '(slime-fancy slime-banner slime-repl slime-autodoc  slime-typeout-frame))
            (slime-setup '(slime-repl))
            (setq slime-complete-symbol*-fancy t)
@@ -1075,7 +1023,7 @@
 (use-package recentf
   :init
   (progn
-    (setq recentf-save-file (concat marcel-lisp-dir "/recentf-" machine-nickname))
+    (setq recentf-save-file (concat marcel-lisp-dir "recentf-" machine-nickname))
     (setq recentf-auto-cleanup 'never)
     (recentf-mode 1)
     (run-at-time nil (* 20 60) 'recentf-save-list)
@@ -1084,7 +1032,7 @@
     ;;(global-set-key [?\e ?\M-x] 'lacarte-execute-menu-command)
     ;;(global-set-key (kbd "C-x C-r") 'icicle-recent-file)
     (global-set-key (kbd "C-x C-r") 'recentf-open-files)
-    (add-to-list 'recentf-exclude (concat marcel-lisp-dir "/elpa"))
+    (add-to-list 'recentf-exclude (concat marcel-lisp-dir "elpa"))
     (add-to-list 'recentf-exclude  ".*-autoloads\\.el\\'")
     (add-to-list 'recentf-exclude ".cache")
     (add-to-list 'recentf-exclude ".cask")
@@ -1104,7 +1052,6 @@
   :commands (undo-tree-undo undo-tree-visualize)
   :diminish "UNDO"
   :init
-  ;; (global-undo-tree-mode)
   (setq undo-tree-visualizer-timestamps t)
   (setq undo-tree-visualizer-diff t)
   (let ((undo-dir (concat user-cache-directory "undo")))
@@ -1156,7 +1103,7 @@ file to write to."
 (use-package savehist
   :init
   (progn
-    (setq savehist-file (concat marcel-lisp-dir "/savehistory-" machine-nickname))
+    (setq savehist-file (concat marcel-lisp-dir "savehistory-" machine-nickname))
     (savehist-mode 1)))
 
 
@@ -1271,7 +1218,7 @@ file to write to."
   :init
   (save-place-mode 1)
   (setq save-place-forget-unreadable-files nil)
-  (setq save-place-file (concat marcel-lisp-dir "/places-" machine-nickname)))
+  (setq save-place-file (concat marcel-lisp-dir "places-" machine-nickname)))
 
 
 
@@ -1280,10 +1227,10 @@ file to write to."
   :diminish (yas-minor-mode . "")
   :init
   ;; (setq yas-snippet-dirs
-  ;;       (list (concat marcel-lisp-dir "/el-get/yasnippet/snippets")
-  ;;             (concat marcel-lisp-dir "/el-get/yasnippet-snippets")
-  ;;             (concat marcel-lisp-dir "/el-get/yasnippets")
-  ;;             (concat marcel-lisp-dir "/snippets")
+  ;;       (list (concat marcel-lisp-dir "el-get/yasnippet/snippets")
+  ;;             (concat marcel-lisp-dir "el-get/yasnippet-snippets")
+  ;;             (concat marcel-lisp-dir "el-get/yasnippets")
+  ;;             (concat marcel-lisp-dir "snippets")
   ;;             ))
   (yas-global-mode 1)
   )
@@ -1433,8 +1380,8 @@ file to write to."
 
 ;; Replace Strings with Regexes
 (use-package visual-regexp
-    :bind (("A-%" . vr/replace)
-           ("M-%" . vr/query-replace)))
+  :bind (("A-%" . vr/replace)
+         ("M-%" . vr/query-replace)))
 
 
 ;;(use-package auto-complete-config)
@@ -1583,7 +1530,7 @@ file to write to."
 ;; ;; ;;       (smex-initialize)
 ;; ;; ;;       (global-set-key (kbd "M-x") 'smex)
 ;; ;; ;;       (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; ;; ;;       (setq smex-save-file (concat marcel-lisp-dir "/smex-items-" machine-nickname)))         ; don't save state to "~/.smex-items"
+;; ;; ;;       (setq smex-save-file (concat marcel-lisp-dir "smex-items-" machine-nickname)))         ; don't save state to "~/.smex-items"
 ;; ;; ;;   ;;(icomplete-mode t)
 ;; ;; ;;   )
 ;; ;; ;;---------------------------------------------
@@ -1830,7 +1777,7 @@ file to write to."
 ;; file and jump to node.
 (setq-default neo-smart-open t)
 ;; change root automatically when running `projectile-switch-project`
-(use-package projectile :ensure t :diminish projectile-mode)
+(use-package projectile :ensure t :diminish "PRJ")
 (setq projectile-switch-project-action 'neotree-projectile-action)
 (setq neo-theme (if window-system 'icons 'nerd)) ; 'classic, 'nerd, 'ascii, 'arrow
 (setq neo-vc-integration '(face char))
@@ -2316,10 +2263,10 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (defun my-load-modeline ()
   (interactive)
   (message "Loading telephone line mode line")
-  ;;(load-file (concat marcel-lisp-dir  "/becker-mode-line-evil-mode.el"))
-  (load-file (concat marcel-lisp-dir  "/telephone-line-mode-line.el"))
+  ;;(load-file (concat marcel-lisp-dir  "becker-mode-line-evil-mode.el"))
+  (load-file (concat marcel-lisp-dir  "telephone-line-mode-line.el"))
   (message "Loading header line")
-  (load-file (concat marcel-lisp-dir  "/header-line.el"))
+  (load-file (concat marcel-lisp-dir  "header-line.el"))
   ;;(winum--install-mode-line)
   )
 
@@ -2417,7 +2364,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 (defun my-load-latex ()
   (interactive)
-  (let* ((latex-setup (concat marcel-lisp-dir  "/latex-init.el")))
+  (let* ((latex-setup (concat marcel-lisp-dir  "latex-init.el")))
     (when (file-exists-p latex-setup)
       (load-file latex-setup))))
 (my-load-latex)
@@ -2470,25 +2417,33 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 ;; ;; ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; [ CTAGS ]
 
-;; ;; ;;(use-package ctags-update)
-;; ;; ;;(ctags-update-minor-mode 1)
-;; ;; (setq path-to-ctags
-;; ;;       (if running-ms-windows
-;; ;;           "etags.exe"
-;; ;;         "etags"))
+(use-package ctags-update)
+(ctags-auto-update-mode 1)
+(setq path-to-ctags
+      (if running-ms-windows
+          "etags.exe"
+        "/usr/local/bin/ctags"))
 
-;; ;; (setq default-tags-file
-;; ;;       (if running-ms-windows "D:/Source/TAGS" (expand-file-name "~/src/TAGS")))
+(setq default-tags-file
+      (if running-ms-windows "D:/Source/TAGS" (expand-file-name "~/src/TAGS")))
+(setq tags-table-list (list default-tags-file (expand-file-name "~/src/rspace-eclipse/scharp/TAGS")
+                            ))
+
+(defun my-create-ctags (dir-name)
+  "Create tags file."
+  (interactive "DDirectory: ")
+  (shell-command
+   (format "%s --append -f %s -R %s" path-to-ctags default-tags-file (directory-file-name dir-name))))
 
 
-;; ;; (defun create-tags (dir-name)
-;; ;;   "Create tags file."
-;; ;;   (interactive "DDirectory: ")
-;; ;;   (shell-command
-;; ;;    (format "%s --append -f %s -R %s" path-to-ctags default-tags-file (directory-file-name dir-name))))
-
+(defun create-etags (dir-name)
+  "Create tags file."
+  (interactive "DDirectory: ")
+  (eshell-command
+   (format "find %s -type f -name \"*.java\" | etags -" dir-name)))
 
 (message "Loading doremi")
+(use-package hexrgb)
 (require 'doremi)
 (require 'doremi-frm)
 (require 'doremi-cmd)
@@ -2553,9 +2508,9 @@ frames with exactly two windows."
 (setq split-height-threshold 0)
 (setq split-width-threshold nil)
 
-;;  C-x h runs the command mark-whole-buffer
-;;    C-M-\ runs the command indent-region
-;;You can also insert something like:
+;; C-x h runs the command mark-whole-buffer
+;; C-M-\ runs the command indent-region
+;; You can also insert something like:
 (defun my-indent-buffer ()
   (interactive)
   (save-excursion
@@ -2570,7 +2525,7 @@ frames with exactly two windows."
 (message "menu-bar+")
 (require 'menu-bar+)
 
-;; (let ((menu-bar+-lib (concat marcel-lisp-dir "/el-get/menu-bar+")))
+;; (let ((menu-bar+-lib (concat marcel-lisp-dir "el-get/menu-bar+")))
 ;;   (when (file-exists-p menu-bar+-lib)
 ;;     (add-to-list 'load-path menu-bar+-lib)
 ;;     (eval-after-load "menu-bar" '(use-package menu-bar+))))
@@ -2665,13 +2620,31 @@ by using nxml's indentation rules."
 (c-add-style "ECLIPSE" eclipse-java-style)
 (customize-set-variable 'c-default-style (quote ((java-mode . "eclipse") (awk-mode . "awk") (other . "gnu"))))
 
+(use-package company-emacs-eclim
+  :config
+  (company-emacs-eclim-setup))
 
-(setq company-eclim-auto-save t)
-(setq company-eclim-executable
-      "~/opt/eclipse/plugins/org.eclim_1.4.5/bin/eclim")
-(defun my-java-mode-init ()
-  (setq company-backend 'company-eclim))
-(add-hook 'java-mode-hook 'my-java-mode-init)
+(use-package ansi-color
+  :config
+  (defun colorize-compilation-buffer ()
+    (toggle-read-only)
+    (ansi-color-apply-on-region compilation-filter-start (point))
+    (toggle-read-only))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
+
+(use-package eclim
+  :defer t
+  :config
+  (require 'eclimd)
+  (setq eclimd-autostart t)
+  (setq company-eclim-auto-save t)
+  (setq company-eclim-executable "/Applications/eclipse-photon/Eclipse.app/Contents/Eclipse/plugins/org.eclim_2.8.0/bin/eclim")
+  (setq eclim-eclipse-dirs '("/Applications/eclipse-photon/Eclipse.app/Contents/Eclipse"))
+  (setq eclim-executable "/Applications/eclipse-photon/Eclipse.app/Contents/Eclipse/plugins/org.eclim_2.8.0/bin/eclim")
+  (defun my-java-mode-init ()
+    (eclim-mode t)
+    (setq company-backend 'company-eclim))
+  (add-hook 'java-mode-hook 'my-java-mode-init))
 
 
 
@@ -2908,8 +2881,8 @@ by using nxml's indentation rules."
 (setq  scroll-conservatively 10000)
 (setq  scroll-preserve-screen-position 1)
 (setq auto-window-vscroll nil)
-                                        ;(setq  smooth-scroll/vscroll-step-size 1)
-                                        ;(smooth-scroll-mode 1)
+;;(setq  smooth-scroll/vscroll-step-size 1)
+;;(smooth-scroll-mode 1)
 
 
 (message "Loading rainbow-delimiters")
@@ -2952,7 +2925,7 @@ by using nxml's indentation rules."
                              (popup-menu 'yank-menu))))
 
 ;; ;; (message "Loading hexgrb")
-(use-package hexrgb)
+
 ;;(message "Loading one-key")
 ;;(use-package one-key)
 ;;(message "Loading one-key-dir")
@@ -2970,7 +2943,7 @@ by using nxml's indentation rules."
 ;; (use-package powerline)
 
 ;; "Loading custom file")
-(setq custom-file (concat marcel-lisp-dir "/custom.el"))
+(setq custom-file (concat marcel-lisp-dir "custom.el"))
 (load custom-file 'noerror)
 
 
@@ -3090,10 +3063,11 @@ by using nxml's indentation rules."
 (my-load-treemacs)
 (my-load-bookmarks)
 
+
 (use-package outline-magic)
-(add-hook 'outline-mode-hook
-          (lambda ()
-            (require 'outline-cycle)))
+;; (add-hook 'outline-mode-hook
+;;           (lambda ()
+;;             (require 'outline-cycle)))
 
 (add-hook 'outline-minor-mode-hook
           (lambda ()
@@ -3132,7 +3106,7 @@ by using nxml's indentation rules."
 (use-package visible-mark
   :ensure t
   :config
-  (global-visible-mark-mode 1) ;; or add (visible-mark-mode) to specific hooks
+  (global-visible-mark-mode -1) ;; or add (visible-mark-mode) to specific hooks
   (setq visible-mark-max 2)
   (setq visible-mark-faces `(visible-mark-face1 visible-mark-face2)))
 
@@ -3144,3 +3118,6 @@ by using nxml's indentation rules."
     (interactive)
     (display-buffer ilog-buffer-name))
   (bind-key "A-l" 'open-interaction-log))
+
+
+(setq paradox-github-token '76d271dd2c6e2f893557ba978663af6cc65d3087)
