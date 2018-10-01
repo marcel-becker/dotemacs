@@ -1,4 +1,4 @@
-;;; Time-stamp: "2018-09-27 Thu 11:53 marcelbecker on kestrelimac"
+;;; Time-stamp: "2018-09-27 Thu 16:02 marcelbecker on kestrelimac"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -260,6 +260,9 @@
 
   (add-to-list 'default-frame-alist frame-left)
   (add-to-list 'initial-frame-alist frame-left)
+
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
   (message  "Frame alist %s" initial-frame-alist)
   (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
