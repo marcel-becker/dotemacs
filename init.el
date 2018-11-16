@@ -1,4 +1,4 @@
-;;; Time-stamp: "2018-09-27 Thu 16:02 marcelbecker on kestrelimac"
+;;; Time-stamp: "2018-11-13 Tue 12:25 marcelbecker on kestrelimac"
 ;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2623,9 +2623,9 @@ by using nxml's indentation rules."
 (c-add-style "ECLIPSE" eclipse-java-style)
 (customize-set-variable 'c-default-style (quote ((java-mode . "eclipse") (awk-mode . "awk") (other . "gnu"))))
 
-(use-package company-emacs-eclim
-  :config
-  (company-emacs-eclim-setup))
+;; (use-package company-emacs-eclim
+;;   :config
+;;   (company-emacs-eclim-setup))
 
 (use-package ansi-color
   :config
@@ -2635,19 +2635,19 @@ by using nxml's indentation rules."
     (toggle-read-only))
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
 
-(use-package eclim
-  :defer t
-  :config
-  (require 'eclimd)
-  (setq eclimd-autostart t)
-  (setq company-eclim-auto-save t)
-  (setq company-eclim-executable "/Applications/eclipse-photon/Eclipse.app/Contents/Eclipse/plugins/org.eclim_2.8.0/bin/eclim")
-  (setq eclim-eclipse-dirs '("/Applications/eclipse-photon/Eclipse.app/Contents/Eclipse"))
-  (setq eclim-executable "/Applications/eclipse-photon/Eclipse.app/Contents/Eclipse/plugins/org.eclim_2.8.0/bin/eclim")
-  (defun my-java-mode-init ()
-    (eclim-mode t)
-    (setq company-backend 'company-eclim))
-  (add-hook 'java-mode-hook 'my-java-mode-init))
+;; (use-package eclim
+;;   :defer t
+;;   :config
+;;   (require 'eclimd)
+;;   (setq eclimd-autostart t)
+;;   (setq company-eclim-auto-save t)
+;;   (setq company-eclim-executable "/Applications/eclipse-photon/Eclipse.app/Contents/Eclipse/plugins/org.eclim_2.8.0/bin/eclim")
+;;   (setq eclim-eclipse-dirs '("/Applications/eclipse-photon/Eclipse.app/Contents/Eclipse"))
+;;   (setq eclim-executable "/Applications/eclipse-photon/Eclipse.app/Contents/Eclipse/plugins/org.eclim_2.8.0/bin/eclim")
+;;   (defun my-java-mode-init ()
+;;     (eclim-mode t)
+;;     (setq company-backend 'company-eclim))
+;;   (add-hook 'java-mode-hook 'my-java-mode-init))
 
 
 
