@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-04-04 Thu 19:10 marcelbecker on beckermac.local"
+;;; Time-stamp: "2019-04-05 Fri 15:37 marcelbecker on kestrelimac"
 ;;;
 
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -828,7 +828,7 @@
 (setq my-el-get-packages
       '(
         diff+
-        dired+
+        ;;dired+
         dired-column-widths
         dired-details
         dired-details+
@@ -846,7 +846,7 @@
         file-template
         frame-cmds
         frame-fns
-        helm-anything
+        ;;helm-anything
         help-fns+
         menu-bar+
         pycomplete+
@@ -2377,7 +2377,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
       (load-file latex-setup))))
 
 (my-load-latex)
-(latex-preview-pane-enable)
+
 
 
 (setq TeX-view-program-list
@@ -2474,7 +2474,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
    (format "find %s -type f -name \"*.java\" | etags -" dir-name)))
 
 (message "Loading doremi")
-(use-package hexrgb)
+(require 'hexrgb)
 (require 'doremi)
 (require 'doremi-frm)
 (require 'doremi-cmd)
