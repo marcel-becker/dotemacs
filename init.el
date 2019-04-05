@@ -1,5 +1,10 @@
-;;; Time-stamp: "2018-11-13 Tue 12:25 marcelbecker on kestrelimac"
+;;; Time-stamp: "2019-04-04 Thu 19:10 marcelbecker on beckermac.local"
 ;;;
+
+;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
+
+;;(load-file "profile-dotemacs.el")
+;;(profile-dotemacs)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; set the load path
@@ -27,6 +32,8 @@
 ;; (if (not (eq user-init-file (expand-file-name "~/.emacs.d")))
 ;;     (load-file user-init-file))
 
+
+(setq gc-cons-threshold 100000000)
 (message  (concat "Loading " load-file-name))
 
 ;; Setting the running environment
@@ -711,7 +718,7 @@
         undo-tree
         unfill
         ;;use-package
-        ;;use-package-el-get
+        use-package-el-get
         uuidgen
         vi-tilde-fringe
         virtualenvwrapper
@@ -1052,6 +1059,7 @@
 (message "Loading undo-tree")
 ;;Graphical undo
 (use-package undo-tree
+  :defer t
   :commands (undo-tree-undo undo-tree-visualize)
   :diminish "UNDO"
   :init
@@ -1383,6 +1391,7 @@ file to write to."
 
 ;; Replace Strings with Regexes
 (use-package visual-regexp
+  :defer t
   :bind (("A-%" . vr/replace)
          ("M-%" . vr/query-replace)))
 
@@ -1726,12 +1735,13 @@ file to write to."
 
 
 (message "Loading swiper")
-(use-package swiper)
-(use-package ivy :diminish "")
-(ivy-mode 1)
-(setq ivy-use-virtual-buffers t)
-(global-set-key (kbd "C-c C-s") 'swiper-helm)
-(global-set-key (kbd "C-c C-r") 'ivy-resume)
+(use-package swiper :defer t)
+(use-package ivy :diminish "" :defer t
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (global-set-key (kbd "C-c C-s") 'swiper-helm)
+  (global-set-key (kbd "C-c C-r") 'ivy-resume))
 ;; (global-set-key (kbd "M-x") 'counsel-M-x)
 ;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
 ;; (global-set-key (kbd "<f1> f") 'counsel-describe-function)
@@ -1759,8 +1769,7 @@ file to write to."
 (message "Loading and configuring neotree")
 
 (use-package all-the-icons)
-(use-package neotree)
-
+(use-package neotree :defer t)
 (global-set-key [f8] 'neotree-toggle)
 
 
@@ -2338,11 +2347,6 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;;(setq TeX-view-program-selection '((output-pdf "Evince")))
 ;;(setq TeX-output-view-style '("^pdf$" "." "C:/Program Files (x86)/SumatraPDF/SumatraPDF.exe %o"))
 
-(setq TeX-view-program-list
-      '(;;("SumatraPDF" "\"C:/Program Files (x86)/SumatraPDF/SumatraPDF.exe\" -reuse-instance %o")
-        ;;("Okular" "okular --unique %o#src:%n%b")
-        ("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
-;;("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline %q")))
 
 
 (add-hook 'LaTeX-mode-hook
@@ -2351,18 +2355,19 @@ https://github.com/jaypei/emacs-neotree/pull/110"
              '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
                :help "Run latexmk on file")
              TeX-command-list)))
-(add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
+(add-hook 'TeX-mode-hook
+          '(lambda ()
+             (setq TeX-command-default "latexmk")
+             (setq TeX-view-program-selection
+                   (cond (running-ms-windows
+                          '((output-pdf "SumatraPDF")
+                            (output-dvi "Yap")))
+                         (running-linux
+                          '((output-pdf "Okular")
+                            (output-dvi "Okular")))
+                         (running-macos
+                          '((output-pdf "Skim")))))))
 
-
-(setq TeX-view-program-selection
-      (cond (running-ms-windows
-             '((output-pdf "SumatraPDF")
-               (output-dvi "Yap")))
-            (running-linux
-             '((output-pdf "Okular")
-               (output-dvi "Okular")))
-            (running-macos
-             '((output-pdf "Skim")))))
 
 
 (defun my-load-latex ()
@@ -2370,8 +2375,31 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (let* ((latex-setup (concat marcel-lisp-dir  "latex-init.el")))
     (when (file-exists-p latex-setup)
       (load-file latex-setup))))
+
 (my-load-latex)
 (latex-preview-pane-enable)
+
+
+(setq TeX-view-program-list
+      '(;;("SumatraPDF" "\"C:/Program Files (x86)/SumatraPDF/SumatraPDF.exe\" -reuse-instance %o")
+        ;;("Okular" "okular --unique %o#src:%n%b")
+        ("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+;;("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline %q")))
+
+
+;; (setq TeX-view-program-selection
+;;       (cond (running-ms-windows
+;;              '((output-pdf "SumatraPDF")
+;;                (output-dvi "Yap")))
+;;             (running-linux
+;;              '((output-pdf "Okular")
+;;                (output-dvi "Okular")))
+;;             (running-macos
+;;              '((output-pdf "Skim")))))
+
+
+
+
 
 ;; (eval-after-load "tex"
 ;;   (progn
@@ -2981,6 +3009,7 @@ by using nxml's indentation rules."
 (message "Loading git stuff")
 (use-package git-gutter+
   :ensure t
+  :defer t
   :init (global-git-gutter+-mode)
   :config (progn
             (define-key git-gutter+-mode-map (kbd "C-x n") 'git-gutter+-next-hunk)

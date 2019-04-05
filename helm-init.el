@@ -35,7 +35,7 @@
 (autoload 'helm-esh-pcomplete  "helm-eshell"    t)
 
 (setq
- helm-adaptive-history-file (concat marcel-lisp-dir "/helm-history")
+ helm-adaptive-history-file (concat marcel-lisp-dir "helm-history")
  helm-buffers-fuzzy-matching t  ; fuzzy matching buffer names when non-nil useful in helm-mini that lists buffers
  helm-recentf-fuzzy-match t
  helm-M-x-fuzzy-match t

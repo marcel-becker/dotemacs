@@ -51,8 +51,13 @@
 ;;
 ;;    emacs -Q -l <PATH>/profile-dotemacs.el -f profile-dotemacs
 ;;
-;; With <PATH> being the path to where this file resides.
+;; with <PATH> being the path to where this file resides.
 
+
+;;emacs -Q -l git/profile-dotemacs/profile-dotemacs.el \
+;;    --eval "(setq profile-dotemacs-file \
+;;        (setq load-file-name \"$~/Dropbox/.emacs.d/init.el)\"))" \
+;;    -f profile-dotemacs
 ;;; Caveats (thanks to Raffaele Ricciardi for reporting those):
 
 ;; - The usual `--debug-init' for debugging your init file won't work
@@ -77,7 +82,7 @@
 
 ;; User variables
 
-(defvar profile-dotemacs-file "/Users/marcelbecker/Dropbox/.emacs.d/init.el"
+(defvar profile-dotemacs-file "~/.emacs"
   "File to be profiled.")
 
 (defvar profile-dotemacs-low-percentage 3
@@ -91,7 +96,7 @@ grayed out.")
   "Background color to indicate percentage of total time.")
 
 (defface profile-dotemacs-low-percentage-face
-  '((((background dark)) (:foreground "white"))
+  '((((background dark)) (:foreground "gray25"))
     (t (:foreground "gray75")))
   "Face for sexps below `profile-dotemacs-low-percentage'.")
 
