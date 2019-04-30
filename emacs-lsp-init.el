@@ -38,3 +38,10 @@
   (add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
   (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
   (setq lsp-java--workspace-folders (list "~/src/rspace-eclipse/scharp")))
+
+
+(use-package lsp-python-ms
+  :defer 0.3
+  :custom
+  (lsp-python-ms-dir (expand-file-name "~/.emacs.d/elisp/python-language-server/output/bin/Release/"))
+  (lsp-python-ms-executable "~/.emacs.d/elisp/python-language-server/output/bin/Release/linux-x64/publish/Microsoft.Python.LanguageServer"))

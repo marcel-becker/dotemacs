@@ -1,39 +1,73 @@
 ;;(package-initialize)
 
+
+(display-init-load-time-checkpoint "Loading helm")
 (use-package helm :ensure t :diminish "H")
+(display-init-load-time-checkpoint "Loading helm config")
 (use-package helm-config :ensure helm :demand t :diminish "H")
 
+(display-init-load-time-checkpoint "Loading helm ag")
 (use-package    helm-ag :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm snippets")
 (use-package    helm-c-yasnippet :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm company")
 (use-package    helm-company :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm descbinds")
 (use-package    helm-descbinds :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm gitignore")
 (use-package    helm-gitignore :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm mode-manager")
 (use-package    helm-mode-manager :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm projectile")
 (use-package    helm-projectile :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm pydoc")
 (use-package    helm-pydoc :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm swoop")
 (use-package    helm-swoop :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm themes")
 (use-package    helm-themes :ensure t)
 
-;(use-package    helm-ls-git :ensure t)
+;;(use-package    helm-ls-git :ensure t)
+(display-init-load-time-checkpoint "Loading helm git-files")
 (use-package    helm-git-files :ensure t)
+
+(display-init-load-time-checkpoint "Loading helm commands")
 (use-package    helm-helm-commands :ensure t)
 
+(display-init-load-time-checkpoint "Loading helm flx")
 (use-package helm-flx
   :ensure t
   :init
   (setq helm-flx-for-helm-find-files nil)
   (helm-flx-mode 1))
 
+
+(display-init-load-time-checkpoint "Loading helm etags")
 (use-package helm-etags-plus
   :ensure t
   :config
- (global-set-key (kbd "M-.") 'helm-etags-plus-select))
+  (global-set-key (kbd "M-.") 'helm-etags-plus-select))
+
+
+(display-init-load-time-checkpoint "Loading helm bibtex")
+(use-package helm-bibtex
+  :defer t)
 
 
 (autoload 'helm-descbinds      "helm-descbinds" t)
 (autoload 'helm-eshell-history "helm-eshell"    t)
 (autoload 'helm-esh-pcomplete  "helm-eshell"    t)
 
+(display-init-load-time-checkpoint "Configuring helm")
 (setq
  helm-adaptive-history-file (concat marcel-lisp-dir "helm-history")
  helm-buffers-fuzzy-matching t  ; fuzzy matching buffer names when non-nil useful in helm-mini that lists buffers
@@ -76,11 +110,21 @@
 (global-set-key (kbd "M-s s") 'helm-ag)
 
 
+;; use mdfind for mac
+(setq helm-locate-command
+      (case system-type
+        ('gnu/linux "locate -i -r %s")
+        ('berkeley-unix "locate -i %s")
+        ('windows-nt "es %s")
+        ('darwin "mdfind -name %s %s")
+        (t "locate %s")))
+
 
 (global-set-key (kbd "C-x b")   'helm-mini)
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (global-set-key (kbd "C-x C-m") 'helm-M-x)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-x f")   'helm-for-files)
 (global-set-key (kbd "C-x C-r") 'helm-recentf)
 (global-set-key (kbd "C-x r l") 'helm-filtered-bookmarks)
 (global-set-key (kbd "M-y")     'helm-show-kill-ring)
@@ -149,28 +193,31 @@
                                          (remove 'helm-source-projectile-files-list
                                                  helm-projectile-sources-list)))
 
-
 (define-key projectile-mode-map (kbd "C-c p /")
   #'(lambda ()
       (interactive)
       (helm-ag (projectile-project-root))))
 
 
+(display-init-load-time-checkpoint "Loading helm org")
 (require 'org)
 (define-key org-mode-map (kbd "C-x c o h") #'helm-org-headlines)
+(display-init-load-time-checkpoint "Done loading helm org")
+;;(add-to-list 'helm-completing-read-handlers-alist '(find-file))
+;;(add-to-list 'helm-completing-read-handlers-alist '(find-file-other-window))
 
-;(add-to-list 'helm-completing-read-handlers-alist '(find-file))
-;(add-to-list 'helm-completing-read-handlers-alist '(find-file-other-window))
 
-
-(projectile-mode)
+(display-init-load-time-checkpoint "Loading helm projectile mode")
+(projectile-global-mode)
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
-
+(setq projectile-switch-project-action 'helm-projectile)
+(display-init-load-time-checkpoint "Done loading helm projectile mode")
 
 
 (define-key company-mode-map (kbd "C-:") 'helm-company)
 (define-key company-active-map (kbd "C-:") 'helm-company)
 
-
+(display-init-load-time-checkpoint "Setting helm mode on")
 (helm-mode 1)
+(display-init-load-time-checkpoint "Done setting helm mode on")

@@ -71,7 +71,7 @@
         ("cite*" "[{")
         ("parencite*" "[{")
         ("supercite" "[{")
-        ; Qualified citation lists
+                                        ; Qualified citation lists
         ("cites" "[{")
         ("Cites" "[{")
         ("parencites" "[{")

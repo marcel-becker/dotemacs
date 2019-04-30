@@ -2,8 +2,7 @@
 
 (use-package unicode-fonts
   :config
-  (unicode-fonts-setup)
-)
+  (unicode-fonts-setup))
 
 
 
@@ -37,17 +36,17 @@
                     :background "Blue2"
                     :inverse-video nil
                     :weight 'bold
-                   ;; :height (* (window-font-height) 10)
+                    ;; :height (* (window-font-height) 10)
                     :box '(:line-width 6 :color "orange" :style nil))
 
- (set-face-attribute 'mode-line-inactive nil
-;;                     ;;:foreground "Orange" ;;Yellow"
-;;                     :background "gray22"
-;;                     :inverse-video nil
-;;                     ;;:weight 'bold
-;;                     ;;:box '(:line-width 6 :color "orange" :style nil)
-                     :box nil
-                     )
+(set-face-attribute 'mode-line-inactive nil
+                    ;;                     ;;:foreground "Orange" ;;Yellow"
+                    ;;                     :background "gray22"
+                    ;;                     :inverse-video nil
+                    ;;                     ;;:weight 'bold
+                    ;;                     ;;:box '(:line-width 6 :color "orange" :style nil)
+                    :box nil
+                    )
 
 
 
@@ -59,9 +58,9 @@
                     :box '(:line-width 6 :color "orange" :style nil))
 
 (set-face-attribute 'telephone-line-evil-visual nil :background "light sea green")
-                   
-                   
- 
+
+
+
 
 (make-face 'mode-line-mode-face)
 (make-face 'mode-line-folder-face)
@@ -148,7 +147,7 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
 
 (telephone-line-defsegment my-telephone-line-window-number-segment (&optional in-unicode)
   (when (bound-and-true-p winum-mode)
-        (propertize (get-window-number) 'face 'winum-face)))
+    (propertize (get-window-number) 'face 'winum-face)))
 
 
 
@@ -180,8 +179,8 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
                    ))
         (nil    . nil)
         (accent    . (telephone-line-minor-mode-segment
-                   ;;telephone-line-buffer-segment
-                   ))
+                      ;;telephone-line-buffer-segment
+                      ))
         (accent . nil)
         (nil    . nil)
         ))

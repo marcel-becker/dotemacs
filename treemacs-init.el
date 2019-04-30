@@ -52,7 +52,7 @@
         ;;("M-0"       . treemacs-select-window)
         ("A-t 1"   . treemacs-delete-other-windows)
         ("A-t t"   . treemacs)
-       ;; ("S-f8"   . treemacs)
+        ;; ("S-f8"   . treemacs)
         ("A-t B"   . treemacs-bookmark)
         ("A-t C-t" . treemacs-find-file)
         ("A-t M-t" . treemacs-find-tag)
@@ -65,6 +65,8 @@
 (use-package treemacs-projectile
   :after treemacs projectile
   :ensure t
+  :config
+  (setq treemacs-header-function #'treemacs-projectile-create-header)
   :bind (([M-f8] . treemacs-projectile)
          :map projectile-command-map
          ("h" . treemacs-projectile)))
