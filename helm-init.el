@@ -107,7 +107,7 @@
 (global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-h i") 'helm-info-emacs)
 (global-set-key (kbd "C-h b") 'helm-descbinds)
-(global-set-key (kbd "M-s s") 'helm-ag)
+(global-set-key (kbd "C-h A") 'helm-ag)
 
 
 ;; use mdfind for mac

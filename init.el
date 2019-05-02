@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-04-30 Tue 15:58 marcelbecker on kestrelimac"
+;;; Time-stamp: "2019-04-30 Tue 17:14 marcelbecker on kestrelimac"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -783,19 +783,7 @@
         ))
 
 
-;; (dolist (p my-elpa-packages)
-;;   (progn
-;;     (when (not (package-installed-p p))
-;;       (message "installing package %s" p)
-;;       (package-install p))
-;;     (message "loading package %s" p)
-;;     (require p)
-;;     ))
 
-
-;;(package-initialize)
-;;(message "Loading use-package")
-;;(require 'use-package)
 
 (use-package diminish :ensure t :diminish "")
 
@@ -878,23 +866,6 @@
 (use-package diff+
   :quelpa (diff+ :fetcher wiki))
 
-;;(require 'dired-x)
-
-;; (use-package dired+
-;;   ;;  :quelpa (dired+ :fetcher url  :url "https://www.emacswiki.org/emacs/download/dired+.el")
-;;   :quelpa (dired+ :fetcher wiki)
-;;   :defer t
-;;   :init
-;;   (setq diredp-hide-details-initially-flag nil)
-;;   (setq diredp-hide-details-propagate-flag nil)
-;;   :config
-;;   (diredp-toggle-find-file-reuse-dir 1))
-
-
-
-
-;; (use-package hexrgb
-;;     :quelpa (hexrgb :fetcher wiki))
 
 (display-init-load-time-checkpoint "Loading faces+")
 (use-package faces+
@@ -998,16 +969,13 @@
                 (auto-dim-other-buffers-mode t)))))
 
 
-;;(message "Loading diminish")
-;;(use-package diminish)  ;; if you use :diminish
 
 (display-init-load-time-checkpoint "Loading bind-key")
-;;(message "Loading bind-key")
 (use-package bind-key)  ;; if you use any :bind variant
 
 
 (display-init-load-time-checkpoint "Loading restart-emacs")
-;;(message "restart emacs")
+
 (use-package restart-emacs
   :commands restart-emacs)
 
@@ -1123,46 +1091,41 @@
       (load-file init-file))))
 
 (display-init-load-time-checkpoint "Loading dired extensions")
-(my-load-init-file "init-dired.el")
-
+(defun my-load-dired ()
+  (interactive)
+  (my-load-init-file "init-dired.el"))
+(my-load-dired)
 
 (display-init-load-time-checkpoint "Loading hydra definitions")
-(my-load-init-file "hydra-init.el")
+(defun my-load-hydra ()
+  (interactive)
+  (my-load-init-file "hydra-init.el"))
+(my-load-hydra)
 
 
 (defun my-load-python ()
   (interactive)
-  (let* ((python-setup (concat marcel-lisp-dir  "elpy-init.el"))
-         (anaconda-setup (concat marcel-lisp-dir  "anaconda-init.el")))
-    ;;  (when (file-exists-p python-setup)
-    ;;  (load-file python-setup))
-    (when (file-exists-p anaconda-setup)
-      (load-file anaconda-setup))
-    ))
+  ;;  (my-load-init-file "elpy-init.el")
+  (my-load-init-file "anaconda-init.el"))
+
+
 
 (defun my-load-helm ()
   (interactive)
-  (let* ((helm-setup (concat marcel-lisp-dir  "helm-init.el")))
-    (when (file-exists-p helm-setup)
-      (load-file helm-setup))))
+  (my-load-init-file  "helm-init.el"))
+
 
 (defun my-load-bookmarks ()
   (interactive)
-  (let* ((helm-setup (concat marcel-lisp-dir  "visual-bookmarks-init.el")))
-    (when (file-exists-p helm-setup)
-      (load-file helm-setup))))
+  (my-load-init-file "visual-bookmarks-init.el"))
 
 (defun my-load-evil ()
   (interactive)
-  (let* ((evil-setup (concat marcel-lisp-dir  "evil-init.el")))
-    (when (file-exists-p evil-setup)
-      (load-file evil-setup))))
+  (my-load-init-file "evil-init.el"))
 
 (defun my-load-treemacs ()
   (interactive)
-  (let* ((init-setup (concat marcel-lisp-dir  "treemacs-init.el")))
-    (when (file-exists-p init-setup)
-      (load-file init-setup))))
+  (my-load-init-file "treemacs-init.el"))
 
 
 (setenv "WORKON_HOME" "~/PythonEnvs")
@@ -1188,13 +1151,11 @@
 
 
 (display-init-load-time-checkpoint "Loading vline")
-;;(message "Loading vline")
 (use-package vline)
 ;;(require 'col-highlight)
 ;;(require 'tabbar-extension)
 
 (display-init-load-time-checkpoint "Loading recentf")
-;;(message "Loading recentf")
 (use-package recentf
   :init
   (progn
@@ -1219,14 +1180,14 @@
     (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
     (use-package recentf-ext)
     ))
-(display-init-load-time-checkpoint "Done loading recentf stuff")
+
 
 
 ;;(use-package recentf-buffer)
 ;;(use-package redo+)
 
 (display-init-load-time-checkpoint "Loading undo-tree")
-;;(message "Loading undo-tree")
+
 ;;Graphical undo
 (use-package undo-tree
   :defer t
@@ -1280,21 +1241,19 @@ file to write to."
 
 
 (display-init-load-time-checkpoint "Loading savehist")
-;;(message "Loading savehist")
 (use-package savehist
   :init
   (progn
     (setq savehist-file (concat marcel-lisp-dir "savehistory-" machine-nickname))
     (savehist-mode 1)))
-(display-init-load-time-checkpoint "Done loading savehist")
+
 
 (display-init-load-time-checkpoint "Loading unbound")
-;;(message "Loading unbound")
 ;; find convenient unbound keystrokes
 (use-package unbound)                  ; `M-x describe-unbound-keys'
+(use-package free-keys)
 
 (display-init-load-time-checkpoint "Loading switch window")
-;;(message "Loading switch-window")
 (use-package switch-window
   :custom-face
   (switch-window-label ((t (:inherit font-lock-keyword-face :height 3.0))))
@@ -1313,11 +1272,8 @@ file to write to."
 (use-package eyebrowse
   :hook (after-init . eyebrowse-mode))
 
-
-
 ;; save the place in files
 (display-init-load-time-checkpoint "Loading saveplace")
-;;(message "Loading saveplace")
 (use-package saveplace
   :init
   (save-place-mode 1)
@@ -1326,7 +1282,6 @@ file to write to."
 (display-init-load-time-checkpoint "Done loading saveplace")
 
 (display-init-load-time-checkpoint "Loading yasnippet")
-;;(message "Loading yasnippet")
 (use-package yasnippet
   :diminish (yas-minor-mode . "")
   :init
@@ -1341,7 +1296,6 @@ file to write to."
 
 
 (display-init-load-time-checkpoint "Loading anzu")
-;;(message "Loading anzu")
 (use-package anzu
   :init
   (progn
@@ -1352,14 +1306,10 @@ file to write to."
   (define-key isearch-mode-map [remap isearch-query-replace]  #'anzu-isearch-query-replace)
   (define-key isearch-mode-map [remap isearch-query-replace-regexp] #'anzu-isearch-query-replace-regexp))
 
-;; C-x C-j opens dired with the cursor right on the file you're editing
-;;(use-package dired-x)
-
 
 ;;; Keep the highlight color 10% darker than the default background face
 ;;; https://emacs.stackexchange.com/questions/9740/how-to-define-a-good-highlight-face
 (display-init-load-time-checkpoint "Loading color")
-;;(message "Loading color")
 (use-package color)
 ;;(use-package pallet)
 
@@ -1386,26 +1336,25 @@ file to write to."
 
 ;; dim the ignored part of the file name
 (file-name-shadow-mode 1)
-
 ;;Line wrap
 (global-visual-line-mode)
 (setq line-move-visual t) ;; move via visual lines
-(diminish 'visual-line-mode "")
+(diminish 'visual-line-mode "VLine")
 
 
 (display-init-load-time-checkpoint "Loading hlinum")
-;;(message "Loading hlinum")
 (use-package hlinum
   :init
   (hlinum-activate))
 
 
 (display-init-load-time-checkpoint "Loading expand region")
-;;(message "Loading expand-region")
-(use-package expand-region)
-(global-set-key (kbd "C-=") 'er/expand-region)
-(set-face-attribute 'region nil :background "magenta1" :foreground "#ffffff")
 
+(use-package expand-region
+  :config
+  (global-set-key (kbd "C-=") 'er/expand-region))
+
+(set-face-attribute 'region nil :background "magenta1" :foreground "#ffffff")
 (set-face-attribute 'hl-line nil :background "#666666")
 (set-face-attribute 'linum-highlight-face nil :background "#666666")
 
@@ -1438,7 +1387,7 @@ file to write to."
 (display-init-load-time-checkpoint "Loading company")
 (use-package company
   :ensure t
-  :diminish "CMP"
+  :diminish "CIA"
   :bind (("A-." . company-complete)
          ("C-c C-y" . company-yasnippet)
          :map company-active-map
@@ -1477,10 +1426,8 @@ file to write to."
 
 (use-package company-box
   :after company
-  :delight
+  :diminish "CiaBox"
   :hook (company-mode . company-box-mode))
-
-(display-init-load-time-checkpoint "Done loading company")
 
 
 (display-init-load-time-checkpoint "Loading visual-regex")
@@ -1489,15 +1436,6 @@ file to write to."
   :defer t
   :bind (("A-%" . vr/replace)
          ("M-%" . vr/query-replace)))
-
-
-;;(use-package auto-complete-config)
-;;(ac-config-default)
-;;(defadvice auto-complete-mode (around disable-auto-complete-for-python)
-;;  (unless (eq major-mode 'python-mode) ad-do-it))
-;;(ad-activate 'auto-complete-mode)
-
-
 
 ;; ----------------------------------------------------------[Window Number]
 
@@ -1520,13 +1458,6 @@ file to write to."
   :diminish "WN"
   )
 
-;; numbered window shortcuts
-;; (It numbers windows and you can switch them easily with `M-<number>').
-;; (use-package window-numbering
-;;   :init
-;;   (progn
-;;     (window-numbering-mode 1)
-;;     (window-number-meta-mode 1)))
 
 
 (use-package winum
@@ -1561,11 +1492,10 @@ file to write to."
         winum-mode-line-position          1
         winum-ignored-buffers             '(" *which-key*"))
   (winum-mode))
-(display-init-load-time-checkpoint "Done loading winum")
 
-;; ;;Quickly jump between windows using ace-window, I used it frequently and bind it F1.
+
+;; Quickly jump between windows using ace-window, I used it frequently and bind it F1.
 (display-init-load-time-checkpoint "Loading ace-window")
-;;(message "Loading ace-window")
 (use-package ace-window
   :init
   (global-set-key (kbd "<f1>") 'ace-window)
@@ -1602,7 +1532,6 @@ file to write to."
 ;; ;; ;; you enter C-x and wait for the default of 1 second the minibuffer
 ;; ;; ;; will expand with all of the available key bindings that follow
 ;; ;; ;; C-x (or as many as space allows given your settings).
-;;(message "Loading which-key")
 (display-init-load-time-checkpoint "Loading which-key")
 (use-package which-key
   :init
@@ -1655,19 +1584,14 @@ file to write to."
   "kill the minibuffer"
   (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
     (abort-recursive-edit)))
-
 (add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
-
-;; ;; ;;(use-package autopair)
-;; ;; ;;(autopair-global-mode) ;; to enable in all buffers
 
 
 ;; Highlight brackets according to their depth
 (display-init-load-time-checkpoint "Loading rainbow-delimiters")
-;;(message "Loading rainbow-delimiters")
 (use-package rainbow-delimiters
   :ensure t
-  :diminish "RNBDel"
+  :diminish "RainDel"
   :init
   (rainbow-delimiters-mode-enable)
   (custom-set-faces
@@ -1683,8 +1607,8 @@ file to write to."
    '(rainbow-delimiters-depth-6-face ((t (:foreground "orchid"))))
    '(rainbow-delimiters-depth-7-face ((t (:foreground "spring green"))))
    '(rainbow-delimiters-depth-8-face ((t (:foreground "sienna1")))))
-  )
-(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+  :config
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
 
 
@@ -1871,7 +1795,7 @@ file to write to."
 (display-init-load-time-checkpoint "Loading avy")
 (use-package avy
   :ensure t
-  :bind (("M-s" . avy-goto-word-1)))
+  :bind (("M-s g" . avy-goto-word-1)))
 
 ;;(message "Loading swiper")
 (display-init-load-time-checkpoint "Loading swiper")
@@ -1906,7 +1830,7 @@ file to write to."
 ;; (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
 ;; (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
 
-(display-init-load-time-checkpoint "Done loading ivy")
+
 
 
 ;; Iterate through CamelCase words
@@ -1916,7 +1840,7 @@ file to write to."
 ;;(message "Loading and configuring neotree")
 (display-init-load-time-checkpoint "Loading all the icons")
 (use-package all-the-icons)
-(display-init-load-time-checkpoint "Done Loading all the icons")
+
 
 (display-init-load-time-checkpoint "Loading neotree")
 (use-package neotree :defer t)
@@ -2089,11 +2013,6 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (autoload 'xml-mode "psgml" "Major mode to edit XML files." t)
 
 
-
-;;(use-package python)
-;;(autoload 'python-mode "python-mode" "Python editing mode." t)
-;;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
-
 ;; set tab distance to something, so it doesn't change randomly and confuse people
 (setq c-basic-offset 4)
 
@@ -2197,14 +2116,6 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;; ;; (autoload 'auto-make-header "header2")
 ;; ;; (require 'my-python-header)
 
-;; Load the font-lock package.
-;;(use-package font-lock)
-
-
-
-
-
-;;(setq semantic-load-turn-everything-on t)
 
 
 (defconst my-speedbar-buffer-name " SPEEDBAR")
@@ -2448,18 +2359,6 @@ https://github.com/jaypei/emacs-neotree/pull/110"
                    (abbreviate-file-name (buffer-file-name))
                  "%b")) " [%*]"))
 
-
-
-;; (setq-default header-line-format
-;;               (list '(:eval (concat
-;;                              (propertize " " 'display '((space :align-to (- right-fringe 16))))
-;;                              display-time-string))))
-
-;;(progn
-;;  (define-key minibuffer-local-completion-map " " 'minibuffer-complete-word)
-;;  (define-key minibuffer-local-filename-completion-map " " 'minibuffer-complete-word)
-;;  (define-key minibuffer-local-must-match-map " " 'minibuffer-complete-word))
-
 (defun unix-file ()
   "Change the current buffer to Latin 1 with Unix line-ends."
   (interactive)
@@ -2477,127 +2376,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;[Latex/Tex]
-;;(message "Loading tex")
-(display-init-load-time-checkpoint "Loading tex")
-(use-package tex-site
-  :ensure auctex
-  :defer t
-  :after (tex latex)
-  :config
-
-  ;; Spelling
-  (setq ispell-tex-skip-alists
-        '((
-           ;;("%\\[" . "%\\]") ; AMStex block comment...
-           ;; All the standard LaTeX keywords from L. Lamport's guide:
-           ;; \cite, \hspace, \hspace*, \hyphenation, \include, \includeonly
-           ;; \input, \label, \nocite, \rule (in ispell - rest included here)
-           ("\\\\addcontentsline"              ispell-tex-arg-end 2)
-           ("\\\\add\\(tocontents\\|vspace\\)" ispell-tex-arg-end)
-           ("\\\\\\([aA]lph\\|arabic\\)"   ispell-tex-arg-end)
-           ("\\\\author"                         ispell-tex-arg-end)
-           ;; New regexps here --- kjh
-           ("\\\\\\(text\\|paren\\)cite" ispell-tex-arg-end)
-           ("\\\\cite\\(t\\|p\\|year\\|yearpar\\)" ispell-tex-arg-end)
-           ("\\\\bibliographystyle"                ispell-tex-arg-end)
-           ("\\\\makebox"                  ispell-tex-arg-end 0)
-           ("\\\\e?psfig"                  ispell-tex-arg-end)
-           ("\\\\document\\(class\\|style\\)" .
-            "\\\\begin[ \t\n]*{[ \t\n]*document[ \t\n]*}"))
-          (
-           ;; delimited with \begin.  In ispell: displaymath, eqnarray,
-           ;; eqnarray*, equation, minipage, picture, tabular,
-           ;; tabular* (ispell)
-           ("\\(figure\\|table\\)\\*?"     ispell-tex-arg-end 0)
-           ("\\(equation\\|eqnarray\\)\\*?"     ispell-tex-arg-end 0)
-           ("list"                                 ispell-tex-arg-end 2)
-           ("program" . "\\\\end[ \t\n]*{[ \t\n]*program[ \t\n]*}")
-           ("verbatim\\*?"."\\\\end[ \t\n]*{[ \t\n]*verbatim\\*?[ \t\n]*}")
-           ("lstlisting\\*?"."\\\\end[ \t\n]*{[ \t\n]*lstlisting\\*?[ \t\n]*}"))))
-  )
-
-;;(use-package tex)
-;;(use-package latex)
-;;(use-package auctex)
-;;(use-package auto-complete-auctex :defer t)
-(use-package latex-preview-pane)
-(use-package auctex-latexmk
-  :config
-  (auctex-latexmk-setup)
-  (setq auctex-latexmk-inherit-TeX-PDF-mode t)
-  )
-(use-package company-auctex
-  :defer t
-  :after (auctex company)
-  :config (company-auctex-init))
-
-(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-(add-hook 'LaTeX-mode-hook 'flyspell-mode)
-;; the default flyspell behaviour
-(put 'LaTex-mode 'flyspell-mode-predicate 'tex-mode-flyspell-verify)
-
-(setq reftex-plug-into-AUCTeX t)
-(setq TeX-source-specials-mode t)
-(setq-default TeX-master nil) ; Query for master file.
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
-(setq TeX-source-correlate-start-server t)
-(setq TeX-source-correlate-method 'synctex)
-(setq TeX-PDF-mode t)
-
-;;(setq TeX-view-program-list '(("Evince" "evince --page-index=%(outpage) %o")))
-;;(setq TeX-view-program-selection '((output-pdf "Evince")))
-;;(setq TeX-output-view-style '("^pdf$" "." "C:/Program Files (x86)/SumatraPDF/SumatraPDF.exe %o"))
 
 
-
-(add-hook 'LaTeX-mode-hook
-          (lambda ()
-            (push
-             '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
-               :help "Run latexmk on file")
-             TeX-command-list)))
-(add-hook 'TeX-mode-hook
-          '(lambda ()
-             (setq TeX-command-default "latexmk")
-             (setq TeX-view-program-selection
-                   (cond (running-ms-windows
-                          '((output-pdf "SumatraPDF")
-                            (output-dvi "Yap")))
-                         (running-linux
-                          '((output-pdf "Okular")
-                            (output-dvi "Okular")))
-                         (running-macos
-                          ;;'((output-pdf "Skim"))
-                          '((output-pdf "PDF Tools"))
-
-                          )))))
-
-
-(use-package company-auctex
-  :ensure t
-  :hook
-  (latex-mode . (company-auctex-init)))
-
-
-(use-package company-bibtex
-  :ensure t
-  :hook
-  (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex))))
-  (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex)))))
-
-(use-package company-reftex
-  :ensure t
-  :hook
-  (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations))))
-  (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations)))))
-
-(use-package company-math
-  :ensure t
-  :hook
-  (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode))))
-  (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode)))))
 
 
 ;; Build pdf-tools on the mac:
@@ -2616,78 +2396,13 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
   )
 
-;; Update PDF buffers after successful LaTeX runs
-(add-hook 'TeX-after-compilation-finished-functions
-          #'TeX-revert-document-buffer)
 
-
+(display-init-load-time-checkpoint "Loading tex")
 (defun my-load-latex ()
   (interactive)
-  (let* ((latex-setup (concat marcel-lisp-dir  "latex-init.el")))
-    (when (file-exists-p latex-setup)
-      (load-file latex-setup))))
-
+  (my-load-init-file "latex-init.el"))
 (my-load-latex)
 
-
-
-(setq TeX-view-program-list
-      '(;;("SumatraPDF" "\"C:/Program Files (x86)/SumatraPDF/SumatraPDF.exe\" -reuse-instance %o")
-        ;;("Okular" "okular --unique %o#src:%n%b")
-        ("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
-;;("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline %q")))
-
-
-;; Use pdf-tools to open PDF files
-;; Test to see if PDF Tools works better than Skim
-(setq TeX-view-program-selection '((output-pdf "PDF Tools")))
-
-;; add "PDF Tools" to the list of possible PDF tools
-(unless (assoc "PDF Tools" TeX-view-program-list)
-  (add-to-list 'TeX-view-program-list
-               '("PDF Tools" TeX-pdf-tools-sync-view)))
-
-
-
-
-(display-init-load-time-checkpoint "Done loading tex")
-
-;; (setq TeX-view-program-selection
-;;       (cond (running-ms-windows
-;;              '((output-pdf "SumatraPDF")
-;;                (output-dvi "Yap")))
-;;             (running-linux
-;;              '((output-pdf "Okular")
-;;                (output-dvi "Okular")))
-;;             (running-macos
-;;              '((output-pdf "Skim")))))
-
-
-
-
-
-;; (eval-after-load "tex"
-;;   (progn
-;;     (add-to-list 'TeX-expand-list
-;;                  '("%u" okular-make-url))
-;;     (add-to-list 'TeX-expand-list
-;;                  '("%q" skim-make-url))))
-
-;; (defun okular-make-url () (concat
-;;      "file://"
-;;      (expand-file-name (funcall file (TeX-output-extension) t)
-;;          (file-name-directory (TeX-master-file)))
-;;      "#src:"
-;;      (TeX-current-line)
-;;      (TeX-current-file-name-master-relative)))
-
-;; (defun skim-make-url () (concat
-;;      (TeX-current-line)
-;;      " "
-;;      (expand-file-name (funcall file (TeX-output-extension) t)
-;;          (file-name-directory (TeX-master-file)))
-;;      " "
-;;      (buffer-file-name)))
 
 (if running-ms-windows
     (use-package sumatra-forward))
@@ -2709,52 +2424,45 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;; ;;   "Begin ACL2 in an inferior ACL2 mode buffer."
 ;; ;;   t)
 
-
-
 (display-init-load-time-checkpoint "Loading buffer-move")
 (use-package buffer-move)
 
 
 ;; ;; ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; [ CTAGS ]
 (display-init-load-time-checkpoint "Loading ctags update")
-(use-package ctags-update)
-(ctags-auto-update-mode 1)
-(setq path-to-ctags
-      (if running-ms-windows
-          "etags.exe"
-        "/usr/local/bin/ctags"))
+(use-package ctags-update
+  :diminish "Tags"
+  :init
+  (ctags-auto-update-mode 1)
+  :config
+  (setq path-to-ctags
+        (if running-ms-windows
+            "etags.exe"
+          "/usr/local/bin/ctags"))
 
-(setq default-tags-file
-      (if running-ms-windows "D:/Source/TAGS" (expand-file-name "~/src/TAGS")))
-(setq tags-table-list (list default-tags-file (expand-file-name "~/src/rspace-eclipse/scharp/TAGS")
-                            ))
+  (setq default-tags-file
+        (if running-ms-windows "D:/Source/TAGS" (expand-file-name "~/src/TAGS")))
+  (setq tags-table-list (list default-tags-file (expand-file-name "~/src/rspace-eclipse/scharp/TAGS")
+                              ))
 
-(defun my-create-ctags (dir-name)
-  "Create tags file."
-  (interactive "DDirectory: ")
-  (shell-command
-   (format "%s --append -f %s -R %s" path-to-ctags default-tags-file (directory-file-name dir-name))))
+  (defun my-create-ctags (dir-name)
+    "Create tags file."
+    (interactive "DDirectory: ")
+    (shell-command
+     (format "%s --append -f %s -R %s" path-to-ctags default-tags-file (directory-file-name dir-name))))
 
 
-(defun create-etags (dir-name)
-  "Create tags file."
-  (interactive "DDirectory: ")
-  (eshell-command
-   (format "find %s -type f -name \"*.java\" | etags -" dir-name)))
-
-;;(message "Loading doremi")
-;;(display-init-load-time-checkpoint "Loading doremi")
-;;(use-package hexrgb)
-;;(require 'doremi)
-;;(require 'doremi-frm)
-;;(require 'doremi-cmd)
-;;(display-init-load-time-checkpoint "Loading doremi")
-
+  (defun create-etags (dir-name)
+    "Create tags file."
+    (interactive "DDirectory: ")
+    (eshell-command
+     (format "find %s -type f -name \"*.java\" | etags -" dir-name)))
+  )
 
 
 ;;horizontal-to-vertical
 ;; Idea and starter code from Benjamin Rutt (rutt.4+news@osu.edu) on comp.emacs
-(defun my-window-horizontal-to-vertical ()
+(defun my-rotate-window-horizontal-to-vertical ()
   "Switches from a horizontal split to a vertical split."
   (interactive)
   (let ((one-buf (window-buffer (selected-window)))
@@ -2767,7 +2475,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 ;; vertical-to-horizontal
 ;; complement of above created by rgb 11/2004
-(defun my-window-vertical-to-horizontal ()
+(defun my-rotate-window-vertical-to-horizontal ()
   "Switches from a vertical split to a horizontal split."
   (interactive)
   (let ((one-buf (window-buffer (selected-window)))
@@ -2779,7 +2487,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
     (goto-char buf-point)))
 
 
-(defun my-toggle-window-split ()
+(defun my-rotate-toggle-window-split ()
   "Vertical split shows more of each line, horizontal split shows
 more lines. This code toggles between them. It only works for
 frames with exactly two windows."
@@ -2820,9 +2528,9 @@ frames with exactly two windows."
 (global-set-key (kbd "<f5>") 'my-indent-buffer)
 
 
-(global-set-key (kbd "C-c |") 'my-toggle-window-split)
-(global-set-key (kbd "C-c \\") 'my-window-horizontal-to-vertical)
-(global-set-key (kbd "C-c /") 'my-window-vertical-to-horizontal)
+(global-set-key (kbd "C-c |") 'my-rotate-toggle-window-split)
+(global-set-key (kbd "C-c \\") 'my-rotate-window-horizontal-to-vertical)
+(global-set-key (kbd "C-c /") 'my-rotate-window-vertical-to-horizontal)
 
 
 ;; transpose-frame
@@ -2835,13 +2543,8 @@ frames with exactly two windows."
 
 
 (display-init-load-time-checkpoint "Loading menubar+")
-;;(message "menu-bar+")
 (require 'menu-bar+)
 
-;; (let ((menu-bar+-lib (concat marcel-lisp-dir "el-get/menu-bar+")))
-;;   (when (file-exists-p menu-bar+-lib)
-;;     (add-to-list 'load-path menu-bar+-lib)
-;;     (eval-after-load "menu-bar" '(use-package menu-bar+))))
 
 (display-init-load-time-checkpoint "Loading time-stamp")
 ;;(message "Loading time-stamp")
@@ -2975,38 +2678,10 @@ by using nxml's indentation rules."
 ;;     (set-frame-width (selected-frame) 140))))
 
 
-;; =================================================
-;; SET COLOR THEME FOR A FRAME OR BUFFER ONLY
-
-;;(use-package color-theme)
-;; set default color theme
-;;(color-theme-blue-sea)
-;; create some frames with different color themes
-;;(let ((color-theme-is-global nil))
-;;  (select-frame (make-frame))
-;;  (color-theme-gnome2)
-;;  (select-frame (make-frame))
-;;  (color-theme-standard))
-
-;;(use-package color-theme-buffer-local)
-;;(add-hook 'java-mode
-;;          (lambda nil (color-theme-buffer-local 'color-theme-robin-hood (current-buffer))))
-
-;;(color-theme-select)
-
-
-  ;;;; This snippet enables lua-mode
-;; This line is not necessary, if lua-mode.el is already on your load-path
-
-
-;; ;; (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-;; ;; (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-;; ;; (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
-
 (display-init-load-time-checkpoint "Loading docker-mode")
-;;(message "Loading docker-mode")
-(use-package dockerfile-mode :ensure t :defer t)
-(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+(use-package dockerfile-mode :ensure t :defer t
+  :config
+  (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
 
 (defun my-keytable (arg)
   "Print the key bindings in a tabular form."
@@ -3199,7 +2874,6 @@ Version 2017-01-27"
 
 ;;; Buffer scrolling
 (display-init-load-time-checkpoint "Loading smooth-scroll")
-;;(message "Loading smooth-scroll")
 (use-package smooth-scroll)
 (setq redisplay-dont-pause t)
 (setq  scroll-margin 3)
@@ -3216,7 +2890,7 @@ Version 2017-01-27"
   :config (smart-jump-setup-default-registers))
 
 
-;; ;; ;;; init.el ends here
+
 ;; ;; (message "Loading tramp")
 ;; ;; (use-package tramp)
 ;; ;; (defun my-connect-remote ()
@@ -3224,17 +2898,14 @@ Version 2017-01-27"
 ;; ;;   (dired "/ubuntu@10.130.2.77:/home/ubuntu/src")
 ;; ;;   ;;(dired "/becker-openstack:/home/ubuntu/src")
 ;; ;;   )
-
 ;; ;; (defun my-connect-ptt ()
 ;; ;;   (interactive)
 ;; ;;   (dired "/DoD_Admin@50.225.83.4#422:/home/DoD_Admin/becker")
 ;; ;;   )
-
-
 ;; ;; (setq tramp-default-method "ssh")
 
 (display-init-load-time-checkpoint "Loading browse-kill-ring")
-;;(message "Loading browse-kill-ring")
+
 (use-package browse-kill-ring
   :init
   (progn
@@ -3243,7 +2914,7 @@ Version 2017-01-27"
                              (interactive)
                              (popup-menu 'yank-menu))))
 
-;; ;; (message "Loading hexgrb")
+
 
 ;;(message "Loading one-key")
 ;;(use-package one-key)
@@ -3255,7 +2926,6 @@ Version 2017-01-27"
 ;;(global-set-key (kbd "C-<f5>") 'one-key-open-associated-menu-set)
 
 (display-init-load-time-checkpoint "Loading find-file-in-project")
-;;(message "Loading find-file-in-project")
 (use-package find-file-in-project
   :config
   (global-set-key (kbd "C-c M-f") 'find-file-in-project))
@@ -3289,16 +2959,13 @@ Version 2017-01-27"
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; GIT STUFF
-;;(message "Loading git stuff")
+
 (display-init-load-time-checkpoint "Loading git-gutter")
 (defun my-load-gitgutter ()
   (interactive)
-  (let* ((gg-setup (concat marcel-lisp-dir  "gitgutter-init.el")))
-    (when (file-exists-p gg-setup)
-      (load-file gg-setup))))
-
+  (my-load-init-file "gitgutter-init.el"))
 ;;(my-load-gitgutter)
-(display-init-load-time-checkpoint "Done loading git-gutter")
+
 
 
 
@@ -3308,7 +2975,6 @@ Version 2017-01-27"
     (progn
       (autoload 'ediff-files "ediff")
       (autoload 'ediff-buffers "ediff")
-
       (eval-after-load "ediff" '(progn
                                   (message "doing ediff customisation")
                                   (setq diff-switches               "-u"
@@ -3332,21 +2998,6 @@ Version 2017-01-27"
 
 
 ;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-;; (display-time-mode)
-;; (use-package smart-mode-line)
-;; (use-package smart-mode-line-powerline-theme)
-;; (setq powerline-arrow-shape 'curve)
-;; (setq powerline-default-separator-dir '(right . left))
-;; (setq powerline-default-separator 'arrow)
-;; (setq sml/theme 'powerline)
-;; (setq sml/mode-width 0)
-;; (setq sml/name-width 20)
-;; (rich-minority-mode 1)
-;; (setf rm-blacklist "")
-;; (sml/setup)
 
 
 ;;(use-package spaceline-config)
