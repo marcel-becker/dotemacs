@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-04-30 Tue 17:14 marcelbecker on kestrelimac"
+;;; Time-stamp: "2019-05-02 Thu 18:57 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -3050,6 +3050,7 @@ Version 2017-01-27"
   '(progn
      (eval-after-load "cua-base"
        '(progn
+          (setq org-support-shift-select t)
           (defadvice org-call-for-shift-select (before org-call-for-shift-select-cua activate)
             (if (and cua-mode
                      org-support-shift-select
@@ -3060,7 +3061,18 @@ Version 2017-01-27"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Org mode for taking research notes.
 ;; https://www.anand-iyer.com/blog/2017/research-literature-management-with-emacs.html
-;;
+
+;; if I have the master.bib file open, I can simply go to the
+;; entry I want to read, and then use the org-ref-open-bibtex-notes
+;; command. As the name suggests, this command opens the
+;; corresponding notes entry in the org-ref-bibliography-notes file,
+;; creating a new entry if it can’t find one. If I don’t have the
+;; master.bib file open, I use the excellent helm-bibtex package to
+;; search through my bibliography files. When I find the entry I’m
+;; looking for, I open notes (or create it) with helm’s available
+;; actions on the selected entry. For this to work, we need to let
+;; helm-bibtex know where the notes
+
 ;; run doi-utils-get-bibtex-entry-pdf to get the PDF.
 (use-package org-ref
   :after org
