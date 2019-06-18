@@ -1,4 +1,4 @@
-;; Time-stamp: <2019-05-09 Thu 17:37 marcelbecker on beckermac.local>
+;; Time-stamp: <2019-05-14 Tue 11:22 marcelbecker on dhcp220.kestrel.edu>
 
 ;; Shackle
 ;; https://github.com/wasamasa/shackle
@@ -30,7 +30,7 @@
             ("*info*"                      :select t   :inhibit-window-quit t                         :same t)
             (magit-status-mode             :select t   :inhibit-window-quit t                         :same t)
             (magit-log-mode                :select t   :inhibit-window-quit t                         :same t)
-            (pdf-view-mode                       :select nil :inhibit-window-quit t :align right)
+            (pdf-view-mode                 :select nil :inhibit-window-quit t :align right)
             ))
 
     (shackle-mode 1)))

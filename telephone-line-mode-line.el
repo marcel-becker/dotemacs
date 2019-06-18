@@ -145,6 +145,8 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
 ;; (set-face-attribute 'my-winnum-face nil
 ;;                     :height 1000);; (* (window-font-height) 60))
 
+(set-face-attribute 'winum-face nil :height (* 12 (window-font-height)) :weight 'extrabold)
+
 (telephone-line-defsegment my-telephone-line-window-number-segment (&optional in-unicode)
   (when (bound-and-true-p winum-mode)
     (propertize (get-window-number) 'face 'winum-face)))

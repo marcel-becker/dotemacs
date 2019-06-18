@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-05-02 Thu 18:57 marcelbecker on beckermac.local"
+;;; Time-stamp: "2019-06-18 Tue 09:07 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -63,15 +63,15 @@
 
 ;; key bindings
 (when (eq system-type 'darwin) ;; mac specific settings
-  (setq mac-allow-anti-aliasing t)
   (setq mac-option-modifier 'alt)
   (setq mac-right-option-modifier 'super)
-  ;;  (setq mac-right-command-modifier 'super)
+  (setq mac-right-command-modifier 'super)
   (setq mac-command-modifier 'meta)
   (global-set-key [kp-delete] 'delete-char)
-  (setq ns-use-srgb-colorspace nil)
-  (setq powerline-image-apple-rgb t)
-  (setq mac-allow-anti-aliasing t)
+
+  ;;(setq ns-use-srgb-colorspace nil)
+  ;;  (setq powerline-image-apple-rgb t)
+  ;;  (setq mac-allow-anti-aliasing nil)
   ) ;; sets fn-delete to be right-delete
 
 
@@ -670,7 +670,7 @@
         paradox
         parent-mode
         ;;pastels-on-dark-theme
-        pcache
+        ;;pcache
         pcre2el
         persp-mode
         ;;phoenix-dark-mono-theme
@@ -1128,6 +1128,18 @@
   (my-load-init-file "treemacs-init.el"))
 
 
+(defun my-load-shackle ()
+  (interactive)
+  (my-load-init-file "shackle-init.el"))
+(my-load-shackle)
+
+(defun my-load-org-toolkit ()
+  (interactive)
+  (my-load-init-file "org-research-toolkit.el"))
+
+
+
+
 (setenv "WORKON_HOME" "~/PythonEnvs")
 ;;(add-hook 'python-mode-hook (function my-load-python))
 
@@ -1430,6 +1442,55 @@ file to write to."
   :hook (company-mode . company-box-mode))
 
 
+(use-package company-box
+  :defer    t
+  :diminish "CiaBox"
+  :after (all-the-icons company)
+  :init
+  (setq company-box-icons-alist 'company-box-icons-all-the-icons)
+  :config
+  (setq company-box-backends-colors '((company-lsp      . "#e0f9b5")
+                                      (company-elisp    . "#e0f9b5")
+                                      (company-files    . "#ffffc2")
+                                      (company-keywords . "#ffa5a5")
+                                      (company-capf     . "#bfcfff")
+                                      (company-dabbrev  . "#bfcfff")))
+  (setq company-box-icons-unknown (concat (all-the-icons-material "find_in_page") " "))
+  (setq company-box-icons-elisp
+        (list
+         (concat (all-the-icons-faicon "tag") " ")
+         (concat (all-the-icons-faicon "cog") " ")
+         (concat (all-the-icons-faicon "cube") " ")
+         (concat (all-the-icons-material "color_lens") " ")))
+  (setq company-box-icons-yasnippet (concat (all-the-icons-faicon "bookmark") " "))
+  (setq company-box-icons-lsp
+        `((1 .  ,(concat (all-the-icons-faicon   "text-height")    " ")) ;; Text
+          (2 .  ,(concat (all-the-icons-faicon   "tags")           " ")) ;; Method
+          (3 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Function
+          (4 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Constructor
+          (5 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Field
+          (6 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Variable
+          (7 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Class
+          (8 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Interface
+          (9 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Module
+          (10 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Property
+          (11 . ,(concat (all-the-icons-material "settings_system_daydream") " ")) ;; Unit
+          (12 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Value
+          (13 . ,(concat (all-the-icons-material "storage")        " ")) ;; Enum
+          (14 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; Keyword
+          (15 . ,(concat (all-the-icons-faicon   "bookmark")       " ")) ;; Snippet
+          (16 . ,(concat (all-the-icons-material "color_lens")     " ")) ;; Color
+          (17 . ,(concat (all-the-icons-faicon   "file-text-o")    " ")) ;; File
+          (18 . ,(concat (all-the-icons-material "refresh")        " ")) ;; Reference
+          (19 . ,(concat (all-the-icons-faicon   "folder-open")    " ")) ;; Folder
+          (20 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; EnumMember
+          (21 . ,(concat (all-the-icons-faicon   "square")         " ")) ;; Constant
+          (22 . ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Struct
+          (23 . ,(concat (all-the-icons-faicon   "calendar")       " ")) ;; Event
+          (24 . ,(concat (all-the-icons-faicon   "square-o")       " ")) ;; Operator
+          (25 . ,(concat (all-the-icons-faicon   "arrows")         " "))) ;; TypeParameter
+        ))
+
 (display-init-load-time-checkpoint "Loading visual-regex")
 ;; Replace Strings with Regexes
 (use-package visual-regexp
@@ -1710,6 +1771,8 @@ file to write to."
   (drag-stuff-define-keys))
 
 
+
+
 ;; Edit multiple regions in the same way simultaneously
 (display-init-load-time-checkpoint "Loading iedit")
 (use-package iedit
@@ -1948,6 +2011,30 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   ;; put the point in the lowest line and return
   (next-line arg))
 
+
+(defun duplicate-line-or-region (&optional n)
+  "Duplicate current line, or region if active.
+    With argument N, make N copies.
+    With negative N, comment out original line and use the absolute value."
+  (interactive "*p")
+  (let ((use-region (use-region-p)))
+    (save-excursion
+      (let ((text (if use-region        ;Get region if active, otherwise line
+                      (buffer-substring (region-beginning) (region-end))
+                    (prog1 (thing-at-point 'line)
+                      (end-of-line)
+                      (if (< 0 (forward-line 1)) ;Go to beginning of next line, or make a new one
+                          (newline))))))
+        (dotimes (i (abs (or n 1)))     ;Insert N times, or once if not specified
+          (insert text))))
+    (if use-region nil                  ;Only if we're working with a line (not a region)
+      (let ((pos (- (point) (line-beginning-position)))) ;Save column
+        (if (> 0 n)                             ;Comment out original with negative arg
+            (comment-region (line-beginning-position) (line-end-position)))
+        (forward-line 1)
+        (forward-char pos)))))
+
+
 ;; http://emacsredux.com/blog/2013/04/02/move-current-line-up-or-down/
 (defun move-line-up ()
   "Move up the current line."
@@ -1965,10 +2052,12 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (forward-line -1)
   (indent-according-to-mode))
 
-(global-set-key (kbd "M-A-<up>") 'duplicate-line)
-(global-set-key (kbd "M-A-<down>") 'duplicate-line)
+
+(global-set-key (kbd "M-A-<up>") 'duplicate-line-or-region)
+(global-set-key (kbd "M-A-<down>") 'duplicate-line-or-region)
 (global-set-key (kbd "A-<up>") 'move-line-up)
 (global-set-key (kbd "A-<down>") 'move-line-down)
+
 
 (defun set-case ()
   "Sets case-sensitive search mode"
@@ -2383,19 +2472,20 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;; Build pdf-tools on the mac:
 ;;PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig ;;/Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190413.2018/build/server/autobuild -i /Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190
 
-
-(use-package pdf-tools
-  :config
-  ;; initialise
-  (pdf-tools-install t t t)
-  (pdf-loader-install)
-  ;; open pdfs scaled to fit page
-  (setq-default pdf-view-display-size 'fit-page)
-  ;; more fine-grained zooming
-  ;;  (setq pdf-view-resize-factor 1.1)
-  (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
+(when running-macos
+  (use-package pdf-tools
+    :config
+    ;; initialise
+;;    (pdf-tools-install t t t)
+    (pdf-loader-install)
+    ;; open pdfs scaled to fit page
+    (setq pdf-view-use-unicode-ligther nil)
+    (setq-default pdf-view-display-size 'fit-page)
+    ;; more fine-grained zooming
+    ;;  (setq pdf-view-resize-factor 1.1)
+    (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
+    )
   )
-
 
 (display-init-load-time-checkpoint "Loading tex")
 (defun my-load-latex ()
@@ -2457,6 +2547,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
     (interactive "DDirectory: ")
     (eshell-command
      (format "find %s -type f -name \"*.java\" | etags -" dir-name)))
+
+  (setq tags-add-tables nil)
   )
 
 
@@ -3034,11 +3126,25 @@ Version 2017-01-27"
    '((emacs-lisp . t)
      (clojure . t)
      (python . t)
+     (R . t)
+     (org . t)
+     (java . t)
+     (ditaa . t)
+     (latex . t)
+     (dot . t)
+     (ledger . t)
+     (gnuplot . t)
+     (screen . nil)
+     (shell . t)
+     (sql . nil)
+     (sqlite . t)
      (ruby . t)))
   ;; stop emacs asking for confirmation
   (setq org-confirm-babel-evaluate nil)
   (setq org-src-fontify-natively t)
   (setq org-support-shift-select t)
+  (setq org-startup-indented t)
+  (setq org-src-tab-acts-natively t)
   )
 
 (use-package org-bullets
@@ -3084,6 +3190,12 @@ Version 2017-01-27"
   (require 'org-ref-bibtex)
   (require 'org-ref-isbn)
   (require 'org-ref-arxiv)
+  (require 'ox-latex)
+  (require 'ox-beamer)
+  (require 'ox-odt)
+  (require 'ox-html)
+  (require 'ox-publish)
+
   (setq
    org-ref-notes-directory "~/Dropbox/EmacsOrg/ref"
    org-ref-bibliography-notes "~/Dropbox/EmacsOrg/ref/notes.org"
@@ -3098,6 +3210,9 @@ Version 2017-01-27"
 
 (unless (file-exists-p org-ref-pdf-directory)
   (make-directory org-ref-pdf-directory t))
+
+
+(my-load-org-toolkit)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Package Interleave to take notes in PDF with Org file
@@ -3195,6 +3310,10 @@ Version 2017-01-27"
 
 
 
+(display-init-load-time-checkpoint "Loading system packages")
+(use-package system-packages)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; visible mark - show where mark is                                      ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3224,3 +3343,10 @@ Version 2017-01-27"
 
 
 (display-init-load-time-checkpoint "Done loading init file")
+(setq inhibit-compacting-font-caches t)
+
+
+;;(setq spacemacs-start-directory "~/src/emacs-spacemacs/.emacs.d/")
+;;(load-file "~/src/emacs-spacemacs/.spacemacs")
+;;(setq dotemacs-install-packages 'all)
+;;(load-file (concat spacemacs-start-directory "init.el"))
