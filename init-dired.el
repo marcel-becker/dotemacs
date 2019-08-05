@@ -58,6 +58,7 @@
 ;; Adapt ls for mac
 (when (eq system-type 'darwin)
   (require 'ls-lisp)
+  ;; use brew install coreutils to get gls
   (setq ls-lisp-use-insert-directory-program t
         insert-directory-program "/usr/local/bin/gls"))
 

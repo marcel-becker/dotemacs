@@ -1,0 +1,37 @@
+#+LaTeX_CLASS: article
+#+LaTeX_HEADER: \usepackage{enumitem}
+#+LaTeX_HEADER: \usepackage[margin=1in]{geometry}
+#+LaTeX_HEADER: \usepackage{hyperref}
+#+LaTeX_HEADER: \usepackage{url}
+#+LaTeX_HEADER: \usepackage{breakurl}
+#+LaTeX_HEADER: \usepackage{pbox}
+#+LaTeX_HEADER: \usepackage{amssymb}
+#+LaTeX_HEADER: \usepackage{mathtools}
+#+LaTeX_HEADER: \usepackage{amsfonts}
+#+LaTeX_HEADER: \usepackage{pdfsync}
+#+LaTeX_HEADER: \synctex=1
+#+LaTeX_HEADER: \usepackage{graphicx}
+#+LaTeX_HEADER: \usepackage{subfig}
+
+#+LaTeX_HEADER: \usepackage[numbib,notlof,notlot,nottoc]{tocbibind}
+#+LaTeX_HEADER: \renewcommand\refname{Bibliography}
+
+% comments:
+#+LaTeX_HEADER: \newcommand{\todo}[2]{{\small\textcolor{#1}{\textbf{[[#2]]}}}}
+#+LaTeX_HEADER: \newcommand{\baa}[1]{\todo{orange}{BAA: #1}}
+#+LaTeX_HEADER: \newcommand{\mb}[1]{\todo{red}{MB: #1}}
+#+LaTeX_HEADER: \newcommand{\ds}[1]{\todo{blue}{DS: #1}}
+#+LaTeX_HEADER: \newcommand{\sfitzp}[1]{\todo{JungleGreen}{SF: #1}}
+% uncomment the following to exclude comments from generated PDF:
+#+LaTeX_HEADER: \renewcommand{\todo}[2]{\relax}
+
+
+
+#+LaTeX_HEADER: \usepackage[dvipsnames,svgnames,table]{xcolor}
+#+LATEX_HEADER: \usepackage{comment,multirow,booktabs,threeparttable,tabularx,xcolor,lmodern,longtable,float,wrapfig,url,underscore,siunitx}
+#+LaTeX_HEADER: \usepackage{parnotes,comment,multirow,amsmath,marvosym,wasysym}
+#+LaTeX_HEADER: \usepackage[T1]{fontenc}
+#+LaTeX_HEADER: \usepackage[normalem]{ulem}
+#+LaTeX_HEADER: \usepackage[version=3]{mhchem}
+#+LaTeX_HEADER: \usepackage[section]{placeins}
+#+LATEX_HEADER: \hypersetup{colorlinks=true,citecolor=blue,linkcolor=blue,citebordercolor={0 0},linktocpage,pdfstartview=FitH,anchorcolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue}

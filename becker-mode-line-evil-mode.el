@@ -46,7 +46,7 @@
    " "
    (:eval (get-window-number))
    " "
-  ;; (:eval  (propertize " " 'display separator-right))
+   ;; (:eval  (propertize " " 'display separator-right))
    (:eval  (propertize " " 'display separator-left))
 
    (:eval (my/evil-mode-state))
@@ -244,7 +244,7 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
                     :foreground "orange"
                     ;;:background "#ffffff"
                     :weight 'extra-bold
-                   :box '(:line-width 6 :color "orange"))
+                    :box '(:line-width 6 :color "orange"))
 
 (set-face-attribute 'mode-line-folder-face nil
                     :inherit 'mode-line-mode-face
@@ -343,7 +343,7 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
       ;;(print tag)
       ;;(print face)
       (propertize tag 'face face)
-            ))
+      ))
    (t
     "")))
 
@@ -416,7 +416,6 @@ static char * arrow_right[] = {
 (setq color1 "Red") ;; "#777777")
 (setq color2 "Orange") ;; "#555555"))
 (setq scale-factor 10.0
-
       arrow-right-1 (create-image (arrow-right-xpm color1 color2) 'xpm t :ascent 'center :scale scale-factor)
       arrow-right-2 (create-image (arrow-right-xpm color2 "None") 'xpm t :ascent 'center :scale scale-factor)
       arrow-left-1  (create-image (arrow-left-xpm color2 color1) 'xpm t :ascent 'center :scale scale-factor)

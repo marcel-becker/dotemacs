@@ -16,10 +16,18 @@
          ("C-c u" . hydra-upload/body)
          ("C-z w" . hydra-window/body)
          ("C-z q" . hydra-window-move-and-split)
-         ))
+         ("C-z C-e" . emms-player-simple-mpv-hydra/body)
+         )
+  :config
+  (setq hydra-hint-display-type  'message
+        lv-use-separator t
+        )
+  )
 
 (use-package major-mode-hydra
   :after hydra
+  :bind
+  ([f13] . major-mode-hydra)
   :preface
   (defun with-alltheicon (icon str &optional height v-adjust)
     "Displays an icon from all-the-icon."
@@ -35,26 +43,32 @@
 
   (defun with-octicon (icon str &optional height v-adjust)
     "Displays an icon from the GitHub Octicons."
-    (s-concat (all-the-icons-octicon icon :v-adjust (or v-adjust 0) :height (or height 1)) " " str)))
-
+    (s-concat (all-the-icons-octicon icon :v-adjust (or v-adjust 0) :height (or height 1)) " " str))
+  :config
+  (setq major-mode-hydra-title-generator
+        '(lambda (mode)
+           (s-concat "\n"
+                     (s-repeat 10 " ")
+                     (all-the-icons-icon-for-mode mode :v-adjust 0.05)
+                     " "
+                     (symbol-name mode)
+                     " commands")))
+  )
 
 (bind-key
  "C-z w"
- (defhydra hydra-window (:color red)
+ (defhydra hydra-window (:color red :hint nil)
    "
- Split: _v_ert _x_:horz
-Delete: _o_nly  _da_ce  _dw_indow  _db_uffer  _df_rame
-  Move: _s_wap
-Frames: _f_rame new  _df_ delete
-  Misc: _m_ark _a_ce  _u_ndo  _r_edo"
-   ("h" windmove-left)
-   ("j" windmove-down)
-   ("k" windmove-up)
-   ("l" windmove-right)
-   ("H" hydra-move-splitter-left)
-   ("J" hydra-move-splitter-down)
-   ("K" hydra-move-splitter-up)
-   ("L" hydra-move-splitter-right)
+Split^           ^Delete^         ^Window Move^   ^Splitter Move^    ^Frames^        ^Misc^
+--------------------------------------------------------------------------------------------------------
+_v_: right         _o_:others       _h_: left       _H_: left          _f_: new        _m_: mark
+_x_: below         _da_: ace        _j_: down       _J_: down          _df_: delete    _a_: ace
+_|_: move right    _dw_: window     _k_: up         _K_: up            ^          ^    _u_: winner undo
+___: move down     _db_: buffer     _l_: right      _L_:right          ^          ^    _r_: winner redo
+^             ^    _df_: frame      _s_: swap       ^             ^    ^          ^    _q_: quit
+"
+   ("v" split-window-right)
+   ("x" split-window-below)
    ("|" (lambda ()
           (interactive)
           (split-window-right)
@@ -63,8 +77,17 @@ Frames: _f_rame new  _df_ delete
           (interactive)
           (split-window-below)
           (windmove-down)))
-   ("v" split-window-right)
-   ("x" split-window-below)
+
+
+   ("h" windmove-left)
+   ("j" windmove-down)
+   ("k" windmove-up)
+   ("l" windmove-right)
+   ("H" hydra-move-splitter-left)
+   ("J" hydra-move-splitter-down)
+   ("K" hydra-move-splitter-up)
+   ("L" hydra-move-splitter-right)
+
    ;;("t" transpose-frame "'")
    ;; winner-mode must be enabled
    ("u" winner-undo)
@@ -83,6 +106,14 @@ Frames: _f_rame new  _df_ delete
    ("q" nil)
    ))
 
+(setq major-mode-hydra-title-generator
+      '(lambda (mode)
+         (s-concat "\n"
+                   (s-repeat 10 " ")
+                   (all-the-icons-icon-for-mode mode :v-adjust 0.05)
+                   " "
+                   (symbol-name mode)
+                   " commands")))
 
 
 (defun hydra-move-splitter-left (arg)
@@ -120,7 +151,7 @@ Frames: _f_rame new  _df_ delete
 ;; window movement / management
 (bind-key*
  "C-z q"
- (defhydra hydra-window-move-and-split (:color red)
+ (defhydra hydra-window-move-and-split (:color red :hint nil)
    "
 Movement      ^Split^            ^Switch^        ^Resize^
 ----------------------------------------------------------------
@@ -283,8 +314,8 @@ _q_uit          ^        ^         _]_forward
     ("t" reftex-toc "table of content"))))
 
 
- (defhydra hydra-dired (:hint nil :color pink)
-    "
+(defhydra hydra-dired (:hint nil :color pink)
+  "
   _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
   _C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
   _D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
@@ -297,39 +328,170 @@ _q_uit          ^        ^         _]_forward
 
   T - tag prefix
   "
-    ("\\" dired-do-ispell)
-    ("(" dired-hide-details-mode)
-    (")" dired-omit-mode)
-    ("+" dired-create-directory)
-    ("=" diredp-ediff)         ;; smart diff
-    ("?" dired-summary)
-    ("$" diredp-hide-subdir-nomove)
-    ("A" dired-do-find-regexp)
-    ("C" dired-do-copy)        ;; Copy all marked files
-    ("D" dired-do-delete)
-    ("E" dired-mark-extension)
-    ("e" dired-ediff-files)
-    ("F" dired-do-find-marked-files)
-    ("G" dired-do-chgrp)
-    ("g" revert-buffer)        ;; read all directories again (refresh)
-    ("i" dired-maybe-insert-subdir)
-    ("l" dired-do-redisplay)   ;; relist the marked or singel directory
-    ("M" dired-do-chmod)
-    ("m" dired-mark)
-    ("O" dired-display-file)
-    ("o" dired-find-file-other-window)
-    ("Q" dired-do-find-regexp-and-replace)
-    ("R" dired-do-rename)
-    ("r" dired-do-rsynch)
-    ("S" dired-do-symlink)
-    ("s" dired-sort-toggle-or-edit)
-    ("t" dired-toggle-marks)
-    ("U" dired-unmark-all-marks)
-    ("u" dired-unmark)
-    ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
-    ("w" dired-kill-subdir)
-    ("Y" dired-do-relsymlink)
-    ("z" diredp-compress-this-file)
-    ("Z" dired-do-compress)
-    ("q" nil)
-    ("." nil :color blue))
+  ("\\" dired-do-ispell)
+  ("(" dired-hide-details-mode)
+  (")" dired-omit-mode)
+  ("+" dired-create-directory)
+  ("=" diredp-ediff)         ;; smart diff
+  ("?" dired-summary)
+  ("$" diredp-hide-subdir-nomove)
+  ("A" dired-do-find-regexp)
+  ("C" dired-do-copy)        ;; Copy all marked files
+  ("D" dired-do-delete)
+  ("E" dired-mark-extension)
+  ("e" dired-ediff-files)
+  ("F" dired-do-find-marked-files)
+  ("G" dired-do-chgrp)
+  ("g" revert-buffer)        ;; read all directories again (refresh)
+  ("i" dired-maybe-insert-subdir)
+  ("l" dired-do-redisplay)   ;; relist the marked or singel directory
+  ("M" dired-do-chmod)
+  ("m" dired-mark)
+  ("O" dired-display-file)
+  ("o" dired-find-file-other-window)
+  ("Q" dired-do-find-regexp-and-replace)
+  ("R" dired-do-rename)
+  ("r" dired-do-rsynch)
+  ("S" dired-do-symlink)
+  ("s" dired-sort-toggle-or-edit)
+  ("t" dired-toggle-marks)
+  ("U" dired-unmark-all-marks)
+  ("u" dired-unmark)
+  ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
+  ("w" dired-kill-subdir)
+  ("Y" dired-do-relsymlink)
+  ("z" diredp-compress-this-file)
+  ("Z" dired-do-compress)
+  ("q" nil)
+  ("." nil :color blue))
+
+
+
+;; This setting example emulates default key bindings of mpv player as mutch as possible.
+
+(defvar emms-player-simple-mpv-hydra-docstring
+  "
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃      Keyboard Control for emms simple player of mpv      ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+   _Q_      Quit emms-player-simple-mpv-hydra.
+  ─────────────────────────────
+   _<left>_ and _<right>_
+          Seek backward/forward 5 seconds.
+   _S-<left>_ and _S-<right>_
+          Seek backward/forward 1 seconds.
+   _<down>_ and <up>
+          Seek backward/forward 1 minute.
+   _S-<down>_ and S-<upt>
+          Seek backward/forward 5 seconds.
+  ─────────────────────────────
+   _\[_ and _\]_
+          Decrease/increase current playback speed by 10 %%%%.
+   _\{_ and _\}_
+          Halve/double current playback speed.
+   _<backspace>_
+          Reset playback speed to normal.
+  ─────────────────────────────
+   _<_ and _>_
+          Go backward/forward in the playlist.
+  _<return>_
+          Go forward in the playlist.
+  ─────────────────────────────
+  _p_ / _SPC_
+          Pause (pressing again unpauses).
+  ─────────────────────────────
+   _q_      Stop playing and quit.
+  ─────────────────────────────
+   _/_ and _*_
+          Decrease/increase volume.
+   _9_ and _0_
+          Decrease/increase volume.
+  ─────────────────────────────
+   _m_      Mute sound.
+  ─────────────────────────────
+   _f_      Toggle fullscreen.
+  ─────────────────────────────
+   _T_      Toggle stay-on-top.
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+"
+  "Docstring for `emms-player-simple-mpv-hydra/body'.")
+
+
+(eval-after-load "hydra"
+  `(defhydra emms-player-simple-mpv-hydra     (:foreign-keys warn :hint nil)
+     ,emms-player-simple-mpv-hydra-docstring
+     ("Q" nil)
+     ("<left>"    (lambda () (interactive) (emms-seek -5)))
+     ("S-<left>"  (lambda () (interactive) (emms-seek -1)))
+     ("<down>"    (lambda () (interactive) (emms-seek -60)))
+     ("S-<down>"  (lambda () (interactive) (emms-seek -5)))
+     ("<right>"   (lambda () (interactive) (emms-seek 5)))
+     ("S-<right>" (lambda () (interactive) (emms-seek 1)))
+     ("<up>"      (lambda () (interactive) (emms-seek 60)))
+     ("S-<up>"    (lambda () (interactive) (emms-seek 5)))
+     ("["  emms-player-simple-mpv-speed-decrease)
+     ("]"  emms-player-simple-mpv-speed-increase)
+     ("{"  emms-player-simple-mpv-speed-halve)
+     ("}"  emms-player-simple-mpv-speed-double)
+     ("<backspace>" emms-player-simple-mpv-speed-normal)
+     ("<" emms-player-simple-mpv-playlist-prev)
+     (">" emms-player-simple-mpv-playlist-next)
+     ("<return>" emms-player-simple-mpv-playlist-next)
+     ("p" emms-pause)
+     ("SPC" emms-pause)
+     ("q" (lambda () (interactive)
+            (when (y-or-n-p "emms-stop?")
+              (emms-stop))) :exit t)
+     ("/" emms-volume-lower)
+     ("*" emms-volume-raise)
+     ("9" emms-volume-lower)
+     ("0" emms-volume-raise)
+     ("m" emms-player-simple-mpv-mute)
+     ("f" emms-player-simple-mpv-fullscreen)
+     ("T" emms-player-simple-mpv-ontop)))
+
+
+
+(bind-key*
+ "C-z C-e"
+ (pretty-hydra-define emms-player-simple-mpv-hydra
+   (:color red :foreign-keys warn :hint nil :title  (with-faicon "headphones" "Music" 1 -0.05))
+   ("Seek"
+    (("q" nil)
+     ("<left>"    (lambda () (interactive) (emms-seek -5)) "Back 5s")
+     ("S-<left>"  (lambda () (interactive) (emms-seek -1)) "Back 1s")
+     ("<down>"    (lambda () (interactive) (emms-seek -60)) "Back 1m")
+     ("S-<down>"  (lambda () (interactive) (emms-seek -5)) "Back 5s")
+     ("<right>"   (lambda () (interactive) (emms-seek 5)) "Forward 5s")
+     ("S-<right>" (lambda () (interactive) (emms-seek 1)) "Forward 1s")
+     ("<up>"      (lambda () (interactive) (emms-seek 60)) "Forward 1m")
+     ("S-<up>"    (lambda () (interactive) (emms-seek 5)) "Forward 5s"))
+
+    "Speed"
+    (("["  emms-player-simple-mpv-speed-decrease "decrease")
+     ("]"  emms-player-simple-mpv-speed-increase "increase")
+     ("{"  emms-player-simple-mpv-speed-halve "half")
+     ("}"  emms-player-simple-mpv-speed-double "double")
+     ("<backspace>" emms-player-simple-mpv-speed-normal "normal"))
+    "Playlist"
+    (("<" emms-player-simple-mpv-playlist-prev "Prev")
+     (">" emms-player-simple-mpv-playlist-next "Next")
+     ("<return>" emms-player-simple-mpv-playlist-next "Next"))
+    "Playback"
+    (("p" emms-pause "pause")
+     ("SPC" emms-pause "pause")
+     ("Q" (lambda () (interactive)
+            (when (y-or-n-p "emms-stop?")
+              (emms-stop)))
+      :exit t
+      "Quit EMMS"))
+    "Volume"
+    (("/" emms-volume-lower "lower")
+     ("*" emms-volume-raise "raise")
+     ("9" emms-volume-lower "lower")
+     ("0" emms-volume-raise "raise")
+     ("m" emms-player-simple-mpv-mute "mute" :toggle t))
+    "Player"
+    (("f" emms-player-simple-mpv-fullscreen "fullscreen" :toggle t)
+     ("T" emms-player-simple-mpv-ontop "on top" :toggle t)))))

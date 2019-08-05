@@ -145,13 +145,12 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
 ;; (set-face-attribute 'my-winnum-face nil
 ;;                     :height 1000);; (* (window-font-height) 60))
 
-(set-face-attribute 'winum-face nil :height (* 12 (window-font-height)) :weight 'extrabold)
+(set-face-attribute 'winum-face nil :height (* 10 (window-font-height)) :weight 'extrabold)
+
 
 (telephone-line-defsegment my-telephone-line-window-number-segment (&optional in-unicode)
   (when (bound-and-true-p winum-mode)
     (propertize (get-window-number) 'face 'winum-face)))
-
-
 
 
 (telephone-line-defsegment* my-telephone-line-buffer-segment ()
@@ -168,7 +167,7 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
     ))
 
 
-(setq telephone-line-height 30)
+;;(setq telephone-line-height 40);; 30
 (setq telephone-line-lhs
       '((evil   . (telephone-line-evil-tag-segment))
         (nil    . (my-telephone-line-window-number-segment))
@@ -200,6 +199,14 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
         (accent    . (telephone-line-misc-info-segment))
         (evil   . (telephone-line-airline-position-segment))
         ))
+
+
+(setq telephone-line-primary-left-separator 'telephone-line-utf-abs-left
+      telephone-line-secondary-left-separator 'telephone-line-utf-abs-hollow-left
+      telephone-line-primary-right-separator 'telephone-line-utf-abs-right
+      telephone-line-secondary-right-separator 'telephone-line-utf-abs-hollow-right
+      )
+
 
 
 (telephone-line-mode 1)

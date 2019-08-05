@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-06-18 Tue 09:07 marcelbecker on beckermac.local"
+;;; Time-stamp: "2019-08-05 Mon 08:21 marcelbecker on kestrelimac"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -41,14 +41,23 @@
 ;;; FROM: https://www.reddit.com/r/emacs/comments/8eozfl/advanced_techniques_for_reducing_emacs_startup/
 ;; use to measure load time
 (defconst emacs-start-time (current-time))
+(setq last-checkpoint-time emacs-start-time)
+
 ;; The time since the load began
 (defun time-since-load-start()
-  (float-time (time-subtract (current-time)
-                             emacs-start-time)))
+  (let* ((current (current-time))
+         (delta-start  (float-time (time-subtract current emacs-start-time)))
+         (delta-load (float-time (time-subtract current last-checkpoint-time))))
+    (setq last-checkpoint-time current)
+    (list delta-start delta-load)
+    ))
+
 ;; Use to track load time through file
 (defun display-init-load-time-checkpoint (checkpoint)
-  (message "Loading init %s checkpoint %s (%.3fs)" load-file-name
-           checkpoint (time-since-load-start)))
+  (let ((deltas (time-since-load-start)))
+    ;;    (message "%s %s %s" deltas (first deltas) (last deltas))
+    (message "Loading init %s checkpoint %s Total Time (%.3fs) Load Time (%.3fs)"
+             load-file-name checkpoint (car deltas) (cadr deltas))))
 (display-init-load-time-checkpoint "Loading init file")
 
 
@@ -69,9 +78,9 @@
   (setq mac-command-modifier 'meta)
   (global-set-key [kp-delete] 'delete-char)
 
-  ;;(setq ns-use-srgb-colorspace nil)
-  ;;  (setq powerline-image-apple-rgb t)
-  ;;  (setq mac-allow-anti-aliasing nil)
+  (setq ns-use-srgb-colorspace nil)
+  (setq powerline-image-apple-rgb t)
+  (setq mac-allow-anti-aliasing nil)
   ) ;; sets fn-delete to be right-delete
 
 
@@ -150,8 +159,24 @@
 (transient-mark-mode t)
 (show-paren-mode t)
 (line-number-mode 1)
-;;(global-linum-mode 1)
+(global-linum-mode 1)
 (linum-mode 1)
+
+
+;; Use native line numbers
+;; (when (version<= "26.0.50" emacs-version )
+;; ;; native line numbers
+;;   (setq display-line-numbers t
+;;         display-line-numbers-current-absolute t
+;;         display-line-numbers-width 5
+;;         display-line-numbers-widen t)
+;;   (set-face-attribute 'line-number nil
+;;                       :inherit 'default)
+;;   (set-face-attribute 'line-number-current-line nil
+;;                       :weight 'ultra-bold :inherit 'hl-line)
+;;   ;;(global-display-line-numbers-mode)
+;;   )
+
 ;; highlight current line
 (global-hl-line-mode 1)
 ;; whenever an external process changes a file underneath emacs, and there
@@ -309,9 +334,12 @@
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
-  (message  "Frame alist %s" initial-frame-alist)
+  ;;(message  "Frame alist %s" initial-frame-alist)
   (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
   )
+
+
+(display-init-load-time-checkpoint "Finished configuring emacs frame")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -345,147 +373,155 @@
 (setq package-check-signature nil)
 (setq package-user-dir (concat marcel-lisp-dir "elpa"))
 (add-to-list 'load-path (concat marcel-lisp-dir "elpa"))
+(setq package-enable-at-startup nil)
 ;;(when (not package-archive-contents)
 ;;(package-refresh-contents))
-(if (version< emacs-version "28.0")
-    (package-initialize))
+(when (version< emacs-version "28.0")
+  (display-init-load-time-checkpoint "Calling package-initialize")
+  (package-initialize)
+  (display-init-load-time-checkpoint "Done with package-initialize")
+  )
+
 
 (unless (package-installed-p 'use-package)
+  (display-init-load-time-checkpoint "Installing use-package")
   (package-refresh-contents)
   (package-install 'use-package))
+
+(display-init-load-time-checkpoint "Requiring use-package")
 (require 'use-package)
 (setq use-package-always-ensure t
       use-package-verbose t
       use-package-compute-statistics t)
 
-(display-init-load-time-checkpoint "Loading benchmark-init")
-(use-package benchmark-init
-  :ensure t
-  :config
-  ;; To disable collection of benchmark data after init is done.
-  (add-hook 'after-init-hook 'benchmark-init/deactivate))
-
+(defun my-init-benchmark ()
+  (display-init-load-time-checkpoint "Loading benchmark-init")
+  (use-package benchmark-init
+    :ensure t
+    :config
+    ;; To disable collection of benchmark data after init is done.
+    (add-hook 'after-init-hook 'benchmark-init/deactivate))
+  )
+;; Use this to profile the initialization
+;;(my-init-benchmark)
 
 (setq my-elpa-packages
       '(
-        ac-helm
-        ac-ispell
-        ac-python
-        ace-flyspell
-        ace-jump-helm-line
-        ace-jump-mode
-        ace-link
-        ace-window
-        adaptive-wrap
+        ;;ace-flyspell
+        ;;ace-jump-helm-line
+        ;;ace-jump-mode
+        ;;ace-link
+        ;;ace-window
+        ;;adaptive-wrap
         ;;afternoon-theme
-        aggressive-indent
+        ;;aggressive-indent
         ;;alect-themes
-        alert
-        all-the-icons
-        ample-regexps
+        ;;alert
+        ;;all-the-icons
+        ;;ample-regexps
         ;;ample-theme
         ;;ample-zen-theme
-        anaconda-mode
+        ;;anaconda-mode
         ;;anti-zenburn-theme
         ;;anything
-        anzu
+        ;;anzu
         ;;apropospriate-theme
-        async
+        ;;async
         ;;auctex
-        auto-compile
+        ;;auto-compile
         ;;auto-complete
         ;;auto-complete-auctex
-        auto-dictionary
-        auto-highlight-symbol
-        auto-yasnippet
-        autopair
-        autothemer
-        avy
+        ;;auto-dictionary
+        ;;auto-highlight-symbol
+        ;;auto-yasnippet
+        ;;autopair
+        ;;autothemer
+        ;;avy
         ;;badwolf-theme
-        bind-key
-        bind-map
+        ;;bind-key
+        ;;bind-map
         ;;birds-of-paradise-plus-theme
-        browse-kill-ring
+        ;;browse-kill-ring
         ;;bubbleberry-theme
-        buffer-move
+        ;;buffer-move
         ;;busybee-theme
         ;;cherry-blossom-theme
-        cl-lib
-        clean-aindent-mode
+        ;;cl-lib
+        ;;clean-aindent-mode
         ;;clues-theme
-        coffee-mode
-        color-theme
+        ;;coffee-mode
+        ;;color-theme-modern
         ;;color-theme-sanityinc-solarized
         ;;color-theme-sanityinc-tomorrow
         ;;color-theme-tango
-        column-enforce-mode
-        company
-        company-anaconda
-        company-jedi
-        company-quickhelp
-        company-statistics
-        company-tern
-        counsel
-        csv-mode
-        ctable
+        ;;column-enforce-mode
+        ;;company
+        ;;company-anaconda
+        ;;company-jedi
+        ;;company-quickhelp
+        ;;company-statistics
+        ;;company-tern
+        ;;counsel
+        ;;csv-mode
+        ;; ctable
         ;;cyberpunk-theme
-        cython-mode
+        ;;cython-mode
         ;;dakrone-theme
         ;;darkburn-theme
         ;;darkmine-theme
         ;;darkokai-theme
         ;;darktooth-theme
-        dash
-        dash-functional
-        deferred
-        define-word
-        diff-hl
-        diminish
+        ;;dash
+        ;;dash-functional
+        ;;deferred
+        ;;define-word
+        ;;diff-hl
+        ;;diminish
         ;;dired+
-        dired-atool
-        dired-avfs
+        ;;dired-atool
+        ;;dired-avfs
         ;;dired-details
         ;;dired-details+
-        dired-dups
-        dired-efap
-        dired-explorer
-        dired-fdclone
-        dired-filetype-face
-        dired-filter
-        dired-hacks-utils
-        dired-imenu
-        dired-launch
-        dired-narrow
+        ;;dired-dups
+        ;;dired-efap
+        ;;dired-explorer
+        ;;dired-fdclone
+        ;;dired-filetype-face
+        ;;dired-filter
+        ;;dired-hacks-utils
+        ;;dired-imenu
+        ;;dired-launch
+        ;;dired-narrow
         ;;dired-nav-enhance
-        dired-open
-        dired-quick-sort
-        dired-rainbow
-        dired-single
+        ;;dired-open
+        ;;dired-quick-sort
+        ;;dired-rainbow
+        ;;dired-single
         ;;dired-sort
         ;;dired-sort-menu
         ;;dired-sort-menu+
-        dired-subtree
-        dired-toggle
-        dired-toggle-sudo
-        diredful
-        direx
-        direx-grep
+        ;;dired-subtree
+        ;;dired-toggle
+        ;;dired-toggle-sudo
+        ;;diredful
+        ;;direx
+        ;;direx-grep
         ;;django-theme
-        dockerfile-mode
+        ;;dockerfile-mode
         ;;doremi
         ;;doremi-frm
         ;;doremi-cmd
         ;;dracula-theme
-        dumb-jump
+        ;;dumb-jump
         ;;el-get
-        elisp-slime-nav
-        elpy
+        ;;elisp-slime-nav
+        ;;elpy
         ;;emacs-eclim
-        epc
-        epl
+        ;;epc
+        ;;epl
         ;;escreen
         ;;espresso-theme
-        eval-sexp-fu
+        ;;eval-sexp-fu
         ;; evil
         ;; evil-anzu
         ;; evil-args
@@ -508,73 +544,73 @@
         ;; evil-unimpaired
         ;; evil-visual-mark-mode
         ;; evil-visualstar
-        exec-path-from-shell
-        expand-region
-        eyebrowse
-        f
-        fancy-battery
+        ;;exec-path-from-shell
+        ;;expand-region
+        ;;eyebrowse
+        ;;f
+        ;;fancy-battery
         ;;farmhouse-theme
-        fill-column-indicator
-        find-file-in-project
+        ;;fill-column-indicator
+        ;;find-file-in-project
         ;;firebelly-theme
         ;;flatland-theme
         ;;flatui-theme
-        flx
-        flx-ido
-        flycheck
-        flycheck-pos-tip
-        flymake
-        flyspell-correct
-        flyspell-correct-helm
+        ;;flx
+        ;;flx-ido
+        ;;flycheck
+        ;;flycheck-pos-tip
+        ;;flymake
+        ;;flyspell-correct
+        ;;flyspell-correct-helm
         ;;frame-cmds
         ;;frame-fns
-        fringe-helper
-        fuzzy
+        ;;fringe-helper
+        ;;fuzzy
         ;;gandalf-theme
-        gh-md
-        git-commit
-        git-gutter
-        git-gutter+
-        git-gutter-fringe
-        git-gutter-fringe+
-        git-link
-        git-messenger
-        git-timemachine
-        gitattributes-mode
-        gitconfig-mode
-        gitignore-mode
-        gntp
-        gnuplot
-        golden-ratio
-        google-translate
+        ;;gh-md
+        ;;git-commit
+        ;;git-gutter
+        ;;git-gutter+
+        ;;git-gutter-fringe
+        ;;git-gutter-fringe+
+        ;;git-link
+        ;;git-messenger
+        ;;git-timemachine
+        ;;gitattributes-mode
+        ;;gitconfig-mode
+        ;;gitignore-mode
+        ;;gntp
+        ;;gnuplot
+        ;;golden-ratio
+        ;;google-translate
         ;;gotham-theme
-        goto-chg
-        goto-last-change
+        ;;goto-chg
+        ;;goto-last-change
         ;;grandshell-theme
         ;;gruber-darker-theme
         ;;gruvbox-theme
         ;;hc-zenburn-theme
-        header2
-        helm
-        helm-ag
-        helm-c-yasnippet
-        helm-company
+        ;;header2
+        ;;helm
+        ;;helm-ag
+        ;;helm-c-yasnippet
+        ;;helm-company
         ;;helm-core
-        helm-descbinds
-        helm-flx
+        ;;helm-descbinds
+        ;;helm-flx
         ;;helm-git
-        helm-git-files
-        helm-gitignore
-        helm-helm-commands
-        helm-ls-git
-        helm-make
-        helm-mode-manager
+        ;;helm-git-files
+        ;;helm-gitignore
+        ;;helm-helm-commands
+        ;;helm-ls-git
+        ;;helm-make
+        ;;helm-mode-manager
         ;;helm-package
-        helm-projectile
-        helm-pydoc
-        helm-spotify
-        helm-swoop
-        helm-themes
+        ;;helm-projectile
+        ;;helm-pydoc
+        ;; helm-spotify
+        ;;helm-swoop
+        ;;helm-themes
         ;;help-fns+
         ;;hemisu-theme
         ;;heroku-theme
@@ -585,15 +621,15 @@
         highlight-numbers
         highlight-parentheses
         hl-todo
-        hlinum
+        ;;hlinum
         htmlize
         hungry-delete
         hy-mode
-        hydra
+        ;;hydra
         ;;icicles
         ;;ido-vertical-mode
         ;;idomenu
-        iedit
+        ;;iedit
         indent-guide
         ;;info+
         ;;inkpot-theme
@@ -623,13 +659,13 @@
         ;;lush-theme
         macrostep
         ;;madhat2r-theme
-        magit
-        magit-gitflow
-        magit-popup
+        ;;magit
+        ;;magit-gitflow
+        ;;magit-popup
         ;;majapahit-theme
-        makey
-        markdown-mode
-        markdown-toc
+        ;;makey
+        ;;markdown-mode
+        ;;markdown-toc
         ;;material-theme
         ;;menu-bar+
         ;;minimal-theme
@@ -638,13 +674,13 @@
         ;;molokai-theme
         ;;monochrome-theme
         ;;monokai-theme
-        move-text
-        multiple-cursors
+        ;;move-text
+        ;;  multiple-cursors
         ;;mustang-theme
-        mwim
+        ;;mwim
         ;;naquadah-theme
-        neotree
-        nginx-mode
+        ;;neotree
+        ;;nginx-mode
         ;;niflheim-theme
         ;;noctilux-theme
         nose
@@ -653,16 +689,16 @@
         ;;occidental-theme
         ;;oldlace-theme
         ;;omtose-phellack-theme
-        open-junk-file
-        org
-        org-bullets
-        org-download
+        ;;open-junk-file
+        ;;org
+        ;;org-bullets
+        ;;org-download
         ;;org-plus-contrib
-        org-pomodoro
-        org-present
-        org-projectile
+        ;;org-pomodoro
+        ;;org-present
+        ;;org-projectile
         ;;organic-green-theme
-        orgit
+        ;;orgit
         ;;package
         ;;package-build
         packed
@@ -697,28 +733,28 @@
         python-pep8
         pythonic
         pyvenv
-        quelpa
+        ;;quelpa
         ;;railscasts-theme
-        rainbow-delimiters
-        rainbow-mode
-        recentf-ext
+        ;;rainbow-delimiters
+        ;;rainbow-mode
+        ;;recentf-ext
         ;;redo+
-        request
-        restart-emacs
+        ;;request
+        ;;restart-emacs
         ;;reverse-theme
-        s
-        seq
+        ;;s
+        ;;seq
         ;;seti-theme
-        shell-command
-        simple-httpd
-        skewer-mode
-        smartparens
-        smartrep
-        smart-mode-line
-        smart-mode-line-powerline-theme
-        smeargle
-        smooth-scroll
-        smooth-scrolling
+        ;;shell-command
+        ;;simple-httpd
+        ;;skewer-mode
+        ;;        smartparens
+        ;;smartrep
+        ;;smart-mode-line
+        ;;smart-mode-line-powerline-theme
+        ;;smeargle
+        ;;smooth-scroll
+        ;;smooth-scrolling
         ;;smyx-theme
         ;;soft-charcoal-theme
         ;;soft-morning-theme
@@ -726,59 +762,59 @@
         ;;solarized-theme
         ;;soothe-theme
         ;;spacegray-theme
-        spaceline
-        spaceline-all-the-icons
+        ;;spaceline
+        ;;spaceline-all-the-icons
         ;;spaceline-segments
         ;;spaceline-config
         ;;spacemacs-theme
-        spinner
-        spotify
-        spray
-        sr-speedbar
+        ;;spinner
+        ;;spotify
+        ;;spray
+        ;;sr-speedbar
         ;;subatomic-theme
         ;;subatomic256-theme
         ;;sublime-themes
         ;;sunny-day-theme
-        swiper
-        swiper-helm
-        switch-window
-        tabbar
+        ;;swiper
+        ;;swiper-helm
+        ;;switch-window
+        ;;tabbar
         ;;tango-2-theme
         ;;tango-plus-theme
         ;;tangotango-theme
         ;;tao-theme
-        tern
-        toc-org
+        ;;tern
+        ;;toc-org
         ;;toxi-theme
         ;;tronesque-theme
         ;;twilight-anti-bright-theme
         ;;twilight-bright-theme
         ;;twilight-theme
         ;;ujelly-theme
-        unbound
+        ;;unbound
         ;;underwater-theme
-        undo-tree
+        ;;undo-tree
         unfill
         ;;use-package
         ;;use-package-el-get
         uuidgen
-        vi-tilde-fringe
-        virtualenvwrapper
-        vline
+        ;;vi-tilde-fringe
+        ;;virtualenvwrapper
+        ;;vline
         volatile-highlights
         web-beautify
         websocket
-        which-key
-        window-number
+        ;;which-key
+        ;;window-number
         ;;window-numbering
-        winum
-        with-editor
-        ws-butler
-        yaml-mode
-        yasnippet
+        ;;winum
+        ;;with-editor
+        ;;ws-butler
+        ;;yaml-mode
+        ;;yasnippet
         ;;zen-and-art-theme
         ;;zenburn-theme
-        zencoding-mode
+        ;;zencoding-mode
         ;;zonokai-theme
         ))
 
@@ -786,7 +822,7 @@
 
 
 (use-package diminish :ensure t :diminish "")
-
+(use-package paradox)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -838,7 +874,7 @@
 ;;         (global-set-key (kbd "<C-S-up>")     'buf-move-up)
 ;;         (global-set-key (kbd "<C-S-down>")   'buf-move-down)
 ;;         (global-set-key (kbd "<C-S-left>")   'buf-move-left)
-;;         (global-set-key (kbd "<C-S-right>")  'buf-move-right)))
+;;         (glqobal-set-key (kbd "<C-S-right>")  'buf-move-right)))
 
 ;;    (:name smex				; a better (ido like) M-x
 ;;    :after (progn
@@ -883,8 +919,8 @@
   :quelpa (doremi :fetcher wiki))
 (use-package doremi-cmd
   :quelpa (doremi-cmd :fetcher wiki))
-(use-package doremi-frm
-  :quelpa (doremi-frm :fetcher wiki))
+;;(use-package doremi-frm
+;;:quelpa (doremi-frm :fetcher wiki))
 (use-package doremi-mac
   :quelpa (doremi-mac :fetcher wiki))
 
@@ -892,6 +928,18 @@
 (use-package menu-bar+
   :quelpa (menu-bar+ :fetcher wiki))
 
+
+(display-init-load-time-checkpoint "Loading f")
+(use-package f :defer t)
+(use-package cl-lib :defer t)
+(use-package s :defer t)
+(use-package seq :defer t)
+(use-package shell-command :defer t)
+
+
+
+(display-init-load-time-checkpoint "Loading all-the-icons")
+(use-package all-the-icons)
 
 ;; (setq my-el-get-packages
 ;;       '(
@@ -972,7 +1020,7 @@
 
 (display-init-load-time-checkpoint "Loading bind-key")
 (use-package bind-key)  ;; if you use any :bind variant
-
+(use-package bind-map)
 
 (display-init-load-time-checkpoint "Loading restart-emacs")
 
@@ -1094,13 +1142,20 @@
 (defun my-load-dired ()
   (interactive)
   (my-load-init-file "init-dired.el"))
-(my-load-dired)
+;;(my-load-dired)
 
 (display-init-load-time-checkpoint "Loading hydra definitions")
 (defun my-load-hydra ()
   (interactive)
   (my-load-init-file "hydra-init.el"))
 (my-load-hydra)
+
+
+(display-init-load-time-checkpoint "Loading emms definitions")
+(defun my-load-emms ()
+  (interactive)
+  (my-load-init-file "emms-init.el"))
+(my-load-emms)
 
 
 (defun my-load-python ()
@@ -1133,10 +1188,13 @@
   (my-load-init-file "shackle-init.el"))
 (my-load-shackle)
 
-(defun my-load-org-toolkit ()
+(defun my-load-org()
   (interactive)
-  (my-load-init-file "org-research-toolkit.el"))
+  (my-load-init-file "org-init.el"))
 
+(defun my-load-language-server ()
+  (interactive)
+  (my-load-init-file "emacs-lsp-init.el"))
 
 
 
@@ -1163,7 +1221,11 @@
 
 
 (display-init-load-time-checkpoint "Loading vline")
-(use-package vline)
+(use-package vline
+  :defer t
+  :diminish "vl"
+  )
+
 ;;(require 'col-highlight)
 ;;(require 'tabbar-extension)
 
@@ -1303,7 +1365,11 @@ file to write to."
   ;;             (concat marcel-lisp-dir "el-get/yasnippets")
   ;;             (concat marcel-lisp-dir "snippets")
   ;;             ))
+  (use-package yasnippet-snippets)
   (yas-global-mode 1)
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (define-key yas-minor-mode-map (kbd "C-c s") #'yas-expand)
   )
 
 
@@ -1325,22 +1391,7 @@ file to write to."
 (use-package color)
 ;;(use-package pallet)
 
-(defun my-set-hl-line-color-based-on-theme ()
-  "Sets the hl-line face to have no foregorund and a background
-    that is 10% darker than the default face's background."
-  (interactive)
-  (set-face-attribute 'hl-line nil
-                      :foreground nil
-                      :background (color-darken-name (face-background 'default) 10)))
 
-
-(defun my-set-hl-line-color-lighten-based-on-theme ()
-  "Sets the hl-line face to have no foregorund and a background
-    that is 10% darker than the default face's background."
-  (interactive)
-  (set-face-attribute 'hl-line nil
-                      :foreground nil
-                      :background (color-lighten-name (face-background 'default) 10)))
 
 ;;(add-hook 'global-hl-line-mode-hook 'my-set-hl-line-color-based-on-theme)
 
@@ -1351,13 +1402,34 @@ file to write to."
 ;;Line wrap
 (global-visual-line-mode)
 (setq line-move-visual t) ;; move via visual lines
-(diminish 'visual-line-mode "VLine")
+(diminish 'visual-line-mode "VizLine")
 
 
 (display-init-load-time-checkpoint "Loading hlinum")
 (use-package hlinum
   :init
-  (hlinum-activate))
+  (hlinum-activate)
+  :config
+  (set-face-attribute 'hl-line nil :inherit nil :background "#666666"  :foreground nil :weight 'bold)
+  ;;(set-face-attribute 'linum-highlight-face nil :background "#666666")
+  (set-face-attribute 'linum-highlight-face nil :inherit 'hl-line :weight 'ultra-bold)
+  (defun my-set-hl-line-color-based-on-theme ()
+    "Sets the hl-line face to have no foregorund and a background
+    that is 10% darker than the default face's background."
+    (interactive)
+    (set-face-attribute 'hl-line nil
+                        :foreground nil
+                        :background (color-darken-name (face-background 'default) 10)))
+
+
+  (defun my-set-hl-line-color-lighten-based-on-theme ()
+    "Sets the hl-line face to have no foregorund and a background
+    that is 10% darker than the default face's background."
+    (interactive)
+    (set-face-attribute 'hl-line nil
+                        :foreground nil
+                        :background (color-lighten-name (face-background 'default) 10)))
+  )
 
 
 (display-init-load-time-checkpoint "Loading expand region")
@@ -1367,8 +1439,7 @@ file to write to."
   (global-set-key (kbd "C-=") 'er/expand-region))
 
 (set-face-attribute 'region nil :background "magenta1" :foreground "#ffffff")
-(set-face-attribute 'hl-line nil :background "#666666")
-(set-face-attribute 'linum-highlight-face nil :background "#666666")
+
 
 ;; minibuffer completion incremental feedback
 ;;(icomplete-mode)
@@ -1396,6 +1467,7 @@ file to write to."
 
 (setq suggest-key-bindings 10)
 (setq tab-always-indent 'complete)  ;; use 't when company is disabled
+
 (display-init-load-time-checkpoint "Loading company")
 (use-package company
   :ensure t
@@ -1410,6 +1482,9 @@ file to write to."
          ("<tab>" . company-complete-common-or-cycle)
          ("S-TAB" . company-select-previous)
          ("<backtab>" . company-select-previous)
+         ("C-g" . company-abort)
+         ("<left>" . company-abort)
+
          :map company-search-map
          ("C-p" . company-select-previous)
          ("C-n" . company-select-next))
@@ -1420,12 +1495,53 @@ file to write to."
         company-idle-delay .2               ; decrease delay before autocompletion popup shows
         company-echo-delay 0                ; remove annoying blinking
         company-minimum-prefix-length 2
-        company-require-match nil
+        company-require-match 'never
         company-dabbrev-ignore-case nil
         company-show-numbers t
         company-dabbrev-downcase nil)
+
+  (custom-set-faces
+   '(company-preview  ((t (:foreground "dark gray" :underline t))))
+   '(company-preview-common ((t (:inherit company-preview))))
+   '(company-tooltip   ((t (:background "light gray" :foreground "black"))))
+   '(company-tooltip-selection   ((t (:background "steel blue" :foreground "white" :weight bold))))
+   '(company-tooltip-common  ((((type x)) (:inherit company-tooltip :weight bold))
+                              (t (:inherit company-tooltip))))
+   '(company-tooltip-common-selection  ((((type x)) (:inherit company-tooltip-selection :weight bold))
+                                        (t (:inherit company-tooltip-selection))))
+   '(company-scrollbar-fg ((t ( :background "gray40" :foreground "black" :weight bold))))
+   '(company-scrollbar-bg ((t (:inherit 'company-tooltip :background "gray20" :foreground "black" :weight bold))))
+   '(popup-menu-face     ((t :foreground "red"   :background "#49483E")))
+   '(popup-menu-selection-face     ((t :background "#349B8D"   :foreground "#BBF7EF"))))
+
   (add-hook 'after-init-hook 'global-company-mode)
+  (add-to-list 'company-backends 'company-dabbrev t)
+  (add-to-list 'company-backends 'company-ispell t)
+  (add-to-list 'company-backends 'company-files t)
+  (use-package company-shell)
+  (add-to-list 'company-backends 'company-shell t)
+  (use-package company-anaconda)
+  (add-to-list 'company-backends 'company-anaconda t)
+  (use-package company-jedi)
+  (add-to-list 'company-backends 'company-jedi t)
+  (use-package company-tern)
+  (add-to-list 'company-backends 'company-tern t)
+  (use-package company-statistics)
+  (add-to-list 'company-backends 'company-statistics t)
   (global-company-mode)
+  ;; (use-package company-posframe
+  ;;   :diminish "PosFr"
+  ;;   :config
+  ;;   (company-posframe-mode 1)
+  ;;   )
+
+  ;; (custom-set-faces
+  ;;  '(company-tooltip-common
+  ;;    ((t (:inherit company-tooltip :weight bold :underline nil))))
+  ;;  '(company-tooltip-common-selection
+  ;;    ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+
+
   ;; Popup documentation for completion candidates
   (when (display-graphic-p)
     (use-package company-quickhelp
@@ -1434,62 +1550,191 @@ file to write to."
       :hook (global-company-mode . company-quickhelp-mode)
       :config
       (company-quickhelp-mode 1)
-      (setq company-quickhelp-delay 0.8))))
-
-(use-package company-box
-  :after company
-  :diminish "CiaBox"
-  :hook (company-mode . company-box-mode))
+      (setq company-quickhelp-use-propertized-text t)
+      (setq company-quickhelp-color-foreground "white")
+      (setq company-quickhelp-color-background "black")
+      (setq company-quickhelp-delay 0.4))))
 
 
-(use-package company-box
-  :defer    t
-  :diminish "CiaBox"
-  :after (all-the-icons company)
-  :init
-  (setq company-box-icons-alist 'company-box-icons-all-the-icons)
-  :config
-  (setq company-box-backends-colors '((company-lsp      . "#e0f9b5")
-                                      (company-elisp    . "#e0f9b5")
-                                      (company-files    . "#ffffc2")
-                                      (company-keywords . "#ffa5a5")
-                                      (company-capf     . "#bfcfff")
-                                      (company-dabbrev  . "#bfcfff")))
-  (setq company-box-icons-unknown (concat (all-the-icons-material "find_in_page") " "))
-  (setq company-box-icons-elisp
-        (list
-         (concat (all-the-icons-faicon "tag") " ")
-         (concat (all-the-icons-faicon "cog") " ")
-         (concat (all-the-icons-faicon "cube") " ")
-         (concat (all-the-icons-material "color_lens") " ")))
-  (setq company-box-icons-yasnippet (concat (all-the-icons-faicon "bookmark") " "))
-  (setq company-box-icons-lsp
-        `((1 .  ,(concat (all-the-icons-faicon   "text-height")    " ")) ;; Text
-          (2 .  ,(concat (all-the-icons-faicon   "tags")           " ")) ;; Method
-          (3 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Function
-          (4 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Constructor
-          (5 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Field
-          (6 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Variable
-          (7 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Class
-          (8 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Interface
-          (9 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Module
-          (10 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Property
-          (11 . ,(concat (all-the-icons-material "settings_system_daydream") " ")) ;; Unit
-          (12 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Value
-          (13 . ,(concat (all-the-icons-material "storage")        " ")) ;; Enum
-          (14 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; Keyword
-          (15 . ,(concat (all-the-icons-faicon   "bookmark")       " ")) ;; Snippet
-          (16 . ,(concat (all-the-icons-material "color_lens")     " ")) ;; Color
-          (17 . ,(concat (all-the-icons-faicon   "file-text-o")    " ")) ;; File
-          (18 . ,(concat (all-the-icons-material "refresh")        " ")) ;; Reference
-          (19 . ,(concat (all-the-icons-faicon   "folder-open")    " ")) ;; Folder
-          (20 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; EnumMember
-          (21 . ,(concat (all-the-icons-faicon   "square")         " ")) ;; Constant
-          (22 . ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Struct
-          (23 . ,(concat (all-the-icons-faicon   "calendar")       " ")) ;; Event
-          (24 . ,(concat (all-the-icons-faicon   "square-o")       " ")) ;; Operator
-          (25 . ,(concat (all-the-icons-faicon   "arrows")         " "))) ;; TypeParameter
-        ))
+(defun my-load-company-box ()
+  (interactive)
+  (use-package company-box
+    :defer    t
+    :diminish " ⓐ" ;;"CiaBox"
+    :after (all-the-icons company)
+    :hook (company-mode . company-box-mode)
+    :functions (my-company-box--make-line
+                my-company-box-icons--elisp)
+    :commands (company-box--get-color
+               company-box--resolve-colors
+               company-box--add-icon
+               company-box--apply-color
+               company-box--make-line
+               company-box-icons--elisp)
+
+    :init
+    (setq company-box-frame-parameters
+          '((left . -1)
+            (no-accept-focus . t)
+            (no-focus-on-map . t)
+            (min-width  . t)
+            (min-height  . t)
+            (width  . 30)
+            (height  . 30)
+            (internal-border-width . 5)
+            (vertical-scroll-bars . nil)
+            (horizontal-scroll-bars . nil)
+            (menu-bar-lines . 0)
+            (tool-bar-lines . 0)
+            (line-spacing . 1)
+            ;; (unsplittable . nil)
+            (undecorated . t)
+            (top . -1)
+            (visibility . nil)
+            (mouse-wheel-frame . nil)
+            (no-other-frame . t)
+            (cursor-type . nil)
+            (drag-internal-border . t)
+            (left-fringe . 5)
+            (right-fringe . 5)
+            (no-special-glyphs . t)))
+    (setq company-box-doc-frame-parameters
+          '((internal-border-width . 5)
+            (foreground-color . "white")
+            (background-color . "black")
+            (no-accept-focus . t)
+            (no-focus-on-map . t)
+            )
+          )
+
+    (setq company-box-icons-alist 'company-box-icons-all-the-icons)
+    :config
+    ;; (setq company-box-backends-colors
+    ;;        '((company-lsp      . "#e0f9b5")
+    ;;          (company-elisp    . "#e0f9b5")
+    ;;          (company-files    . "#ffffc2")
+    ;;          (company-keywords . "#ffa5a5")
+    ;;          (company-capf     . "#bfcfff")
+    ;;          (company-dabbrev  . "#bfcfff"))
+    ;;       )
+    (company-box--set-frame nil)
+    (set-frame-parameter nil 'company-box-doc-frame nil)
+
+    (setq company-box-backends-colors nil
+          company-box-show-single-candidate t
+          company-box-max-candidates 50
+          company-box-doc-delay 0.4)
+
+    (setq company-box-icons-unknown (concat (all-the-icons-material "find_in_page") " "))
+    (setq company-box-icons-elisp
+          (list
+           (concat (all-the-icons-faicon "tag") " ")
+           (concat (all-the-icons-faicon "cog") " ")
+           (concat (all-the-icons-faicon "cube") " ")
+           (concat (all-the-icons-material "color_lens") " ")))
+    (setq company-box-icons-yasnippet (concat (all-the-icons-faicon "bookmark") " "))
+    (setq company-box-icons-lsp
+          `((1 .  ,(concat (all-the-icons-faicon   "text-height")    " ")) ;; Text
+            (2 .  ,(concat (all-the-icons-faicon   "tags")           " ")) ;; Method
+            (3 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Function
+            (4 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Constructor
+            (5 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Field
+            (6 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Variable
+            (7 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Class
+            (8 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Interface
+            (9 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Module
+            (10 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Property
+            (11 . ,(concat (all-the-icons-material "settings_system_daydream") " ")) ;; Unit
+            (12 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Value
+            (13 . ,(concat (all-the-icons-material "storage")        " ")) ;; Enum
+            (14 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; Keyword
+            (15 . ,(concat (all-the-icons-faicon   "bookmark")       " ")) ;; Snippet
+            (16 . ,(concat (all-the-icons-material "color_lens")     " ")) ;; Color
+            (17 . ,(concat (all-the-icons-faicon   "file-text-o")    " ")) ;; File
+            (18 . ,(concat (all-the-icons-material "refresh")        " ")) ;; Reference
+            (19 . ,(concat (all-the-icons-faicon   "folder-open")    " ")) ;; Folder
+            (20 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; EnumMember
+            (21 . ,(concat (all-the-icons-faicon   "square")         " ")) ;; Constant
+            (22 . ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Struct
+            (23 . ,(concat (all-the-icons-faicon   "calendar")       " ")) ;; Event
+            (24 . ,(concat (all-the-icons-faicon   "square-o")       " ")) ;; Operator
+            (25 . ,(concat (all-the-icons-faicon   "arrows")         " "))) ;; TypeParameter
+          ))
+
+  ;; Support `company-common'
+  (defun my-company-box--make-line (candidate)
+    (-let* (((candidate annotation len-c len-a backend) candidate)
+            (color (company-box--get-color backend))
+            ((c-color a-color i-color s-color) (company-box--resolve-colors color))
+            (icon-string (and company-box--with-icons-p (company-box--add-icon candidate)))
+            (candidate-string (concat (propertize (or company-common "") 'face 'company-tooltip-common)
+                                      (substring (propertize candidate 'face 'company-box-candidate) (length company-common) nil)))
+            (align-string (when annotation
+                            (concat " " (and company-tooltip-align-annotations
+                                             (propertize " " 'display `(space :align-to (- right-fringe ,(or len-a 0) 1)))))))
+            (space company-box--space)
+            (icon-p company-box-enable-icon)
+            (annotation-string (and annotation (propertize annotation 'face 'company-box-annotation)))
+            (line (concat (unless (or (and (= space 2) icon-p) (= space 0))
+                            (propertize " " 'display `(space :width ,(if (or (= space 1) (not icon-p)) 1 0.75))))
+                          (company-box--apply-color icon-string i-color)
+                          (company-box--apply-color candidate-string c-color)
+                          align-string
+                          (company-box--apply-color annotation-string a-color)))
+            (len (length line)))
+      (add-text-properties 0 len (list 'company-box--len (+ len-c len-a)
+                                       'company-box--color s-color)
+                           line)
+      line))
+  (advice-add #'company-box--make-line :override #'my-company-box--make-line)
+
+  ;; Prettify icons
+  (defun my-company-box-icons--elisp (candidate)
+    (when (derived-mode-p 'emacs-lisp-mode)
+      (let ((sym (intern candidate)))
+        (cond ((fboundp sym) 'Function)
+              ((featurep sym) 'Module)
+              ((facep sym) 'Color)
+              ((boundp sym) 'Variable)
+              ((symbolp sym) 'Text)
+              (t . nil)))))
+  (advice-add #'company-box-icons--elisp :override #'my-company-box-icons--elisp)
+
+  (with-eval-after-load 'all-the-icons
+    (declare-function all-the-icons-faicon 'all-the-icons)
+    (declare-function all-the-icons-material 'all-the-icons)
+    (setq company-box-icons-all-the-icons
+          `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.9 :v-adjust -0.2))
+            (Text . ,(all-the-icons-faicon "text-width" :height 0.85 :v-adjust -0.05))
+            (Method . ,(all-the-icons-faicon "cube" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-purple))
+            (Function . ,(all-the-icons-faicon "cube" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-purple))
+            (Constructor . ,(all-the-icons-faicon "cube" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-purple))
+            (Field . ,(all-the-icons-faicon "tag" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-lblue))
+            (Variable . ,(all-the-icons-faicon "tag" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-lblue))
+            (Class . ,(all-the-icons-material "settings_input_component" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-orange))
+            (Interface . ,(all-the-icons-material "share" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
+            (Module . ,(all-the-icons-material "view_module" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
+            (Property . ,(all-the-icons-faicon "wrench" :height 0.85 :v-adjust -0.05))
+            (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.9 :v-adjust -0.2))
+            (Value . ,(all-the-icons-material "format_align_right" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
+            (Enum . ,(all-the-icons-material "storage" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-orange))
+            (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.9 :v-adjust -0.2))
+            (Snippet . ,(all-the-icons-material "format_align_center" :height 0.9 :v-adjust -0.2))
+            (Color . ,(all-the-icons-material "palette" :height 0.9 :v-adjust -0.2))
+            (File . ,(all-the-icons-faicon "file-o" :height 0.9 :v-adjust -0.05))
+            (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.9 :v-adjust -0.2))
+            (Folder . ,(all-the-icons-faicon "folder-open" :height 0.9 :v-adjust -0.05))
+            (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
+            (Constant . ,(all-the-icons-faicon "square-o" :height 0.9 :v-adjust -0.05))
+            (Struct . ,(all-the-icons-material "settings_input_component" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-orange))
+            (Event . ,(all-the-icons-faicon "bolt" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-orange))
+            (Operator . ,(all-the-icons-material "control_point" :height 0.9 :v-adjust -0.2))
+            (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.85 :v-adjust -0.05))
+            (Template . ,(all-the-icons-material "format_align_center" :height 0.9 :v-adjust -0.2)))))
+  )
+
+(my-load-company-box)
+
 
 (display-init-load-time-checkpoint "Loading visual-regex")
 ;; Replace Strings with Regexes
@@ -1501,23 +1746,23 @@ file to write to."
 ;; ----------------------------------------------------------[Window Number]
 
 (display-init-load-time-checkpoint "Loading winum")
-(autoload 'window-number-mode "window-number"
-  "A global minor mode that enables selection of windows according to
- numbers with the C-x C-j prefix.  Another mode,
- `window-number-meta-mode' enables the use of the M- prefix."
-  t)
+;; (autoload 'window-number-mode "window-number"
+;;   "A global minor mode that enables selection of windows according to
+;;  numbers with the C-x C-j prefix.  Another mode,
+;;  `window-number-meta-mode' enables the use of the M- prefix."
+;;   t)
 
-(autoload 'window-number-meta-mode "window-number"
-  "A global minor mode that enables use of the M- prefix to select
- windows, use `window-number-mode' to display the window numbers in
- the mode-line."
-  t)
+;; (autoload 'window-number-meta-mode "window-number"
+;;   "A global minor mode that enables use of the M- prefix to select
+;;  windows, use `window-number-mode' to display the window numbers in
+;;  the mode-line."
+;;   t)
 
-(use-package window-number
-  :init
-  (window-number-mode 1)
-  :diminish "WN"
-  )
+;; (use-package window-number
+;;   :init
+;;   (window-number-mode 1)
+;;   :diminish "WN"
+;;   )
 
 
 
@@ -1566,9 +1811,14 @@ file to write to."
 ;; ;; ;; ----------------------------------------------------------[Window Number]
 
 
-;; ;; ;;(use-package flycheck)
-;; ;; ;;(add-hook 'after-init-hook #'global-flycheck-mode)
+(use-package flycheck
+  :diminish "flyck"
+  ;;:config
+  ;;(global-flycheck-mode 1)
+  ;;(add-hook 'after-init-hook #'global-flycheck-mode)
+  )
 
+(use-package flycheck-pos-tip)
 ;; ;; ;; Line to indicate column limit for program lines
 ;; ;; (message "Loading fill-column-indicator")
 ;; ;; (use-package fill-column-indicator
@@ -1777,7 +2027,7 @@ file to write to."
 (display-init-load-time-checkpoint "Loading iedit")
 (use-package iedit
   :defines desktop-minor-mode-table
-  :bind (("C-;" . iedit-mode)
+  :bind (("C-c i" . iedit-mode)
          ("C-x r RET" . iedit-rectangle-mode)
          :map isearch-mode-map ("C-;" . iedit-mode-from-isearch)
          :map esc-map ("C-;" . iedit-execute-last-modification)
@@ -1810,7 +2060,11 @@ file to write to."
 ;; Goto last change
 (display-init-load-time-checkpoint "Loading goto last change")
 (use-package goto-chg
-  :bind ("C-," . goto-last-change))
+  :bind ("C-," . goto-last-change)
+  :config
+  (global-set-key [(control ?.)] 'goto-last-change)
+  (global-set-key [(control ?,)] 'goto-last-change-reverse)
+  )
 
 
 ;; Framework for mode-specific buffer indexes
@@ -1860,9 +2114,11 @@ file to write to."
   :ensure t
   :bind (("M-s g" . avy-goto-word-1)))
 
-;;(message "Loading swiper")
+
 (display-init-load-time-checkpoint "Loading swiper")
 (use-package swiper :defer t)
+(use-package counsel :defer t)
+(use-package swiper-helm)
 (display-init-load-time-checkpoint "Done loading swiper")
 
 (display-init-load-time-checkpoint "Loading ivy")
@@ -1901,6 +2157,12 @@ file to write to."
 (diminish 'subword-mode)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; neotree
 ;;(message "Loading and configuring neotree")
+;; https://github.com/domtronn/all-the-icons.el#installation
+;;(all-the-icons-insert-icons-for 'alltheicon 1)   ;; Prints all the icons for `alltheicon' font set
+;;(all-the-icons-insert-icons-for 'octicon 1)   ;; Prints all the icons for the `octicon' family
+;; and makes the icons height 10
+;;(all-the-icons-insert-icons-for 'faicon 1 0.5) ;; Prints all the icons for the `faicon' family
+;; and also waits 0.5s between printing each one
 (display-init-load-time-checkpoint "Loading all the icons")
 (use-package all-the-icons)
 
@@ -2135,7 +2397,11 @@ https://github.com/jaypei/emacs-neotree/pull/110"
               '(("\\.h$"   . c++-mode))
               '(("\\.c$"   . c-mode))
               '(("\\.y$"   . c-mode))
+              '(("\\.csv$"  . csv-mode))
               '(("\\.py$"  . python-mode))
+              ;;'(("\\.py$"  . python-mode))
+              '(("\\.py$"  . lsp-mode))
+              '(("\\.py$"  . anaconda-mode))
               '(("\\.sl\\'" . slang-mode))
               '(("\\.sml$" . sml-mode))
               '(("\\.sig$" . sml-mode))
@@ -2262,16 +2528,6 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;;(setq speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'")
 ;;(setq speedbar-directory-unshown-regexp  "^\\(\\.*\\)\\'")
 
-(setq-default ispell-program-name
-              (cond (running-ms-windows
-                     ;;"c:/Program Files/Aspell6/x64/bin/aspell.exe"
-                     "aspell")
-                    (running-macos
-                     "/usr/local/bin/aspell")
-                    (t
-                     (if (file-executable-p "/usr/bin/hunspell")
-                         "/usr/bin/hunspell"
-                       "/usr/bin/aspell"))))
 
 (setq ediff-diff-program ; your Lisp system
       (cond (running-ms-windows
@@ -2281,13 +2537,43 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 (setq grep-command "grep -i -nH -e -r ")
 
-(autoload 'flyspell-mode "flyspell" "On-the-fly spelling checker." t)
-(autoload 'flyspell-delay-command "flyspell" "Delay on command." t)
-(autoload 'tex-mode-flyspell-verify "flyspell" "" t)
+;;(autoload 'flyspell-mode "flyspell" "On-the-fly spelling checker." t)
+;;(autoload 'flyspell-delay-command "flyspell" "Delay on command." t)
+
+
 (use-package flyspell
   :ensure t
   :defer t
-  :diminish "")
+  :diminish "Spell"
+  :config
+  (setq ispell-list-command "--list")
+  (setq-default ispell-program-name
+                (cond (running-ms-windows
+                       ;;"c:/Program Files/Aspell6/x64/bin/aspell.exe"
+                       "aspell")
+                      (running-macos
+                       "/usr/local/bin/aspell")
+                      (t
+                       (if (file-executable-p "/usr/bin/hunspell")
+                           "/usr/bin/hunspell"
+                         "/usr/bin/aspell"))))
+
+  (flyspell-mode-off)
+  (flyspell-mode 0)
+  (autoload 'tex-mode-flyspell-verify "flyspell" "" t)
+  (global-set-key (kbd "C-S-<f8>") 'flyspell-mode)
+  (global-set-key (kbd "C-M-<f8>") 'flyspell-buffer)
+  )
+(use-package ace-flyspell)
+(use-package flyspell-correct-helm
+  :bind ("C-M-;" . flyspell-correct-wrapper)
+  :init
+  (setq flyspell-correct-interface #'flyspell-correct-helm))
+;;(use-package auto-dictionary
+;;  :config
+;;  (add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
+
+
 
 
 ;; ;; If antlr-mode is not part of your distribution, put this file into your
@@ -2469,23 +2755,11 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 
 
-;; Build pdf-tools on the mac:
-;;PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig ;;/Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190413.2018/build/server/autobuild -i /Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190
-
-(when running-macos
-  (use-package pdf-tools
-    :config
-    ;; initialise
-;;    (pdf-tools-install t t t)
-    (pdf-loader-install)
-    ;; open pdfs scaled to fit page
-    (setq pdf-view-use-unicode-ligther nil)
-    (setq-default pdf-view-display-size 'fit-page)
-    ;; more fine-grained zooming
-    ;;  (setq pdf-view-resize-factor 1.1)
-    (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
-    )
-  )
+(display-init-load-time-checkpoint "Loading pdf-tools")
+(defun my-load-pdf-tools()
+  (interactive)
+  (my-load-init-file "pdf-tools-init.el"))
+(my-load-pdf-tools)
 
 (display-init-load-time-checkpoint "Loading tex")
 (defun my-load-latex ()
@@ -2968,10 +3242,10 @@ Version 2017-01-27"
 (display-init-load-time-checkpoint "Loading smooth-scroll")
 (use-package smooth-scroll)
 (setq redisplay-dont-pause t)
-(setq  scroll-margin 3)
-(setq  scroll-step 1)
-(setq  scroll-conservatively 10000)
-(setq  scroll-preserve-screen-position 1)
+(setq scroll-margin 3)
+(setq scroll-step 1)
+(setq scroll-conservatively 10000)
+(setq scroll-preserve-screen-position 1)
 (setq auto-window-vscroll nil)
 ;;(setq  smooth-scroll/vscroll-step-size 1)
 ;;(smooth-scroll-mode 1)
@@ -3056,7 +3330,7 @@ Version 2017-01-27"
 (defun my-load-gitgutter ()
   (interactive)
   (my-load-init-file "gitgutter-init.el"))
-;;(my-load-gitgutter)
+(my-load-gitgutter)
 
 
 
@@ -3109,154 +3383,17 @@ Version 2017-01-27"
 ;;                     :box nil)
 
 (display-init-load-time-checkpoint "Loading helm")
+(setq tramp-verbose 6)
+;; CTRL-Backspace disables auto-expansion
 (my-load-helm)
 (display-init-load-time-checkpoint "Done loading helm")
 
 
-(display-init-load-time-checkpoint "Loading org stuff")
-;;(message "Loading org stuff")
-(use-package org
-  :defer t
-  :config
-  ;;(use-package org-install)
-  ;;(use-package ob-tangle)
-  ;; make org mode allow eval of some langs
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (clojure . t)
-     (python . t)
-     (R . t)
-     (org . t)
-     (java . t)
-     (ditaa . t)
-     (latex . t)
-     (dot . t)
-     (ledger . t)
-     (gnuplot . t)
-     (screen . nil)
-     (shell . t)
-     (sql . nil)
-     (sqlite . t)
-     (ruby . t)))
-  ;; stop emacs asking for confirmation
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-src-fontify-natively t)
-  (setq org-support-shift-select t)
-  (setq org-startup-indented t)
-  (setq org-src-tab-acts-natively t)
-  )
-
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("●" "►" "▸")))
-
-(eval-after-load "org"
-  '(progn
-     (eval-after-load "cua-base"
-       '(progn
-          (setq org-support-shift-select t)
-          (defadvice org-call-for-shift-select (before org-call-for-shift-select-cua activate)
-            (if (and cua-mode
-                     org-support-shift-select
-                     (not (use-region-p)))
-                (cua-set-mark)))))))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Org mode for taking research notes.
-;; https://www.anand-iyer.com/blog/2017/research-literature-management-with-emacs.html
-
-;; if I have the master.bib file open, I can simply go to the
-;; entry I want to read, and then use the org-ref-open-bibtex-notes
-;; command. As the name suggests, this command opens the
-;; corresponding notes entry in the org-ref-bibliography-notes file,
-;; creating a new entry if it can’t find one. If I don’t have the
-;; master.bib file open, I use the excellent helm-bibtex package to
-;; search through my bibliography files. When I find the entry I’m
-;; looking for, I open notes (or create it) with helm’s available
-;; actions on the selected entry. For this to work, we need to let
-;; helm-bibtex know where the notes
-
-;; run doi-utils-get-bibtex-entry-pdf to get the PDF.
-(use-package org-ref
-  :after org
-  :config
-  (require 'doi-utils)
-  (require 'org-ref-pdf)
-  (require 'org-ref-url-utils)
-  (require 'org-ref-latex)
-  (require 'org-ref-bibtex)
-  (require 'org-ref-isbn)
-  (require 'org-ref-arxiv)
-  (require 'ox-latex)
-  (require 'ox-beamer)
-  (require 'ox-odt)
-  (require 'ox-html)
-  (require 'ox-publish)
-
-  (setq
-   org-ref-notes-directory "~/Dropbox/EmacsOrg/ref"
-   org-ref-bibliography-notes "~/Dropbox/EmacsOrg/ref/notes.org"
-   org-ref-default-bibliography '("~/Dropbox/EmacsOrg/ref/master.bib")
-   org-ref-pdf-directory "~/Dropbox/EmacsOrg/ref/pdfs/")
-  (setq
-   bibtex-completion-bibliography '("~/Dropbox/EmacsOrg/ref/master.bib")
-   bibtex-completion-library-path '("~/Dropbox/EmacsOrg/ref/pdfs" "./pdfs")
-   reftex-default-bibliography '("~/Dropbox/EmacsOrg/ref/master.bib")
-   bibtex-completion-notes-path "~/Dropbox/EmacsOrg/ref/notes.org")
-  )
-
-(unless (file-exists-p org-ref-pdf-directory)
-  (make-directory org-ref-pdf-directory t))
-
-
-(my-load-org-toolkit)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Package Interleave to take notes in PDF with Org file
-;; Usage
-;; Create a Org file that will keep your notes. In the Org header section (#+TITLE, #+AUTHOR, etc.) add
-
-;; #+INTERLEAVE_PDF: /the/path/to/pdf.pdf
-;; Then you can start interleave by typing
-
-;; M-x interleave-mode This will display the PDF side by side to the
-;; org buffer for your notes. You can navigate the PDF as usual with n
-;; and p. Changing the page of the PDF will also narrow to the notes
-;; that are meant for this particular PDF page.
-
-;; The split direction is determined by the customizable variable
-;; interleave-split-direction. When interleave-mode is invoked with a
-;; prefix argument the inverse split direction is used e.g. if
-;; interleave-split-direction is set to vertical the buffer is split
-;; horizontally.
-
-;; If you want to add some notes to the current page you can type
-;; i. This will create a new headline for your notes. If some notes
-;; are already present, i will switch over to the other buffer.
-
-;; Typing q in the DocView will quit interleave-mode.
-;; To use the interleave package, all I need to do is to add the
-
-;; INTERLEAVE_PDF property to the PROPERTIES section of the entry in
-;; my notes.org file. Then, to open the PDF, I place the cursor on
-;; the title, and invoke interleave-mode command. This will display
-;; the PDF side-by-side with my notes, where I can navigate, see or
-;; add notes on any page.
-(use-package interleave
-  :ensure t
-  :bind ("C-x i" . interleave-mode)
-  :config
-  (setq interleave-split-direction 'horizontal
-        interleave-split-lines 20
-        interleave-disable-narrowing t))
-
-
+(display-init-load-time-checkpoint "Loading org")
+;;(my-load-org-toolkit)
 (display-init-load-time-checkpoint "Done loading org stuff")
-
-
 
 ;; open my Emacs init file
 (defun my-open-notes ()
@@ -3276,7 +3413,14 @@ Version 2017-01-27"
 (my-load-bookmarks)
 (display-init-load-time-checkpoint "Done Loading bookmarks")
 
-(display-init-load-time-checkpoint "Loading outline-magig")
+
+(display-init-load-time-checkpoint "Loading language server")
+(my-load-language-server)
+(display-init-load-time-checkpoint "Done Loading language server")
+
+
+
+(display-init-load-time-checkpoint "Loading outline-magic")
 (use-package outline-magic)
 ;; (add-hook 'outline-mode-hook
 ;;           (lambda ()
@@ -3347,6 +3491,163 @@ Version 2017-01-27"
 
 
 ;;(setq spacemacs-start-directory "~/src/emacs-spacemacs/.emacs.d/")
+;;(setenv "HOME" "/Users/marcelbecker/src/emacs-spacemacs/")
+;;(setq spacemacs-start-directory "~/.emacs.d/")
+;;(load-file (concat spacemacs-start-directory "init.el"))
+
+
+
+
+;; Adds letters to helm buffers to assist selection.
+;; It does not look good.
+;; (use-package ace-jump-helm-line
+;;   :after helm
+;;   :config
+;;   (define-key helm-map (kbd "C-'") 'ace-jump-helm-line)
+;;   (setq ace-jump-helm-line-style 'pre)
+;;   (setq ace-jump-helm-line-background t)
+;;   (setq ace-jump-helm-line-default-action 'select)
+;;   (setq ace-jump-helm-line-select-key ?e) ;; this line is not needed
+;;   ;; Set the move-only and persistent keys
+;;   (setq ace-jump-helm-line-move-only-key ?o)
+;;   (setq ace-jump-helm-line-persistent-key ?p)
+;;   ;; enable idle execution for `helm-mini'
+;;   (ace-jump-helm-line-idle-exec-add 'helm-mini)
+;;   ;; enable hints preview
+;;   (ace-jump-helm-line-autoshow-mode +1)
+;;   ;; use `linum-mode' to show
+;;   (setq ace-jump-helm-line-autoshow-mode-use-linum t))
+
+(use-package ace-jump-mode
+  :config
+  (define-key global-map (kbd "C-c SPC") 'ace-jump-mode))
+
+(use-package ace-link
+  :config
+  (ace-link-setup-default)
+  (define-key org-mode-map (kbd "M-o") 'ace-link-org))
+
+(use-package adaptive-wrap)
+
+(use-package aggressive-indent)
+
+(use-package dockerfile-mode
+  :config
+  (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
+
+;;https://github.com/immerrr/ample-regexps.el
+(use-package ample-regexps)
+(use-package async)
+
+;; Highlights symbol under cursor
+;; https://github.com/mhayashi1120/auto-highlight-symbol-mode
+(use-package auto-highlight-symbol
+  :diminish "AHS")
+
+
+(use-package color-theme-modern)
+
+(use-package column-enforce-mode
+  :diminish "COL"
+  :config
+  (setq column-enforce-comments nil)
+  (setq column-enforce-column 120)
+  (global-column-enforce-mode t))
+
+(use-package csv-mode)
+(use-package ctable)
+(use-package dash)
+(use-package dash-functional)
+(use-package deferred)
+(use-package define-word)
+
+;; diff-hl-mode highlights uncommitted changes on the left side of the
+;; window, allows you to jump between and revert them selectively.
+;; https://github.com/dgutov/diff-hl
+(use-package diff-hl
+  :config
+  (global-diff-hl-mode))
+
+(use-package dumb-jump
+  :after hydra
+  :bind (("M-g o" . dumb-jump-go-other-window)
+         ("M-g j" . dumb-jump-go)
+         ("M-g i" . dumb-jump-go-prompt)
+         ("M-g x" . dumb-jump-go-prefer-external)
+         ("M-g z" . dumb-jump-go-prefer-external-other-window)
+         ("C-z j" . hydra-dumb-jump/body))
+  :config
+  (setq dumb-jump-selector 'helm) ;; (setq dumb-jump-selector 'ivy)
+  (defhydra hydra-dumb-jump (:color blue :columns 3)
+    "Dumb Jump"
+    ("j" dumb-jump-go "Go")
+    ("o" dumb-jump-go-other-window "Other window")
+    ("e" dumb-jump-go-prefer-external "Go external")
+    ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
+    ("i" dumb-jump-go-prompt "Prompt")
+    ("l" dumb-jump-quick-look "Quick look")
+    ("b" dumb-jump-back "Back"))
+  :ensure t)
+
+(use-package epc)
+(use-package eval-sexp-fu)
+;; (use-package exec-path-from-shell
+;;   :config
+;;   (when (memq window-system '(mac ns x))
+;;     (exec-path-from-shell-initialize)))
+
+
+(use-package fancy-battery)
+
+;; use display-fill-column-indicator-mode of fci-mode to display
+;; a line in column
+(use-package fill-column-indicator
+  :config
+  (setq-default fci-rule-column 120)
+  (setq fci-handle-truncate-lines nil)
+  (fci-mode -1)
+  )
+
+(use-package find-file-in-project)
+
+;; After install gh-md.el you can use the functions
+;;gh-md-render-region and gh-md-render-buffer to generate a preview of
+;;the markdown content of a buffer.
+(use-package gh-md)
+(use-package gnuplot)
+(use-package golden-ratio)
+(use-package google-translate :defer t)
+(use-package json)
+(use-package json-mode)
+(use-package json-reformat)
+(use-package json-rpc)
+(use-package json-snatcher)
+
+
+(use-package markdown-mode)
+(use-package markdown-toc)
+(use-package move-text)
+(use-package request)
+(use-package tern)
+(use-package yaml-mode :defer t)
+
+
+
+
+;;(setq spacemacs-start-directory (concat marcel-lisp-dir "spacemacs/"))
+;;(trace-function #'load)
+;;(trace-function #'load-file)
+;;(setq spacemacs-start-directory  "~/Dropbox/spacemacs/.emacs.d/")
+;;(setq spacemacs-start-directory  "/Users/marcelbecker/src/emacs-spacemacs/.emacs.d/")
+
 ;;(load-file "~/src/emacs-spacemacs/.spacemacs")
-;;(setq dotemacs-install-packages 'all)
+;;(load-file "/Users/marcelbecker/src/emacs-spacemacs/.emacs.d/core/core-versions.el")
+;;(load-file "/Users/marcelbecker/src/emacs-spacemacs/.emacs.d/core/core-load-paths.el")
+;;(setq package-user-dir "/Users/marcelbecker/src/emacs-spacemacs/.emacs.d/elpa/")
+;; (package-initialize)
+;;(load-file "/Users/marcelbecker/src/emacs-spacemacs/.emacs.d/core/core-load-paths.el")
+;;(load-file "/Users/marcelbecker/Dropbox/spacemacs/.emacs.d/core/core-keybindings.el")
+;; (dotspacemacs/layers)
+;; (dotspacemacs/init)
+;;(load-file "/Users/marcelbecker/src/emacs-spacemacs/.emacs.d/core/core-spacemacs.el")
 ;;(load-file (concat spacemacs-start-directory "init.el"))

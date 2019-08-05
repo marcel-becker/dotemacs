@@ -2,8 +2,10 @@
 
 
 (display-init-load-time-checkpoint "Loading helm")
-(use-package helm :ensure t :diminish "H")
+;;(use-package helm :ensure t :diminish "H")
 (display-init-load-time-checkpoint "Loading helm config")
+(use-package helm :diminish " ⎈")
+
 (use-package helm-config :ensure helm :demand t :diminish "H")
 
 (display-init-load-time-checkpoint "Loading helm ag")
@@ -43,6 +45,7 @@
 (display-init-load-time-checkpoint "Loading helm commands")
 (use-package    helm-helm-commands :ensure t)
 
+
 (display-init-load-time-checkpoint "Loading helm flx")
 (use-package helm-flx
   :ensure t
@@ -63,38 +66,41 @@
   :defer t)
 
 
+(display-init-load-time-checkpoint "Loading helm spotify")
+(use-package  helm-spotify-plus :ensure t)
+
+
 (autoload 'helm-descbinds      "helm-descbinds" t)
 (autoload 'helm-eshell-history "helm-eshell"    t)
 (autoload 'helm-esh-pcomplete  "helm-eshell"    t)
 
 (display-init-load-time-checkpoint "Configuring helm")
-(setq
- helm-adaptive-history-file (concat marcel-lisp-dir "helm-history")
- helm-buffers-fuzzy-matching t  ; fuzzy matching buffer names when non-nil useful in helm-mini that lists buffers
- helm-recentf-fuzzy-match t
- helm-M-x-fuzzy-match t
- helm-candidate-number-limit 500 ; limit the number of displayed candidates
- helm-ff-auto-update-initial-value      t
- helm-ff-file-name-history-use-recentf t
- helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
- helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
- helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
- helm-split-window-in-side-p nil ;; open helm buffer inside current window, not occupy whole other window
- helm-yank-symbol-first                 t
- helm-ff-transformer-show-only-basename nil
- helm-mini-default-sources '(helm-source-buffers-list
-                             helm-source-recentf
-                             helm-source-bookmarks
-                             helm-source-buffer-not-found)
- ;; Save buffer when helm-multi-swoop-edit completeo
- helm-multi-swoop-edit-save t
- ;; If this value is t, split window inside the current window
- helm-swoop-split-with-multiple-windows t
- ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
- helm-swoop-split-direction 'split-window-vertically
- ;; If nil, you can slightly boost invoke speed in exchange for text color
- helm-swoop-speed-or-color t
- )
+(setq helm-adaptive-history-file (concat marcel-lisp-dir "helm-history")
+      helm-buffers-fuzzy-matching t  ; fuzzy matching buffer names when non-nil useful in helm-mini that lists buffers
+      helm-recentf-fuzzy-match t
+      helm-M-x-fuzzy-match t
+      helm-candidate-number-limit 500 ; limit the number of displayed candidates
+      helm-ff-auto-update-initial-value      nil
+      helm-ff-file-name-history-use-recentf t
+      helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
+      helm-move-to-line-cycle-in-source nil ; move to end or beginning of source when reaching top or bottom of source.
+      helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
+      helm-split-window-in-side-p nil ;; open helm buffer inside current window, not occupy whole other window
+      helm-yank-symbol-first                 t
+      helm-ff-transformer-show-only-basename nil
+      helm-mini-default-sources '(helm-source-buffers-list
+                                  helm-source-recentf
+                                  helm-source-bookmarks
+                                  helm-source-buffer-not-found)
+      ;; Save buffer when helm-multi-swoop-edit completeo
+      helm-multi-swoop-edit-save t
+      ;; If this value is t, split window inside the current window
+      helm-swoop-split-with-multiple-windows t
+      ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
+      helm-swoop-split-direction 'split-window-vertically
+      ;; If nil, you can slightly boost invoke speed in exchange for text color
+      helm-swoop-speed-or-color t
+      )
 
 (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
 
