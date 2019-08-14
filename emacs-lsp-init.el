@@ -1,9 +1,13 @@
 (require 'cc-mode)
 
 (use-package lsp-mode
-  :init (setq lsp-inhibit-message nil ; you may set this to t to hide messages from message area
-              lsp-eldoc-render-all nil
-              lsp-highlight-symbol-at-point nil)
+  :init
+  (setq lsp-inhibit-message nil ; you may set this to t to hide messages from message area
+        lsp-eldoc-render-all nil
+        lsp-highlight-symbol-at-point nil)
+  (setq lsp-prefer-flymake nil)
+  (setq lsp-log-io t)
+  (setq lsp-print-performance t)
   :hook ((python-mode . lsp)
          (java-mode . lsp))
   :config
@@ -64,6 +68,9 @@
   (add-hook 'java-mode-hook  'company-mode)
   (add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
   (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
+  (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+  (setq lsp-java-format-settings-url        "file://Users/marcelbecker/src/rspace-eclipse/scharp/eclipse-utils/EclipseRspaceFormatter.xml")
+  (setq lsp-java-format-settings-profile "Marcel 100 Width")
   (setq lsp-java--workspace-folders (list "~/src/rspace-eclipse/scharp")))
 
 

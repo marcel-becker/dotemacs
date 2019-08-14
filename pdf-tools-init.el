@@ -2,6 +2,8 @@
 ;;PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig ;;/Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190413.2018/build/server/autobuild -i /Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190
 (when running-macos
   (use-package pdf-tools
+    :init
+    (setq pdf-view-use-unicode-ligther nil)
     :config
     ;; initialise
     ;;    (pdf-tools-install t t t)

@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-08-05 Mon 08:21 marcelbecker on kestrelimac"
+;;; Time-stamp: "2019-08-13 Tue 19:49 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -130,7 +130,8 @@
 (defconst machine-nickname
   (reduce-hostname (system-name) (list "\\.kestrel\\.edu" "\\.CMU\\.EDU" "\\.CS" "\\.MACH" "\\.SOAR" "\\.CIMDS" "\\.RI" "\\.local")))
 
-
+;;(trace-function 'byte-compile)
+;;(trace-function 'byte-compile-file)
 
 ;;   LOGNAME and USER are expected in many Emacs packages
 ;;   Check these environment variables.
@@ -308,6 +309,7 @@
        (frame-width (cons 'width 180))
        (frame-top (cons 'top (my-get-default-y-frame-position)))
        (frame-left (cons 'left (my-get-default-x-frame-position)))
+       (bg-color  (if (eq (user-uid) 0) "gray38" "#09223F"))
        (frame-background-color (if (eq (user-uid) 0)
                                    '(background-color . "gray38")
                                  '(background-color . "#09223F")
@@ -334,6 +336,7 @@
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
+  (set-face-attribute 'default nil :background bg-color :foreground "white")
   ;;(message  "Frame alist %s" initial-frame-alist)
   (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
   )
@@ -1006,10 +1009,37 @@
 (global-set-key (kbd "<S-f3>") 'my-open-dot-emacs)
 
 
+(display-init-load-time-checkpoint "Loading doom themes")
+(defun my-load-doom-themes ()
+  (use-package doom-themes
+    :config
+    ;; Global settings (defaults)
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+    ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+    ;; may have their own settings.
+    ;;  (load-theme 'doom-one t)
+    (load-theme 'doom-city-lights t)
+
+    ;; Enable flashing mode-line on errors
+    ;;(doom-themes-visual-bell-config)
+
+    ;;   ;; Enable custom neotree theme (all-the-icons must be installed!)
+    (doom-themes-neotree-config)
+    (doom-themes-treemacs-config)
+
+    ;;   ;; Corrects (and improves) org-mode's native fontification.
+    (doom-themes-org-config)
+    ))
+(my-load-doom-themes)
+
+
+
 ;;(message "Loading auto-dim-other-buffers")
 (display-init-load-time-checkpoint "Loading auto-dim-other-buffers")
 (use-package auto-dim-other-buffers
-  :diminish "DIM"
+  :diminish " " ;;"DIM"
   :init
   (add-hook 'after-init-hook
             (lambda ()
@@ -1266,7 +1296,7 @@
 (use-package undo-tree
   :defer t
   :commands (undo-tree-undo undo-tree-visualize)
-  :diminish "UNDO"
+  :diminish " "
   :init
   (setq undo-tree-visualizer-timestamps t)
   (setq undo-tree-visualizer-diff t)
@@ -1413,6 +1443,7 @@ file to write to."
   (set-face-attribute 'hl-line nil :inherit nil :background "#666666"  :foreground nil :weight 'bold)
   ;;(set-face-attribute 'linum-highlight-face nil :background "#666666")
   (set-face-attribute 'linum-highlight-face nil :inherit 'hl-line :weight 'ultra-bold)
+
   (defun my-set-hl-line-color-based-on-theme ()
     "Sets the hl-line face to have no foregorund and a background
     that is 10% darker than the default face's background."
@@ -1429,6 +1460,7 @@ file to write to."
     (set-face-attribute 'hl-line nil
                         :foreground nil
                         :background (color-lighten-name (face-background 'default) 10)))
+  (my-set-hl-line-color-based-on-theme)
   )
 
 
@@ -1471,7 +1503,7 @@ file to write to."
 (display-init-load-time-checkpoint "Loading company")
 (use-package company
   :ensure t
-  :diminish "CIA"
+  :diminish " Ⓒ" ;;"CIA"
   :bind (("A-." . company-complete)
          ("C-c C-y" . company-yasnippet)
          :map company-active-map
@@ -1503,14 +1535,18 @@ file to write to."
   (custom-set-faces
    '(company-preview  ((t (:foreground "dark gray" :underline t))))
    '(company-preview-common ((t (:inherit company-preview))))
-   '(company-tooltip   ((t (:background "light gray" :foreground "black"))))
-   '(company-tooltip-selection   ((t (:background "steel blue" :foreground "white" :weight bold))))
-   '(company-tooltip-common  ((((type x)) (:inherit company-tooltip :weight bold))
-                              (t (:inherit company-tooltip))))
-   '(company-tooltip-common-selection  ((((type x)) (:inherit company-tooltip-selection :weight bold))
-                                        (t (:inherit company-tooltip-selection))))
-   '(company-scrollbar-fg ((t ( :background "gray40" :foreground "black" :weight bold))))
+   '(company-preview-search ((t (:inherit company-preview :background "yellow"))))
    '(company-scrollbar-bg ((t (:inherit 'company-tooltip :background "gray20" :foreground "black" :weight bold))))
+   '(company-scrollbar-fg ((t ( :background "gray40" :foreground "black" :weight bold))))
+   '(company-template-field ((t (:background "magenta" :foreground "black"))))
+   '(company-tooltip   ((t (:background "light gray" :foreground "black"))))
+   '(company-tooltip-annotation ((t (:background "brightwhite" :foreground "black"))))
+   '(company-tooltip-annotation-selection ((t (:background "color-253"))))
+   '(company-tooltip-common  ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip))))
+   '(company-tooltip-common-selection  ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection))))
+   '(company-tooltip-mouse ((t (:foreground "black"))))
+   '(company-tooltip-search ((t (:background "brightwhite" :foreground "black"))))
+   '(company-tooltip-selection   ((t (:background "steel blue" :foreground "white" :weight bold))))
    '(popup-menu-face     ((t :foreground "red"   :background "#49483E")))
    '(popup-menu-selection-face     ((t :background "#349B8D"   :foreground "#BBF7EF"))))
 
@@ -1812,7 +1848,7 @@ file to write to."
 
 
 (use-package flycheck
-  :diminish "flyck"
+  :diminish " "
   ;;:config
   ;;(global-flycheck-mode 1)
   ;;(add-hook 'after-init-hook #'global-flycheck-mode)
@@ -1869,6 +1905,16 @@ file to write to."
   (setq which-key-side-window-max-height 0.5
         which-key-show-prefix 'modeline
         which-key-min-display-lines 5)
+
+  ;; (use-package ivy-posframe)
+  ;; (use-package which-key-posframe
+  ;;   :init
+  ;;   (setq which-key-posframe-border-width 10)
+  ;;   (set-face-attribute 'which-key-posframe nil :background "purple" :foreground "white")
+  ;;   (set-face-attribute 'which-key-posframe-border nil :background "Yellow")
+  ;;   :config
+  ;;   (which-key-posframe-mode)
+  ;;   (setq which-key-posframe-poshandler 'posframe-poshandler-window-bottom-left-corner))
   )
 
 (display-init-load-time-checkpoint "Done loading which-key")
@@ -2129,7 +2175,9 @@ file to write to."
 ;; ivy-switch-buffer (which you are using automatically if you use
 ;; ivy-mode). To make these ivy-views appear in your buffer list,
 ;; you might need to set the option
-(use-package ivy :diminish "" :defer t
+(use-package ivy
+  :diminish ""
+  :defer t
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
@@ -2160,6 +2208,8 @@ file to write to."
 ;; https://github.com/domtronn/all-the-icons.el#installation
 ;;(all-the-icons-insert-icons-for 'alltheicon 1)   ;; Prints all the icons for `alltheicon' font set
 ;;(all-the-icons-insert-icons-for 'octicon 1)   ;; Prints all the icons for the `octicon' family
+;;(all-the-icons-insert-icons-for 'fileicon 1)
+;; (all-the-icons-insert-icons-for 'wiicon 1)
 ;; and makes the icons height 10
 ;;(all-the-icons-insert-icons-for 'faicon 1 0.5) ;; Prints all the icons for the `faicon' family
 ;; and also waits 0.5s between printing each one
@@ -2749,6 +2799,18 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (interactive)
   (set-buffer-file-coding-system 'iso-latin-1-mac t))
 
+
+(defun my-put-file-name-on-clipboard ()
+  "Put the current file name on the clipboard"
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (with-temp-buffer
+        (insert filename)
+        (clipboard-kill-region (point-min) (point-max)))
+      (message filename))))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;[Latex/Tex]
 
@@ -3545,7 +3607,28 @@ Version 2017-01-27"
   :diminish "AHS")
 
 
-(use-package color-theme-modern)
+(use-package color-theme-modern
+  :config
+  (defadvice load-theme
+      (before theme-dont-propagate activate)
+    (mapc #'disable-theme custom-enabled-themes))
+
+  (setq my-cur-theme nil)
+  (defun my-cycle-theme ()
+    "Cycle through a list of themes, my-themes"
+    (interactive)
+    (when my-cur-theme
+      (disable-theme my-cur-theme)
+      (setq my-themes (append my-themes (list my-cur-theme))))
+    (setq my-cur-theme (pop my-themes))
+    (load-theme my-cur-theme t))
+
+  ;; Switch to the first theme in the list above
+  ;;(my-cycle-theme)
+
+  ;; Bind this to C-t
+  (global-set-key (kbd "C-t") 'my-cycle-theme)
+  )
 
 (use-package column-enforce-mode
   :diminish "COL"
@@ -3632,7 +3715,32 @@ Version 2017-01-27"
 (use-package yaml-mode :defer t)
 
 
+;; Highlight symbols in code
+(use-package erefactor)
 
+;; Highlights the expression evaluated
+(use-package eval-sexp-fu)
+
+;; (use-package doom-themes
+;;   :config
+;;   ;; Global settings (defaults)
+;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+;;   ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+;;   ;; may have their own settings.
+;; ;;  (load-theme 'doom-one t)
+
+;;   ;; Enable flashing mode-line on errors
+;;   ;;(doom-themes-visual-bell-config)
+
+;;   ;; Enable custom neotree theme (all-the-icons must be installed!)
+;;   (doom-themes-neotree-config)
+;;   (doom-themes-treemacs-config)
+
+;;   ;; Corrects (and improves) org-mode's native fontification.
+;;   (doom-themes-org-config)
+;;   )
 
 ;;(setq spacemacs-start-directory (concat marcel-lisp-dir "spacemacs/"))
 ;;(trace-function #'load)

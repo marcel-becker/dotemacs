@@ -38,24 +38,17 @@
 ;;(ac-emacs-eclim-config)
 
 
-
-
-
-
-
-
-(use-package flymake)
-(defun my-flymake-init ()
-  (list "my-java-flymake-checks"
-  (list (flymake-init-create-temp-buffer-copy
-  'flymake-create-temp-with-folder-structure))))
-(add-to-list 'flymake-allowed-file-name-masks
-             '("\\.java$" my-flymake-init flymake-simple-cleanup))
+;;(use-package flymake)
+;; (defun my-flymake-init ()
+;;   (list "my-java-flymake-checks"
+;;   (list (flymake-init-create-temp-buffer-copy
+;;   'flymake-create-temp-with-folder-structure))))
+;; (add-to-list 'flymake-allowed-file-name-masks
+;;              '("\\.java$" my-flymake-init flymake-simple-cleanup))
 
 (custom-set-variables
   '(eclim-eclipse-dirs '("/Applications/Eclipse.app/Contents/Eclipse"))
-  '(eclim-executable "/Applications/Eclipse.app/Contents/Eclipse/eclim"))
-
+  '(eclim-executable "/Applications/Eclipse.app/Contents/Eclipse/plugins/org.eclim_2.8.0/bin/eclim"))
 
 (add-hook 'java-mode-hook (lambda ()
                             (setq c-basic-offset 2)

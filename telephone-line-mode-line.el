@@ -5,6 +5,12 @@
   (unicode-fonts-setup))
 
 
+(setq telephone-line-primary-left-separator 'telephone-line-utf-abs-left
+      telephone-line-secondary-left-separator 'telephone-line-utf-abs-hollow-left
+      telephone-line-primary-right-separator 'telephone-line-utf-abs-right
+      telephone-line-secondary-right-separator 'telephone-line-utf-abs-hollow-right
+      )
+
 
 (defvar my-font-height-modifier 10
   "Default value to increment the size by when jacking into a monitor.")
@@ -36,7 +42,7 @@
                     :background "Blue2"
                     :inverse-video nil
                     :weight 'bold
-                    ;; :height (* (window-font-height) 10)
+                    :height (* (window-font-height) 8)
                     :box '(:line-width 6 :color "orange" :style nil))
 
 (set-face-attribute 'mode-line-inactive nil
@@ -45,6 +51,7 @@
                     ;;                     :inverse-video nil
                     ;;                     ;;:weight 'bold
                     ;;                     ;;:box '(:line-width 6 :color "orange" :style nil)
+                    :height (* (window-font-height) 7)
                     :box nil
                     )
 
@@ -55,6 +62,7 @@
                     :background "Orange"
                     :inverse-video nil
                     :weight 'bold
+                    :height (* (window-font-height) 6)
                     :box '(:line-width 6 :color "orange" :style nil))
 
 (set-face-attribute 'telephone-line-evil-visual nil :background "light sea green")
@@ -79,7 +87,7 @@
 (set-face-attribute 'mode-line-filename-face nil
                     :inherit 'mode-line
                     :foreground "#eab700"
-                    :weight 'extra-bold)
+                    :weight 'ultra-bold)
 
 
 
@@ -145,7 +153,7 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
 ;; (set-face-attribute 'my-winnum-face nil
 ;;                     :height 1000);; (* (window-font-height) 60))
 
-(set-face-attribute 'winum-face nil :height (* 10 (window-font-height)) :weight 'extrabold)
+(set-face-attribute 'winum-face nil :height (* 10 (window-font-height)) :weight 'extra-bold)
 
 
 (telephone-line-defsegment my-telephone-line-window-number-segment (&optional in-unicode)
@@ -167,7 +175,7 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
     ))
 
 
-;;(setq telephone-line-height 40);; 30
+;;(setq telephone-line-height 20) ;; 30
 (setq telephone-line-lhs
       '((evil   . (telephone-line-evil-tag-segment))
         (nil    . (my-telephone-line-window-number-segment))
@@ -199,14 +207,6 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
         (accent    . (telephone-line-misc-info-segment))
         (evil   . (telephone-line-airline-position-segment))
         ))
-
-
-(setq telephone-line-primary-left-separator 'telephone-line-utf-abs-left
-      telephone-line-secondary-left-separator 'telephone-line-utf-abs-hollow-left
-      telephone-line-primary-right-separator 'telephone-line-utf-abs-right
-      telephone-line-secondary-right-separator 'telephone-line-utf-abs-hollow-right
-      )
-
 
 
 (telephone-line-mode 1)

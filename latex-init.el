@@ -283,3 +283,6 @@ This forces a complete recompilation of the document, even if the source
 ;;  (set-file-times (buffer-file-name)) ;; sets mod time to current time
   (set-buffer-modified-p t) (save-buffer)
   (TeX-command-sequence t t))
+
+(diminish 'latex-mode " ")
+(diminish 'tex-mode " ")

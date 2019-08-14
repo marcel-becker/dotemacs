@@ -4,7 +4,7 @@
 (display-init-load-time-checkpoint "Loading helm")
 ;;(use-package helm :ensure t :diminish "H")
 (display-init-load-time-checkpoint "Loading helm config")
-(use-package helm :diminish " ⎈")
+(use-package helm :diminish " ")
 
 (use-package helm-config :ensure helm :demand t :diminish "H")
 
@@ -83,7 +83,7 @@
       helm-ff-auto-update-initial-value      nil
       helm-ff-file-name-history-use-recentf t
       helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
-      helm-move-to-line-cycle-in-source nil ; move to end or beginning of source when reaching top or bottom of source.
+      helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
       helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
       helm-split-window-in-side-p nil ;; open helm buffer inside current window, not occupy whole other window
       helm-yank-symbol-first                 t
@@ -103,6 +103,10 @@
       )
 
 (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+
+(set-face-attribute 'helm-selection nil :background "purple" :foreground "white" :weight 'bold)
+(set-face-attribute 'helm-header nil :background "SkyBlue4" :foreground "wheat1" :weight 'ultra-bold :height 1.2)
+(set-face-attribute 'helm-source-header nil :height 1.2)
 
 (global-set-key (kbd "M-x") 'helm-M-x)
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
@@ -161,6 +165,8 @@
 (define-key helm-map (kbd "C-M-p") 'helm-previous-source)
 (define-key helm-map (kbd "M-N")   'helm-next-source)
 (define-key helm-map (kbd "M-P")   'helm-previous-source)
+(define-key helm-map (kbd "<S-down>")   'helm-next-source)
+(define-key helm-map (kbd "<S-up>")   'helm-previous-source)
 
 
 (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)

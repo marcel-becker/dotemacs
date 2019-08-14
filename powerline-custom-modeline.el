@@ -113,7 +113,7 @@
                                                            (powerline-current-separator)
                                                            (cdr powerline-default-separator-dir))))
                           (erc-active (and (boundp 'erc-modified-channels-object)
-                                                        (> (length erc-modified-channels-object) 0)))
+                                           (> (length erc-modified-channels-object) 0)))
 
                           (lhs (append (list ;; modified/readonly status
                                         (powerline-raw "%*" indi-romod-face 'l)
@@ -156,7 +156,7 @@
                                                    (list (powerline-minor-modes minor-face 'l)
                                                          (funcall separator-left minor-face mode-line))
                                                  (list (funcall separator-left major-face mode-line))))
-                                     ))
+                                       ))
 
                           (rhs (append (list
                                         ;; ERC channel tracking status
@@ -177,4 +177,4 @@
                      (concat (powerline-render lhs)
                              (powerline-fill mode-line (powerline-width rhs))
                              (powerline-render rhs))))))
-)
+  )
