@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-08-13 Tue 19:49 marcelbecker on beckermac.local"
+;;; Time-stamp: "2019-09-17 Tue 14:50 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -32,8 +32,14 @@
 ;; (if (not (eq user-init-file (expand-file-name "~/.emacs.d")))
 ;;     (load-file user-init-file))
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; By default Emacs triggers garbage collection at ~0.8MB which makes
+;; startup really slow. Since most systems have at least 64MB of memory,
+;; we increase it during initialization.
 (setq gc-cons-threshold 100000000)
+(add-hook 'after-init-hook #'(lambda ()
+                               ;; restore after startup
+                               (setq gc-cons-threshold 800000)))
 ;;(message  (concat "Loading " load-file-name))
 
 
@@ -80,7 +86,7 @@
 
   (setq ns-use-srgb-colorspace nil)
   (setq powerline-image-apple-rgb t)
-  (setq mac-allow-anti-aliasing nil)
+  (setq mac-allow-anti-aliasing t)
   ) ;; sets fn-delete to be right-delete
 
 
@@ -162,6 +168,22 @@
 (line-number-mode 1)
 (global-linum-mode 1)
 (linum-mode 1)
+
+;; Non-nil means draw block cursor as wide as the glyph under it.
+;; For example, if a block cursor is over a tab, it will be drawn as
+;; wide as that tab on the display.
+(setq x-stretch-cursor t)
+
+
+(setq-default indicate-empty-lines t)
+(when (not indicate-empty-lines)
+  (toggle-indicate-empty-lines))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enable which function mode and set the header line to display both the
+;; path and the function we're in
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(which-function-mode t)
 
 
 ;; Use native line numbers
@@ -1172,7 +1194,7 @@
 (defun my-load-dired ()
   (interactive)
   (my-load-init-file "init-dired.el"))
-;;(my-load-dired)
+(my-load-dired)
 
 (display-init-load-time-checkpoint "Loading hydra definitions")
 (defun my-load-hydra ()
@@ -1975,6 +1997,47 @@ file to write to."
   :diminish "RNB")
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Origami - Does code folding, ie hide the body of an
+;; if/else/for/function so that you can fit more code on your screen
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package origami
+  :ensure t
+  :commands (origami-mode)
+  :bind (:map origami-mode-map
+              ("C-c o :" . origami-recursively-toggle-node)
+              ("C-c o a" . origami-toggle-all-nodes)
+              ("C-c o t" . origami-toggle-node)
+              ("C-c o o" . origami-show-only-node)
+              ("C-c o u" . origami-undo)
+              ("C-c o U" . origami-redo)
+              ("C-c o C-r" . origami-reset)
+              )
+  :config
+  (setq origami-show-fold-header t)
+  ;; The python parser currently doesn't fold if/for/etc. blocks, which is
+  ;; something we want. However, the basic indentation parser does support
+  ;; this with one caveat: you must toggle the node when your cursor is on
+  ;; the line of the if/for/etc. statement you want to collapse. You cannot
+  ;; fold the statement by toggling in the body of the if/for/etc.
+  (add-to-list 'origami-parser-alist '(python-mode . origami-indent-parser))
+  :init
+  (add-hook 'prog-mode-hook 'origami-mode)
+  )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Beacon-mode: flash the cursor when switching buffers or scrolling
+;;              the goal is to make it easy to find the cursor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package beacon
+  :ensure t
+  :init
+  (eval-when-compile
+    ;; Silence missing function warnings
+    (declare-function beacon-mode "beacon.el"))
+  :config
+  (beacon-mode t))
 
 ;; ;; ;;Rectangular markings-----------------------
 ;; ;; ;;COOL! C-RET gives rectangular marking for copy/paste, extremely useful
@@ -2415,7 +2478,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 
 ;; set tab distance to something, so it doesn't change randomly and confuse people
-(setq c-basic-offset 4)
+(setq c-basic-offset 2)
+(setq tab-width 2)
 
 ;; Tell Emacs to use the function above in certain editing modes.
 (add-hook 'lisp-mode-hook             (function newline-indents))
@@ -2816,7 +2880,9 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 
 
-
+;; TO BUILD PDF TOOLS ON MAC:
+;; PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig
+;; /Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190701.202/build/server/autobuild -i /Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190701.202/
 (display-init-load-time-checkpoint "Loading pdf-tools")
 (defun my-load-pdf-tools()
   (interactive)
@@ -3720,6 +3786,22 @@ Version 2017-01-27"
 
 ;; Highlights the expression evaluated
 (use-package eval-sexp-fu)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Load hungry Delete, caus we're lazy
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Set hungry delete:
+(use-package hungry-delete
+  :ensure t
+  :init
+  (eval-when-compile
+    ;; Silence missing function warnings
+    (declare-function global-hungry-delete-mode "hungry-delete.el"))
+  :config
+  (global-hungry-delete-mode t)
+  )
+
 
 ;; (use-package doom-themes
 ;;   :config

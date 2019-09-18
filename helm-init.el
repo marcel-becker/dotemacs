@@ -107,6 +107,7 @@
 (set-face-attribute 'helm-selection nil :background "purple" :foreground "white" :weight 'bold)
 (set-face-attribute 'helm-header nil :background "SkyBlue4" :foreground "wheat1" :weight 'ultra-bold :height 1.2)
 (set-face-attribute 'helm-source-header nil :height 1.2)
+(set-face-attribute 'helm-match nil :foreground "dark cyan" :weight 'bold)
 
 (global-set-key (kbd "M-x") 'helm-M-x)
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
