@@ -6,6 +6,7 @@
         lsp-eldoc-render-all nil
         lsp-highlight-symbol-at-point nil)
   (setq lsp-prefer-flymake nil)
+  (setq flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
   (setq lsp-log-io t)
   (setq lsp-print-performance t)
   :hook ((python-mode . lsp)
@@ -41,9 +42,11 @@
   :config
   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+  (require 'lsp-imenu)
   (require 'lsp-ui-imenu)
-  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (require 'lsp-ui-flycheck)
+  (require 'lsp-ui-peek)
+  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1)))
   (setq lsp-ui-sideline-enable t
         lsp-ui-sideline-show-symbol t
@@ -55,6 +58,7 @@
   )
 
 (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+(use-package helm-xref)
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 ;; optionally if you want to use debugger
 
@@ -72,6 +76,16 @@
   (setq lsp-java-format-settings-url        "file://Users/marcelbecker/src/rspace-eclipse/scharp/eclipse-utils/EclipseRspaceFormatter.xml")
   (setq lsp-java-format-settings-profile "Marcel 100 Width")
   (setq lsp-java--workspace-folders (list "~/src/rspace-eclipse/scharp")))
+
+
+(defun my-load-ccl ()
+  (interactive)
+  (use-package ccls
+    :hook ((c-mode c++-mode objc-mode) .
+           (lambda () (require 'ccls) (lsp)))
+    :config
+    (setq ccls-executable "ccls")))
+
 
 
 (use-package dap-mode
@@ -116,3 +130,10 @@
 ;;   :custom
 ;;   (lsp-python-ms-dir (expand-file-name "~/.emacs.d/elisp/python-language-server/output/bin/Release/"))
 ;;   (lsp-python-ms-executable "~/.emacs.d/elisp/python-language-server/output/bin/Release/linux-x64/publish/Microsoft.Python.LanguageServer"))
+
+(defun my-eglot-init ()
+  (interactive)
+  (use-package eglot)
+  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  (add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c++-mode-hook 'eglot-ensure))

@@ -8,7 +8,26 @@
 (setq powerline-text-scale-factor 0.8)
 
 ;;(face 'mode-line :family "M+ 1m" :height 1.0 :background "gray20" :foreground "gray80" :box nil)
-(face 'mode-line-inactive :inherit 'mode-line :background "gray55" :foreground "gray80" :box nil)
+
+(set-face-attribute 'mode-line nil
+                    :foreground "Orange" ;;Yellow"
+                    :background "Blue2"
+                    :inverse-video nil
+                    :weight 'bold
+                    ;; :height (* (window-font-height) 10)
+                    :box '(:line-width 6 :color "orange" :style nil))
+
+(set-face-attribute 'mode-line-inactive nil
+                    ;;                     ;;:foreground "Orange" ;;Yellow"
+                    ;;                     :background "gray22"
+                    ;;                     :inverse-video nil
+                    ;;                     ;;:weight 'bold
+                    ;;                     ;;:box '(:line-width 6 :color "orange" :style nil)
+                    :box nil
+                    )
+
+
+(face 'mode-line-inactive :inherit 'mode-line :background "gray55" :foreground "white" :box nil)
 (face 'mode-line-highlight :inherit 'mode-line :background "GoldenRod2" :foreground "white"
       :box '(:line-width -2 :color "GoldenRod2" :style released-button))
 
@@ -186,36 +205,36 @@ Valid Values: standard, verbose, visual-expanded"
     (format-time-string "W%y%V"))
 
 
-(setq-default
- powerline-height 30
- powerline-default-separator 'arrow
- spaceline-flycheck-bullet "❖ %s"
- spaceline-separator-dir-left '(right . right)
- spaceline-separator-dir-right '(left . left))
+  (setq-default
+   powerline-height 30
+   powerline-default-separator 'arrow
+   spaceline-flycheck-bullet "❖ %s"
+   spaceline-separator-dir-left '(right . right)
+   spaceline-separator-dir-right '(left . left))
   ;; When there are segments that may or may not appear, they will
   ;; affect the alternating background colors. I try to put the
   ;; indicators that appear/disappear the most towards the center.
   (spaceline-install
-   'main
-   '(
-     (my/buffer-status :tight-left t)
-     (buffer-id :face highlight-face)
-     ;;(amitp/project-id :tight-right t)
-   ;;  (amitp/buffer-id :tight-left t :face highlight-face)
-     (process :when active)
-     (my/evil-state :tight-left t :face highlight-face)
-     )
-   '((selection-info :face region :when mark-active)
-     (my/unicode-character :face my/spaceline-unicode-character :when active)
-     ((flycheck-error flycheck-warning flycheck-info) :when active)
-     (which-function)
-     (version-control :when active)
-     (("L" line column) :separator ":" :when active)
-     (my/week-number :when active)
-     ;;(global :face highlight-face)
-     (major-mode)
+    'main
+    '(
+      (my/buffer-status :tight-left t)
+      (buffer-id :face highlight-face)
+      ;;(amitp/project-id :tight-right t)
+      ;;  (amitp/buffer-id :tight-left t :face highlight-face)
+      (process :when active)
+      (my/evil-state :tight-left t :face highlight-face)
+      )
+    '((selection-info :face region :when mark-active)
+      (my/unicode-character :face my/spaceline-unicode-character :when active)
+      ((flycheck-error flycheck-warning flycheck-info) :when active)
+      (which-function)
+      (version-control :when active)
+      (("L" line column) :separator ":" :when active)
+      (my/week-number :when active)
+      ;;(global :face highlight-face)
+      (major-mode)
       ))
-  ;;(spaceline-spacemacs-theme)
+  (spaceline-spacemacs-theme)
   )
 
 

@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-09-17 Tue 14:50 marcelbecker on beckermac.local"
+;;; Time-stamp: "2019-10-14 Mon 09:10 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -404,6 +404,7 @@
 (when (version< emacs-version "28.0")
   (display-init-load-time-checkpoint "Calling package-initialize")
   (package-initialize)
+;;  (package-activate-all)
   (display-init-load-time-checkpoint "Done with package-initialize")
   )
 
@@ -2881,8 +2882,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 
 ;; TO BUILD PDF TOOLS ON MAC:
-;; PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig
-;; /Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190701.202/build/server/autobuild -i /Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20190701.202/
+;; PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig \\
+;; /Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20191007.1436/build/server/autobuild -i /Users/marcelbecker/Dropbox/.emacs.d/elpa/pdf-tools-20191007.1436/
 (display-init-load-time-checkpoint "Loading pdf-tools")
 (defun my-load-pdf-tools()
   (interactive)
@@ -3543,7 +3544,7 @@ Version 2017-01-27"
 
 
 (display-init-load-time-checkpoint "Loading language server")
-(my-load-language-server)
+;;(my-load-language-server)
 (display-init-load-time-checkpoint "Done Loading language server")
 
 
@@ -3740,10 +3741,11 @@ Version 2017-01-27"
 
 (use-package epc)
 (use-package eval-sexp-fu)
-;; (use-package exec-path-from-shell
-;;   :config
-;;   (when (memq window-system '(mac ns x))
-;;     (exec-path-from-shell-initialize)))
+
+(use-package exec-path-from-shell
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 
 (use-package fancy-battery)

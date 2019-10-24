@@ -91,3 +91,11 @@ Docker/activemq/
 mitre/run1/SCHARP.ato
 mitre/run2/SCHARP.ato
 mitre/run3/SCHARP.ato
+workspace/
+url/
+transient/
+irony/
+custom.el
+TAGS
+rtags/
+semanticdb/

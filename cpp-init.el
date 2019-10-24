@@ -53,20 +53,22 @@
       (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))))
 
 
-(require 'cc-mode)
-(require 'semantic)
+(use-package cc-mode)
 
-(global-semanticdb-minor-mode 1)
-(global-semantic-idle-scheduler-mode 1)
-(global-semantic-stickyfunc-mode 1)
-(semantic-mode 1)
+;;(use-package semantic)
+;;(global-semanticdb-minor-mode 1)
+;;(global-semantic-idle-scheduler-mode 1)
+;;(global-semantic-stickyfunc-mode 1)
+;;(semantic-mode 1)
 
-(defun company-semantic-setup ()
-  "Configure company-backends for company-semantic and company-yasnippet."
-  (delete 'company-irony company-backends)
-  (push '(company-semantic :with company-yasnippet) company-backends)
-  )
+;;(defun company-semantic-setup ()
+;;  "Configure company-backends for company-semantic and company-yasnippet."
+;;  (delete 'company-irony company-backends)
+;;  (push '(company-semantic :with company-yasnippet) company-backends)
+;;  )
+
 (defun company-c-headers-setup ()
+  (delete 'company-semantic company-backends)
   (add-to-list 'company-backends 'company-c-headers))
 
 (add-hook 'c++-mode-hook 'company-c-headers-setup)
@@ -74,17 +76,17 @@
 (add-hook 'c++-mode-hook 'company-semantic-setup)
 (add-hook 'c-mode-hook 'company-semantic-setup)
 
-(defun alexott/cedet-hook ()
-  (local-set-key "\C-c\C-j" 'semantic-ia-fast-jump)
-  (local-set-key "\C-c\C-s" 'semantic-ia-show-summary))
+;; (defun alexott/cedet-hook ()
+;;   (local-set-key "\C-c\C-j" 'semantic-ia-fast-jump)
+;;   (local-set-key "\C-c\C-s" 'semantic-ia-show-summary))
 
-(add-hook 'c-mode-common-hook 'alexott/cedet-hook)
-(add-hook 'c-mode-hook 'alexott/cedet-hook)
-(add-hook 'c++-mode-hook 'alexott/cedet-hook)
+;; (add-hook 'c-mode-common-hook 'alexott/cedet-hook)
+;; (add-hook 'c-mode-hook 'alexott/cedet-hook)
+;; (add-hook 'c++-mode-hook 'alexott/cedet-hook)
 
 ;; Enable EDE only in C/C++
-(require 'ede)
-(global-ede-mode)
+;;(require 'ede)
+;;(global-ede-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GROUP: Editing -> Editing Basics
@@ -422,36 +424,6 @@ Position the cursor at it's beginning, according to the current mode."
          )
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; cmake-mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package cmake-mode
-  :ensure t
-  :mode ("CMakeLists.txt" ".cmake")
-  :hook (cmake-mode . (lambda ()
-                        (add-to-list 'company-backends 'company-cmake)))
-  :config
-  (use-package cmake-font-lock
-    :ensure t
-    :defer t
-    :commands (cmake-font-lock-activate)
-    :hook (cmake-mode . (lambda ()
-                          (cmake-font-lock-activate)
-                          (font-lock-add-keywords
-                           nil '(("\\<\\(FIXME\\|TODO\\|BUG\\|DONE\\)"
-                                  1 font-lock-warning-face t)))
-                          ))
-    )
-  (setq auto-mode-alist
-        (append
-         '(("CMakeLists\\.txt\\'" . cmake-mode))
-         '(("\\.cmake\\'" . cmake-mode))
-         auto-mode-alist))
-  (defun company-cmake-setup ()
-    (add-to-list 'company-backends 'company-cmake))
-  (add-hook 'cmake-mode-hook 'company-cmake-setup)
-  )
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load asm-mode when opening assembly files
@@ -477,81 +449,123 @@ Position the cursor at it's beginning, according to the current mode."
 ;; For compilers to find llvm you may need to set:
 ;; export LDFLAGS="-L/usr/local/opt/llvm/lib"
 ;; export CPPFLAGS="-I/usr/local/opt/llvm/include"
-(use-package rtags
-  :config
-  ;; ensure that we use only rtags checking
-  ;; https://github.com/Andersbakken/rtags#optional-1
-  (defun company-rtags-setup ()
-    "Configure company-backends for company-rtags."
-    (interactive)
-    (use-package company-rtags)
-    (delete 'company-semantic company-backends)
-    (setq rtags-completions-enabled t)
-    (push '(company-rtags :with company-yasnippet) company-backends))
+;;
+;; In the shell
+;; rdm &
+;; rc -J .
+(defun my-rtags-init ()
+  (interactive)
+  (use-package rtags
+    :config
+    ;; ensure that we use only rtags checking
+    ;; https://github.com/Andersbakken/rtags#optional-1
+    (defun company-rtags-setup ()
+      "Configure company-backends for company-rtags."
+      (interactive)
+      (use-package company-rtags)
+      (delete 'company-semantic company-backends)
+      (setq rtags-completions-enabled t)
+      (push '(company-rtags :with company-yasnippet) company-backends))
+    (push 'company-rtags company-backends)
+    (setq rtags-autostart-diagnostics t)
+    (rtags-diagnostics)
+    ;; install standard rtags keybindings. Do M-. on the symbol below to
+    ;; jump to definition and see the keybindings.
+    (rtags-enable-standard-keybindings)
+    (define-key c-mode-base-map (kbd "M-.") (function rtags-find-symbol-at-point))
+    (define-key c-mode-base-map (kbd "M-,") (function rtags-find-references-at-point))
+    (define-key c-mode-base-map (kbd "M-?") 'rtags-display-summary)
+    (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
+    (global-company-mode)
+    (rtags-start-process-unless-running)
+    (add-hook 'c++-mode-hook 'company-rtags-setup)
+    (add-hook 'c-mode-hook 'company-rtags-setup)
+    )
 
+  (use-package helm-rtags
+    :config
+    (setq rtags-use-helm t))
 
-  (push 'company-rtags company-backends)
-  (setq rtags-use-helm t)
-  (setq rtags-autostart-diagnostics t)
-  (rtags-diagnostics)
-  ;; install standard rtags keybindings. Do M-. on the symbol below to
-  ;; jump to definition and see the keybindings.
-  (rtags-enable-standard-keybindings)
-  (define-key c-mode-base-map (kbd "M-.") (function rtags-find-symbol-at-point))
-  (define-key c-mode-base-map (kbd "M-,") (function rtags-find-references-at-point))
-  (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
-  (global-company-mode)  
-  (rtags-start-process-unless-running)
-  (add-hook 'c++-mode-hook 'company-rtags-setup)
-  (add-hook 'c-mode-hook 'company-rtags-setup)
+  (use-package flycheck-rtags
+    :config
+    (defun flycheck-rtags-setup ()
+      (flycheck-select-checker 'rtags)
+      (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+      (setq-local flycheck-check-syntax-automatically nil))
+    ;; c-mode-common-hook is also called by c++-mode
+    (add-hook 'c-mode-hook #'flycheck-rtags-setup)
+    (add-hook 'c-mode-hook 'flycheck-mode)
+    (add-hook 'c++-mode-hook #'flycheck-rtags-setup)
+    (add-hook 'c++-mode-hook 'flycheck-mode))
   )
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cmake-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun my-cmake-init ()
+  (interactive)
+  (use-package cmake-mode
+    :ensure t
+    :mode ("CMakeLists.txt" ".cmake")
+    :hook (cmake-mode . (lambda ()
+                          (add-to-list 'company-backends 'company-cmake)))
+    :config
+    (use-package cmake-font-lock
+      :ensure t
+      :defer t
+      :commands (cmake-font-lock-activate)
+      :hook (cmake-mode . (lambda ()
+                            (cmake-font-lock-activate)
+                            (font-lock-add-keywords
+                             nil '(("\\<\\(FIXME\\|TODO\\|BUG\\|DONE\\)"
+                                    1 font-lock-warning-face t))))))
 
-(use-package cmake-ide
-  :config
-  (cmake-ide-setup))
+    (defun company-cmake-setup ()
+      (add-to-list 'company-backends 'company-cmake))
+    (add-hook 'cmake-mode-hook 'company-cmake-setup))
 
+  (use-package cmake-ide
+    :config
+    (cmake-ide-setup))
 
-(use-package cmake-project
-  :config
-  (defun maybe-cmake-project-hook ()
-    (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
-  (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
-  (add-hook 'c++-mode-hook 'maybe-cmake-project-hook))
+  (use-package cmake-project
+    :config
+    (defun maybe-cmake-project-hook ()
+      (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
+    (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
+    (add-hook 'c++-mode-hook 'maybe-cmake-project-hook))
 
-
-(use-package cpputils-cmake
-  :config
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              (if (derived-mode-p 'c-mode 'c++-mode)
-                  (cppcm-reload-all)
-                )))
-  ;; OPTIONAL, somebody reported that they can use this package with Fortran
-  (add-hook 'c90-mode-hook (lambda () (cppcm-reload-all)))
-  ;; OPTIONAL, avoid typing full path when starting gdb
-  (global-set-key (kbd "C-c C-g")
-                  '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
-  (setq cppcm-get-executable-full-path-callback
-        (lambda (path type tgt-name)
-          ;; path is the supposed-to-be target's full path
-          ;; type is either add_executabe or add_library
-          ;; tgt-name is the target to built. The target's file extension is stripped
-          (message "cppcm-get-executable-full-path-callback called => %s %s %s" path type tgt-name)
-          (let* ((dir (file-name-directory path))
-                 (file (file-name-nondirectory path)))
-            (cond
-             ((string= type "add_executable")
-              (setq path (concat dir "bin/" file)))
-             ;; for add_library
-             (t (setq path (concat dir "lib/" file)))
-             ))
-          ;; return the new path
-          (message "cppcm-get-executable-full-path-callback called => path=%s" path)
-          path))
+  (use-package cpputils-cmake
+    :config
+    (add-hook 'c-mode-common-hook
+              (lambda ()
+                (if (derived-mode-p 'c-mode 'c++-mode)
+                    (cppcm-reload-all)
+                  )))
+    ;; OPTIONAL, somebody reported that they can use this package with Fortran
+    (add-hook 'c90-mode-hook (lambda () (cppcm-reload-all)))
+    ;; OPTIONAL, avoid typing full path when starting gdb
+    (global-set-key (kbd "C-c C-g")
+                    '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
+    (setq cppcm-get-executable-full-path-callback
+          (lambda (path type tgt-name)
+            ;; path is the supposed-to-be target's full path
+            ;; type is either add_executabe or add_library
+            ;; tgt-name is the target to built. The target's file extension is stripped
+            (message "cppcm-get-executable-full-path-callback called => %s %s %s" path type tgt-name)
+            (let* ((dir (file-name-directory path))
+                   (file (file-name-nondirectory path)))
+              (cond
+               ((string= type "add_executable")
+                (setq path (concat dir "bin/" file)))
+               ;; for add_library
+               (t (setq path (concat dir "lib/" file)))
+               ))
+            ;; return the new path
+            (message "cppcm-get-executable-full-path-callback called => path=%s" path)
+            path)))
   )
-
 
 ;;;; IRONY MODE
 ;;;; Before using RTags you need to start rdm and index your
@@ -571,49 +585,53 @@ Position the cursor at it's beginning, according to the current mode."
 ;;;;
 ;;; To have cmake-ide automatically create a compilation commands file in your project root create a .dir-locals.el containing the following:
 ;;;; ((nil . ((cmake-ide-build-dir . "<PATH_TO_PROJECT_BUILD_DIRECTORY>"))))
+;;;; to build irony server:
+;;;; $ cd ~/Dropbox/.emacs.d/elpa/irony-20190703.1732/server
+;;;; $ cmake -DCMAKE_INSTALL_PREFIX\=/Users/marcelbecker/Dropbox/.emacs.d/irony/  -DCMAKE_PREFIX_PATH=/usr/local/opt/llvm /Users/marcelbecker/Dropbox/.emacs.d/elpa/irony-20190703.1732/server
+;;;; $ cmake --build . --use-stderr --config Release --target install
 
-(use-package irony
-  :config
-  (add-hook 'c++-mode-hook 'irony-mode)
-  (add-hook 'c-mode-hook 'irony-mode)
-  (add-hook 'objc-mode-hook 'irony-mode)
+(defun my-irony-init ()
+  (interactive)
+  (use-package irony
+    :config
+    (add-hook 'c++-mode-hook 'irony-mode)
+    (add-hook 'c-mode-hook 'irony-mode)
+    (add-hook 'objc-mode-hook 'irony-mode)
 
-  (defun my-irony-mode-hook ()
-    (define-key irony-mode-map [remap completion-at-point]
-      'irony-completion-at-point-async)
-    (define-key irony-mode-map [remap complete-symbol]
-      'irony-completion-at-point-async))
+    (defun my-irony-mode-hook ()
+      (define-key irony-mode-map [remap completion-at-point]
+        'irony-completion-at-point-async)
+      (define-key irony-mode-map [remap complete-symbol]
+        'irony-completion-at-point-async))
 
-  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-  (setq company-backends (delete 'company-semantic company-backends))
-  (eval-after-load 'company
-    '(add-to-list
-      'company-backends 'company-irony))
+    (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+    (setq company-backends (delete 'company-semantic company-backends)))
 
+  (use-package company-irony
+    :config
+    (eval-after-load 'company1
+      '(add-to-list 'company-backends 'company-irony)))
+
+  (use-package company-irony-c-headers
+    :config
+    (eval-after-load 'company
+      '(add-to-list
+        'company-backends '(company-irony-c-headers company-irony))))
+  (use-package irony-eldoc
+    :config
+    (add-hook 'irony-mode-hook #'irony-eldoc))
+
+  (use-package flycheck-irony
+    :config
+    (eval-after-load 'flycheck
+      '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
   )
 
-(use-package company-irony-c-headers
-  :config
-  (eval-after-load 'company
-    '(add-to-list
-      'company-backends '(company-irony-c-headers company-irony))))
 
-(use-package flycheck-rtags
-  :config
-  (defun flycheck-rtags-setup ()
-    (flycheck-select-checker 'rtags)
-    (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-    (setq-local flycheck-check-syntax-automatically nil))
-  ;; c-mode-common-hook is also called by c++-mode
-  (add-hook 'c-mode-hook #'flycheck-rtags-setup)
-  (add-hook 'c-mode-hook 'flycheck-mode)
-  (add-hook 'c++-mode-hook #'flycheck-rtags-setup)
-  (add-hook 'c++-mode-hook 'flycheck-mode)
-  (eval-after-load 'flycheck
-    '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
-  )
+
+
 
 (defun my-cedet-enable ()
   "Start CEDET."
