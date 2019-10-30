@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-10-14 Mon 09:10 marcelbecker on beckermac.local"
+;;; Time-stamp: "2019-10-30 Wed 08:45 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -16,16 +16,16 @@
 ;; (if (eq system-type 'windows-nt)      ; Windows
 ;;     (cond ((file-exists-p "C:/Dropbox/.emacs.d")
 ;;            (setenv "HOME" "C:/Dropbox")
-;;           "C:/Dropbox/.emacs.d")
+;;           "C:/Dropbox/.emacs.d/")
 ;;           ((file-exists-p "D:/Dropbox/.emacs.d")
 ;;            (setenv "HOME" "D:/Dropbox")
-;;            "D:/Dropbox/.emacs.d")
+;;            "D:/Dropbox/.emacs.d/")
 ;;           (t
-;;            (expand-file-name "~/.emacs.d")))
+;;            (expand-file-name "~/.emacs.d/")))
 ;;   (cond ((file-exists-p  "~/Dropbox/.emacs.d")
-;;          "~/Dropbox/.emacs.d")
+;;          "~/Dropbox/.emacs.d/")
 ;;         (t
-;;          (expand-file-name "~/.emacs.d"))))
+;;          (expand-file-name "~/.emacs.d/"))))
 ;; "Address of Marcel's lisp libraries.")
 
 ;; (setq user-init-file (expand-file-name "init.el" marcel-lisp-dir))
