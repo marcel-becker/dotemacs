@@ -51,19 +51,30 @@
                     ;;                     :inverse-video nil
                     ;;                     ;;:weight 'bold
                     ;;                     ;;:box '(:line-width 6 :color "orange" :style nil)
+                    :weight 'bold
                     :height (* (window-font-height) 7)
-                    :box nil
+                    :box '(:line-width 6 :color "orange" :style nil)
                     )
 
 
 
 (set-face-attribute 'telephone-line-accent-active nil
                     :foreground "Black" ;;Yellow"
-                    :background "Orange"
+                    :background  "Orange"
                     :inverse-video nil
                     :weight 'bold
                     :height (* (window-font-height) 6)
                     :box '(:line-width 6 :color "orange" :style nil))
+
+(set-face-attribute 'telephone-line-accent-inactive nil
+                    :foreground "White"
+                    :background "Black"
+                    :inverse-video nil
+                    :weight 'bold
+                    :height (* (window-font-height) 6)
+                    :box '(:line-width 6 :color "orange" :style nil))
+
+
 
 (set-face-attribute 'telephone-line-evil-visual nil :background "light sea green")
 
@@ -190,6 +201,7 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
         (accent    . (telephone-line-minor-mode-segment
                       ;;telephone-line-buffer-segment
                       ))
+        (nil    . nil)
         (accent . nil)
         (nil    . nil)
         ))
@@ -197,7 +209,9 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
 
 
 (setq telephone-line-center-lhs
-      '((nil . (telephone-line-vc-segment))))
+      '(
+        (nil . (telephone-line-vc-segment))
+        ))
 
 (setq telephone-line-rhs
       '(
@@ -205,7 +219,8 @@ Requires either `winum-mode' or `window-numbering-mode' to be enabled."
         (accent . nil)
         (nil . (telephone-line-major-mode-segment))
         (accent    . (telephone-line-misc-info-segment))
-        (evil   . (telephone-line-airline-position-segment))
+        (nil   . (telephone-line-airline-position-segment))
+        (evil  . (telephone-line-evil-tag-segment))
         ))
 
 

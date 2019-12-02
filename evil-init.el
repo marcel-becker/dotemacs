@@ -1,15 +1,14 @@
 (setq evil-want-integration nil)
 
 (use-package  evil
-  :ensure t
-
+  :ensure nil
   :config
   (evil-mode 1))
 (use-package  evil-anzu)
 (use-package  evil-args)
 (use-package  evil-collection
   :after evil
-  :ensure t
+  :ensure nil
   :config
   (evil-collection-init))
 (use-package  evil-ediff)
@@ -18,9 +17,9 @@
 (use-package  evil-iedit-state)
 (use-package  evil-indent-plus)
 (use-package  evil-indent-textobject
-    :ensure t)
+    :ensure nil)
 (use-package  evil-leader
-  :ensure t
+  :ensure nil
   :config
   (global-evil-leader-mode))
 
@@ -32,7 +31,7 @@
 (use-package  evil-numbers)
 (use-package  evil-search-highlight-persist)
 (use-package  evil-surround
-  :ensure t
+  :ensure nil
   :config
   (global-evil-leader-mode))
 
@@ -43,7 +42,7 @@
 
 
 (use-package evil-goggles
-  :ensure t
+  :ensure nil
   :config
   (evil-goggles-mode)
 
@@ -108,7 +107,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq evil-emacs-state-tag "EMACS")
 (setq evil-replace-state-tag "REPLACE")
 
-;;  (use-package spaceline :ensure t
+;;  (use-package spaceline :ensure nil
 ;;   :config
 ;;  ;; (spaceline-spacemacs-theme)
 ;;   (spaceline-emacs-theme)
@@ -120,7 +119,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;(powerline-center-evil-theme)
 
  ;; (use-package powerline-evil
- ;;     :ensure t
+ ;;     :ensure nil
  ;;     :config
  ;;     (powerline-evil-center-color-theme))
 

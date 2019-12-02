@@ -1,6 +1,6 @@
 (use-package treemacs
-  :ensure t
-  :defer t
+  :ensure nil
+  :defer 10
   :init
   (with-eval-after-load 'winum
     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
@@ -60,11 +60,11 @@
 
 (use-package treemacs-evil
   :after treemacs evil
-  :ensure t)
+  :ensure nil)
 
 (use-package treemacs-projectile
   :after treemacs projectile
-  :ensure t
+  :ensure nil
   :config
   (setq treemacs-header-function #'treemacs-projectile-create-header)
   :bind (([M-f8] . treemacs-projectile)

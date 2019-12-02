@@ -341,7 +341,7 @@ Position the cursor at it's beginning, according to the current mode."
 ;; Create clang-format file using google style
 ;; clang-format -style=google -dump-config > .clang-format
 (use-package clang-format
-  :ensure t
+  :ensure nil
   :bind (("C-c C-f" . clang-format-region))
   :config
   (defun clang-format-on-save ()
@@ -354,7 +354,7 @@ Position the cursor at it's beginning, according to the current mode."
 ;; Modern C++ code highlighting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package modern-cpp-font-lock
-  :ensure t
+  :ensure nil
   :init
   (eval-when-compile
     ;; Silence missing function warnings
@@ -368,7 +368,7 @@ Position the cursor at it's beginning, according to the current mode."
 ;; C++ keys
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package cc-mode
-  :ensure t
+  :ensure nil
   :init
   (add-to-list 'auto-mode-alist '("\\.tpp\\'" . c++-mode))
   :config
@@ -380,7 +380,7 @@ Position the cursor at it's beginning, according to the current mode."
   ;; Enable hide/show of code blocks
   (add-hook 'c-mode-common-hook 'hs-minor-mode)
   (use-package google-c-style
-    :ensure t
+    :ensure nil
     :config
     ;; This prevents the extra two spaces in a namespace that Emacs
     ;; otherwise wants to put... Gawd!
@@ -395,7 +395,7 @@ Position the cursor at it's beginning, according to the current mode."
 ;; global-whitespace-mode allows us to do just that.
 ;; Set whitespace mode to only show tabs, not newlines/spaces.
 (use-package whitespace
-  :ensure t
+  :ensure nil
   :init
   (eval-when-compile
     ;; Silence missing function warnings
@@ -414,7 +414,7 @@ Position the cursor at it's beginning, according to the current mode."
 ;; lowerCamelCase, snake_case, and SCREAMING_SNAKE_CASE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package string-inflection
-  :ensure t
+  :ensure nil
   :defer t
   :bind (("C-c c i" . string-inflection-cycle)
          ("C-c c l" . string-inflection-lower-camelcase)
@@ -506,13 +506,13 @@ Position the cursor at it's beginning, according to the current mode."
 (defun my-cmake-init ()
   (interactive)
   (use-package cmake-mode
-    :ensure t
+    :ensure nil
     :mode ("CMakeLists.txt" ".cmake")
     :hook (cmake-mode . (lambda ()
                           (add-to-list 'company-backends 'company-cmake)))
     :config
     (use-package cmake-font-lock
-      :ensure t
+      :ensure nil
       :defer t
       :commands (cmake-font-lock-activate)
       :hook (cmake-mode . (lambda ()

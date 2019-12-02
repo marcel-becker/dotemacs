@@ -96,25 +96,21 @@
 
 
 (use-package company-auctex
-  :ensure t
   :hook
   (latex-mode . (company-auctex-init)))
 
 
 (use-package company-bibtex
-  :ensure t
   :hook
   (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex))))
   (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex)))))
 
 (use-package company-reftex
-  :ensure t
   :hook
   (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations))))
   (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations)))))
 
 (use-package company-math
-  :ensure t
   :hook
   (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode))))
   (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode)))))

@@ -28,6 +28,7 @@
   (setq org-support-shift-select t)
   (setq org-startup-indented t)
   (setq org-src-tab-acts-natively t)
+  (define-key org-mode-map (kbd "C-x c o h") #'helm-org-headlines)
   )
 
 (use-package toc-org

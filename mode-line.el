@@ -28,8 +28,8 @@
 ;;; mode-line.el). This is a cleaned and debugged version of that original
 ;;; code with more documentation and also with (some) support for view-mode.
 
-;;; AUTHOR OF prettymodeln.el: 
-;;; 
+;;; AUTHOR OF prettymodeln.el:
+;;;
 ;;; Andy Gaynor (a.k.a., Silver)
 ;;; gaynor@paul.rutgers.edu ...!rutgers!paul.rutgers.edu!gaynor
 ;;; [Splthlt...Ahckthph! Ptooey!]
@@ -41,18 +41,18 @@
 ;;; Lawrence R. Dodd
 ;;; dodd@roebling.poly.edu
 ;;;
-;;; Robert McLay 
+;;; Robert McLay
 ;;; mclay@cfdlab.ae.utexas.edu
 ;;;
-;;; Crys Rides (a.k.a., James C. Ghering) 
+;;; Crys Rides (a.k.a., James C. Ghering)
 ;;; crys@cave.tcp.com
 ;;; (for suggesting view-mode support)
 
 ;;; MAINTAINER OF mode-line.el:
-;;;  
+;;;
 ;;; Lawrence R. Dodd
 ;;; dodd@roebling.poly.edu
-;;; 
+;;;
 ;;; Please send bug reports, comments, suggestions, and any smart remarks
 ;;; concerning this code to the above e-mail address. Please mention the value
 ;;; of the variable `mode-line-version' *or* simply type `M-x
@@ -62,8 +62,8 @@
 ;;; Last RCS Check In: $Date: 1992/12/08 13:55:28 $
 ;;;
 ;;; $Id: mode-line.el,v 2.34 1992/12/08 13:55:28 dodd Beta $
-;;; $Source: /home/dodd/lisp/RCS/mode-line.el,v $ 
-;;; $Revision: 2.34 $ 
+;;; $Source: /home/dodd/lisp/RCS/mode-line.el,v $
+;;; $Revision: 2.34 $
 
 ;;; USAGE:
 ;;;
@@ -76,29 +76,29 @@
 ;;;
 ;;;   o  save as mode-line.el in the GNU emacs load-path
 ;;;   o  stick something like the following inside your .emacs:
-;;; 
+;;;
 ;;; (setq file-name-abbreviation-alist
-;;;       (list 
-;;;        (cons  (concat "^" (expand-file-name "~") 
+;;;       (list
+;;;        (cons  (concat "^" (expand-file-name "~")
 ;;;                       "/" "special/")  "special:")
 ;;;        (cons  (concat "^" (expand-file-name "~") "/")  "~/")
 ;;;        '("^/dodd@roebling.poly.edu:/home/dodd/" . "Roebling:")
 ;;;        '("^/joe@\\([a-zA-Z0-9.]*\\).\\(edu\\|gov\\):/home/joe/" . "\\1:")
-;;;        '("^.*/\\([^/]*/\\)" . "\\1")))  
-;;; 
+;;;        '("^.*/\\([^/]*/\\)" . "\\1")))
+;;;
 ;;; (require 'mode-line)
 ;;;
 ;;; The explanation of above is as follows. If I am editing a file called
 ;;; `filename' these associations will be attempted: if the full path to
 ;;; `filename' is
-;;; 
+;;;
 ;;; (1) `/myhomedirectory/special/filename' display as `special:filename'
 ;;; (2) `/myhomedirectory/filename' display as `~/filename'
-;;; (3) `/user@machine.edu:/anything/filename' display as `Machine:filename' 
+;;; (3) `/user@machine.edu:/anything/filename' display as `Machine:filename'
 ;;;     (this is _extremely_ useful with ange-ftp)
-;;; (4) `/user@regexp.edu:/anything/filename' display as `regexp:filename' 
-;;; (5) `/snafu/barfoo/filename' display as `barfoo:filename' 
-;;;     (this is done for any path that does not match one of the above) 
+;;; (4) `/user@regexp.edu:/anything/filename' display as `regexp:filename'
+;;; (5) `/snafu/barfoo/filename' display as `barfoo:filename'
+;;;     (this is done for any path that does not match one of the above)
 
 ;;; ALSO: For more information on the filename associations list, after
 ;;; loading, do `M-x describe-variable file-name-abbreviation-alist'
@@ -131,8 +131,8 @@
 ;;; Otherwise, it displays the file name, but only after abbreviating it as
 ;;; per a list of abbreviations that you provide.
 
-;;; LOGIC: 
-;;; 
+;;; LOGIC:
+;;;
 ;;; Set up mode-line, by making mode-line-buffer-identification local to every
 ;;; buffer.  A find-file-hooks abbreviates the buffer-file-name to something a
 ;;; little easier to read.
@@ -191,7 +191,7 @@
 ;;; (originally was not a user option because it was missing the `*' - LRD)
 
 (defvar file-name-abbreviation-alist
-  (list 
+  (list
    (cons  (concat "^" (expand-file-name "~") "/")  "~/")
    )
 
@@ -222,32 +222,32 @@ Default: simply removes home directory path and replaces it with ~/")
 ;;; the function that makes the substitutions
 
 (defun string-replace-regexp-in-alist (string replacement-list)
-  
+
   "Given a string STRING, replace each instance of regexp (cars of elements in
 REPLACEMENT-LIST) with to-string (cdrs of elements in REPLACEMENT-LIST)."
-  
+
   (let (new-string)
-    
+
     (save-excursion
 
-      (let 
-          
-          ;; VARLIST - generate a unique name for temporary buffer 
+      (let
+
+          ;; VARLIST - generate a unique name for temporary buffer
           ;; (originally code just used `!@#$%^&*' which, believe or not,
           ;; might not be unique - LRD)
 
           ((temp-buffer (make-temp-name "!@#$%^&*"))
-           (temp-list replacement-list)) 
-        
+           (temp-list replacement-list))
+
         ;; BODY
-        
+
         (set-buffer (get-buffer-create temp-buffer))
-        
+
         (insert string)
-        
-        ;; Walk down `replacement-list' as `temp-list', replacing instances of 
+
+        ;; Walk down `replacement-list' as `temp-list', replacing instances of
         ;; (car (car temp-list)) with (cdr (car temp-list)).
-        
+
         (while temp-list
           (goto-char (point-min))
 
@@ -257,10 +257,10 @@ REPLACEMENT-LIST) with to-string (cdrs of elements in REPLACEMENT-LIST)."
           (while (re-search-forward (car (car temp-list)) nil t)
             (replace-match (cdr (car temp-list))))
           (setq temp-list (cdr temp-list)))
-        
+
         (setq new-string (buffer-string))
         (kill-buffer temp-buffer)))
-    
+
     new-string))
 
 ;;; function that defines abbreviated identification (originally did not
@@ -276,9 +276,9 @@ and its return value needs to be predictable (as opposed to garbage)."
 
   (if buffer-file-name
       (setq mode-line-buffer-identification
-	    (list
-	     (string-replace-regexp-in-alist buffer-file-name
-					     file-name-abbreviation-alist)))
+            (list
+             (string-replace-regexp-in-alist buffer-file-name
+                                             file-name-abbreviation-alist)))
     nil))
 
 ;;; Add abbreviate-mode-line-buffer-identification to find-file-hooks and
@@ -287,8 +287,8 @@ and its return value needs to be predictable (as opposed to garbage)."
 (setq find-file-hooks (append find-file-hooks
                               '(abbreviate-mode-line-buffer-identification)))
 
-;(setq view-hook (append view-hook
-;			'(abbreviate-mode-line-buffer-identification)))
+;;(setq view-hook (append view-hook
+;;			'(abbreviate-mode-line-buffer-identification)))
 
 
 ;; this page is provided for reports.
@@ -329,4 +329,3 @@ mode-line-file, to address in mode-line-help-address."
 ;;; provide the package
 
 (provide 'mode-line)
-

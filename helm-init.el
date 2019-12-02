@@ -1,73 +1,75 @@
-;;(package-initialize)
+(setq tramp-verbose 6)
 
-
-(display-init-load-time-checkpoint "Loading helm")
-;;(use-package helm :ensure t :diminish "H")
-(display-init-load-time-checkpoint "Loading helm config")
+;;(use-package helm :ensure nil :diminish "H")
 (use-package helm :diminish " ")
+(display-init-load-time-checkpoint "Loading helm")
 
 (use-package helm-config :ensure helm :demand t :diminish "H")
+(display-init-load-time-checkpoint "Done Loading helm config")
 
-(display-init-load-time-checkpoint "Loading helm ag")
-(use-package    helm-ag :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm snippets")
-(use-package    helm-c-yasnippet :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm company")
-(use-package    helm-company :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm descbinds")
-(use-package    helm-descbinds :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm gitignore")
-(use-package    helm-gitignore :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm mode-manager")
-(use-package    helm-mode-manager :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm projectile")
-(use-package    helm-projectile :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm pydoc")
-(use-package    helm-pydoc :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm swoop")
-(use-package    helm-swoop :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm themes")
-(use-package    helm-themes :ensure t)
-
-;;(use-package    helm-ls-git :ensure t)
-(display-init-load-time-checkpoint "Loading helm git-files")
-(use-package    helm-git-files :ensure t)
-
-(display-init-load-time-checkpoint "Loading helm commands")
-(use-package    helm-helm-commands :ensure t)
+(use-package    helm-ag)
+(display-init-load-time-checkpoint "Done Loading helm ag")
 
 
-(display-init-load-time-checkpoint "Loading helm flx")
+;(display-init-load-time-checkpoint "Loading helm snippets")
+;(use-package    helm-c-yasnippet :after yasnippet)
+
+(use-package    helm-company)
+(display-init-load-time-checkpoint "Done Loading helm company")
+
+(use-package    helm-descbinds )
+(display-init-load-time-checkpoint "Done Loading helm descbinds")
+
+(use-package    helm-gitignore )
+(display-init-load-time-checkpoint "Done Loading helm gitignore")
+
+(use-package    helm-mode-manager )
+(display-init-load-time-checkpoint "Done Loading helm mode-manager")
+
+(use-package    helm-projectile )
+(display-init-load-time-checkpoint "Done Loading helm projectile")
+
+(use-package    helm-pydoc )
+(display-init-load-time-checkpoint "Done Loading helm pydoc")
+
+(use-package    helm-swoop )
+(display-init-load-time-checkpoint "Done Loading helm swoop")
+
+(use-package    helm-themes)
+(display-init-load-time-checkpoint "Done Loading helm themes")
+
+;;(use-package    helm-ls-git :ensure nil)
+(use-package    helm-git-files )
+(display-init-load-time-checkpoint "Done Loading helm git-files")
+
+(use-package    helm-helm-commands )
+(display-init-load-time-checkpoint "Done Loading helm commands")
+
+
 (use-package helm-flx
-  :ensure t
-  :init
+  :config
   (setq helm-flx-for-helm-find-files nil)
   (helm-flx-mode 1))
+(display-init-load-time-checkpoint "Done Loading helm flx")
 
 
-(display-init-load-time-checkpoint "Loading helm etags")
 (use-package helm-etags-plus
-  :ensure t
   :config
   (global-set-key (kbd "M-.") 'helm-etags-plus-select))
+(display-init-load-time-checkpoint "Done Loading helm etags")
 
-
-(display-init-load-time-checkpoint "Loading helm bibtex")
 (use-package helm-bibtex
   :defer t)
+(display-init-load-time-checkpoint "Done Loading helm bibtex")
 
 
-(display-init-load-time-checkpoint "Loading helm spotify")
-(use-package  helm-spotify-plus :ensure t)
+(use-package swiper-helm
+  :after helm
+  :bind (("C-c C-s" . swiper-helm)))
+
+
+;;(display-init-load-time-checkpoint "Loading helm spotify")
+;;(use-package  helm-spotify-plus :ensure nil)
 
 
 (autoload 'helm-descbinds      "helm-descbinds" t)
@@ -80,10 +82,10 @@
       helm-recentf-fuzzy-match t
       helm-M-x-fuzzy-match t
       helm-candidate-number-limit 500 ; limit the number of displayed candidates
-      helm-ff-auto-update-initial-value      nil
+      helm-ff-auto-update-initial-value nil
       helm-ff-file-name-history-use-recentf t
       helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
-      helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
+      helm-move-to-line-cycle-in-source nil ; move to end or beginning of source when reaching top or bottom of source.
       helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
       helm-split-window-in-side-p nil ;; open helm buffer inside current window, not occupy whole other window
       helm-yank-symbol-first                 t
@@ -110,6 +112,7 @@
 (set-face-attribute 'helm-match nil :foreground "dark cyan" :weight 'bold)
 
 (global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "A-x") 'helm-M-x)
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
 ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
 ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
@@ -212,12 +215,10 @@
       (helm-ag (projectile-project-root))))
 
 
-(display-init-load-time-checkpoint "Loading helm org")
-(require 'org)
-(define-key org-mode-map (kbd "C-x c o h") #'helm-org-headlines)
-(display-init-load-time-checkpoint "Done loading helm org")
+
 ;;(add-to-list 'helm-completing-read-handlers-alist '(find-file))
 ;;(add-to-list 'helm-completing-read-handlers-alist '(find-file-other-window))
+(display-init-load-time-checkpoint "Done Configuring helm")
 
 
 (display-init-load-time-checkpoint "Loading helm projectile mode")

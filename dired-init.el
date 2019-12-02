@@ -27,30 +27,30 @@
 
 
 
-(use-package all-the-icons-dired :ensure t)
+(use-package all-the-icons-dired)
 
 
 (use-package dired-column-widths
-  :quelpa (dired-column-widths :fetcher wiki))
+  :quelpa (dired-column-widths :fetcher github :repo "emacsmirror/dired-column-widths"))
 
 
 ;; Use ')' in dired window to show or hide file details
 (use-package dired-details
-  :quelpa (dired-details :fetcher wiki))
+  :quelpa (dired-details :fetcher github :repo "emacsmirror/dired-details"))
 (use-package dired-details+
-  :quelpa (dired-details+ :fetcher wiki)
+  :quelpa (dired-details+ :fetcher github :repo "emacsmirror/dired-details-plus")
   :config
   (setq dired-details-initially-hide nil))
 
 
-(use-package dired-sort
-  :quelpa (dired-sort :fetcher wiki))
+(use-package dired-quick-sort
+  :quelpa (dired-quick-sort :fetcher github :repo "emacsmirror/dired-quick-sort"))
 
 (use-package dired-sort-menu
-  :quelpa (dired-sort-menu :fetcher wiki))
+  :quelpa (dired-sort-menu :fetcher github :repo "emacsmirror/dired-sort-menu"))
 
 (use-package dired-sort-menu+
-  :quelpa (dired-sort-menu+ :fetcher wiki))
+  :quelpa (dired-sort-menu+ :fetcher github :repo "emacsmirror/dired-sort-menu-plus"))
 
 
 
@@ -134,36 +134,29 @@
 
 
 (use-package peep-dired
-  :ensure t
-  :config
-  (define-key dired-mode-map (kbd "P") 'peep-dired)
-  )
+  :bind (:map dired-mode-map ( "P" . peep-dired)))
 
 
 (use-package dired-narrow
-  :ensure t
-  :config
-  (define-key dired-mode-map (kbd "/") 'dired-narrow)
-  )
+  :bind
+  (:map dired-mode-map ("N" .  dired-narrow)))
 
 
 (use-package dired-single
-  :ensure t
-  :config
-  (define-key dired-mode-map [return] 'dired-single-buffer)
-  (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
-  )
+  :bind
+  (:map dired-mode-map
+        ([return] . dired-single-buffer)
+        ([mouse-1]  . dired-single-buffer-mouse)))
 
 
 (use-package dired-collapse
-  :ensure t
   :defer
   :init
   (add-hook 'dired-mode-hook 'dired-collapse-mode))
 
 
 ;; (use-package dired-filter
-;;   :ensure t
+;;   :ensure nil
 ;;   :init
 ;;   (add-hook 'dired-mode-hook 'dired-filter-group-mode)
 ;;   :config
@@ -191,46 +184,43 @@
   :hook ((dired-mode . dired-filter-mode)
          (dired-mode . dired-filter-group-mode))
   :init (setq dired-filter-revert 'never
-               dired-filter-group-saved-groups
-               '(("default"
-                  ("Git"
-                   (directory . ".git")
-                   (file . ".gitignore"))
-                  ("Directory"
-                   (directory))
-                  ("PDF"
-                   (extension . "pdf"))
-                  ("LaTeX"
-                   (extension "tex" "bib"))
-                  ("Source"
-                   (extension "c" "cpp" "hs" "rb" "py" "r" "cs" "el" "lisp" "html" "js" "css"))
-                  ("Doc"
-                   (extension "md" "rst" "txt"))
-                  ("Org"
-                   (extension . "org"))
-                  ("Archives"
-                   (extension "zip" "rar" "gz" "bz2" "tar"))
-                  ("Images"
-                   (extension "jpg" "JPG" "webp" "png" "PNG" "jpeg" "JPEG" "bmp" "BMP" "TIFF" "tiff" "gif" "GIF"))))))
+              dired-filter-group-saved-groups
+              '(("default"
+                 ("Git"
+                  (directory . ".git")
+                  (file . ".gitignore"))
+                 ("Directory"
+                  (directory))
+                 ("PDF"
+                  (extension . "pdf"))
+                 ("LaTeX"
+                  (extension "tex" "bib"))
+                 ("Source"
+                  (extension "c" "cpp" "hs" "rb" "py" "r" "cs" "el" "lisp" "html" "js" "css"))
+                 ("Doc"
+                  (extension "md" "rst" "txt"))
+                 ("Org"
+                  (extension . "org"))
+                 ("Archives"
+                  (extension "zip" "rar" "gz" "bz2" "tar"))
+                 ("Images"
+                  (extension "jpg" "JPG" "webp" "png" "PNG" "jpeg" "JPEG" "bmp" "BMP" "TIFF" "tiff" "gif" "GIF"))))))
 
 
 (use-package dired-subtree
-  :ensure t
-  :config
-  (define-key dired-mode-map "i" 'dired-subtree-insert)
-  (define-key dired-mode-map ";" 'dired-subtree-remove)
-  )
+  :bind (:map dired-mode-map
+              ("i"  . 'dired-subtree-insert)
+              (";" . 'dired-subtree-remove)))
 
 
 (use-package image-dired+
-  :ensure t
   :config
   (setq auto-image-file-mode t)
   (eval-after-load 'image-dired+ '(image-diredx-async-mode 1)))
 
 
 ;; (use-package dired-rainbow
-;;   :ensure t
+;;   :ensure nil
 ;;   :defer t
 ;;   :init
 ;;   (eval-after-load 'dired '(require 'dired-rainbow))

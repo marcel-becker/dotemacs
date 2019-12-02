@@ -19,6 +19,11 @@
          ("C-z C-e" . emms-player-simple-mpv-hydra/body)
          )
   :config
+  (set-face-attribute 'hydra-face-red      nil :foreground "Red"        :bold t)
+  (set-face-attribute 'hydra-face-blue     nil :foreground "RoyalBlue3" :bold t)
+  (set-face-attribute 'hydra-face-amaranth nil :foreground "#e52b50"    :bold t)
+  (set-face-attribute 'hydra-face-pink     nil :foreground "HotPink1"   :bold t)
+  (set-face-attribute 'hydra-face-teal     nil :foreground "#367588"    :bold t)
   (setq hydra-hint-display-type  'message
         lv-use-separator t
         )
@@ -55,11 +60,11 @@
                      " commands")))
   )
 
-(bind-key
+(bind-key*
  "C-z w"
  (defhydra hydra-window (:color red :hint nil)
    "
-Split^           ^Delete^         ^Window Move^   ^Splitter Move^    ^Frames^        ^Misc^
+Split^             ^Delete^         ^Window Move^   ^Splitter Move^    ^Frames^        ^Misc^
 --------------------------------------------------------------------------------------------------------
 _v_: right         _o_:others       _h_: left       _H_: left          _f_: new        _m_: mark
 _x_: below         _da_: ace        _j_: down       _J_: down          _df_: delete    _a_: ace
@@ -213,6 +218,30 @@ _q_uit          ^        ^         _]_forward
    ("l" avy-goto-line "line")
    ("q" nil "quit")))
 
+
+(bind-key* "C-z C-f"
+(pretty-hydra-define hydra-frames
+  (:color teal :quit-key "q" :title (with-faicon "arrows" "Frames" 1 -0.05))
+  ("Move"
+   (("d" move-frame-down "Down" :color pink)
+    ("u" move-frame-up   "Up" :color pink)
+    ("l" move-frame-left "Left" :color pink)
+    ("r" move-frame-right "Right" :color pink))
+   "Position"
+   (("t" (move-frame-to-screen-top nil) "Screen Top" )
+    ("b" (move-frame-to-screen-bottom t) "Screen Bottom" )
+    ("L" (move-frame-to-screen-left nil) "Screen Left" )
+    ("R" (move-frame-to-screen-right nil) "Screen Right")
+    )
+   "Resize"
+   (("<" shrink-frame "Decrease Height" :color pink)
+    (">" enlarge-frame "Increase Height" :color pink)
+    ("<left>" enlarge-frame-horizontally "Increase Width" :color pink)
+    ("<right>" shrink-frame-horizontally "Decrease Width" :color pink))
+   "Other"
+   (("M" flycheck-manual "manual")
+    ("v" flycheck-verify-setup "verify setup"))))
+)
 
 ;;https://github.com/rememberYou/.emacs.d/blob/master/config.org
 (pretty-hydra-define hydra-flycheck
@@ -495,3 +524,21 @@ _q_uit          ^        ^         _]_forward
     "Player"
     (("f" emms-player-simple-mpv-fullscreen "fullscreen" :toggle t)
      ("T" emms-player-simple-mpv-ontop "on top" :toggle t)))))
+
+
+(major-mode-hydra-define emacs-lisp-mode nil
+  ("Eval"
+   (("b" eval-buffer "buffer")
+    ("e" eval-defun "defun")
+    ("r" eval-region "region"))
+   "REPL"
+   (("I" ielm "ielm"))
+   "Test"
+   (("t" ert "prompt")
+    ("T" (ert t) "all")
+    ("F" (ert :failed) "failed"))
+   "Doc"
+   (("d" describe-foo-at-point "thing-at-pt")
+    ("f" describe-function "function")
+    ("v" describe-variable "variable")
+    ("i" info-lookup-symbol "info lookup"))))
