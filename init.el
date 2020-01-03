@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-11-25 Mon 10:17 marcelbecker on beckermac.local"
+;;; Time-stamp: "2019-12-31 Tue 14:42 marcelbecker on kestrelimac"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -475,14 +475,14 @@
 
 ;;(when (not package-archive-contents)
 ;;(package-refresh-contents))
-(when (version< emacs-version "28.0")
-  (display-init-load-time-checkpoint "Calling package-initialize")
-  (setq package-quickstart t)
-  (package-initialize)
-  (display-init-load-time-checkpoint "Done with package-initialize")
-  ;;  (package-activate-all)
-  ;;(display-init-load-time-checkpoint "Done with package-activate")
-  )
+(when (version< emacs-version "28.0"))
+(display-init-load-time-checkpoint "Calling package-initialize")
+(setq package-quickstart t)
+(package-initialize)
+(display-init-load-time-checkpoint "Done with package-initialize")
+;;  (package-activate-all)
+;;(display-init-load-time-checkpoint "Done with package-activate")
+
 
 (unless (package-installed-p 'use-package)
   (display-init-load-time-checkpoint "Installing use-package")
@@ -2462,6 +2462,9 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 (display-init-load-time-checkpoint "Loading programming mode stuff")
 
+(use-package gradle-mode)
+(use-package groovy-mode)
+
 (autoload 'c++-mode "cc-mode" "C++ Editing Mode" t)
 (autoload 'c-mode "c-mode" "C Editing Mode"   t)
 (autoload 'magit-status "magit" nil t)
@@ -2520,6 +2523,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
               '(("\\.grm\\'" . sml-yacc-mode))
               '(("\\.g\\'" . antlr-mode))
               '(("\\.scala$" . scala-mode))
+              '(("\\.gradle$" . groovy-mode))
+              '(("\\.gradle$" . gradle-mode))
               auto-mode-alist))
 
 ;;  html-mode
@@ -3869,7 +3874,7 @@ Version 2017-01-27"
   )
 
 (defun exit-minibuffer-setup ()
-  (message "Exit minibuffer")
+  ;;(message "Exit minibuffer")
   ;; (cond
   ;;  ((or save-as-variable multi-extract-variable multi-attach-variable)
   ;;   (set-face-attribute 'mode-line nil :height 160 :foreground "black" :background "#eab700"))
