@@ -232,6 +232,14 @@
 (define-key company-mode-map (kbd "C-:") 'helm-company)
 (define-key company-active-map (kbd "C-:") 'helm-company)
 
+;; An Emacs-based interface to the package manager of your operating system.
+(use-package helm-system-packages
+  :config
+  (when running-macos
+  ;; Unlike the Helm variant, we need to specify our OS pacman.
+    (setq system-packages-package-manager 'brew)))
+
+
 (display-init-load-time-checkpoint "Setting helm mode on")
 (helm-mode 1)
 (display-init-load-time-checkpoint "Done setting helm mode on")

@@ -23,7 +23,7 @@
 (use-package ein
   :config
   (require 'ein-notebook)
-  (require 'ein-subpackages)
+  ;;(require 'ein-subpackages)
   (setq ein:completion-backend 'ein:use-company-backend)
   (custom-set-faces
    '(ein:cell-input-area ((t (:background "#09223F"))))

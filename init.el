@@ -1,4 +1,4 @@
-;;; Time-stamp: "2019-12-31 Tue 14:42 marcelbecker on kestrelimac"
+;;; Time-stamp: "2020-03-19 Thu 18:50 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -97,6 +97,8 @@
   (setq mac-allow-anti-aliasing t)
   ) ;; sets fn-delete to be right-delete
 
+
+(global-set-key (kbd "M-z") 'undo-tree-visualize)
 
 ;; add everything under ~/.emacs.d to it
 (unless (boundp 'marcel-lisp-dir)
@@ -937,7 +939,8 @@
         ))
 
 
-
+(use-package discover)
+(global-discover-mode 1)
 
 (use-package diminish
   :diminish "")
@@ -1445,6 +1448,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (global-undo-tree-mode))
 (display-init-load-time-checkpoint "Done loading undo tree")
 
+;;(defun undo-tree-save-history-from-hook () nil)
+;;(setq undo-tree-auto-save-history nil)
 
 
 (use-package savehist
@@ -1915,7 +1920,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (add-to-list 'winum-assign-functions #'winum-assign-0-to-neotree)
   (set-face-attribute 'winum-face nil :weight 'bold)
 
-  (setq window-numbering-scope            'global
+  (setq winum-scope            'global
         winum-reverse-frame-list          nil
         winum-auto-assign-0-to-minibuffer t
         winum-assign-func            'my-winum-assign-func
@@ -2442,6 +2447,10 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (message "Searching is now case-insensitive"))
 
 
+(defun sort-lines-nocase ()
+  (interactive)
+  (let ((sort-fold-case t))
+    (call-interactively 'sort-lines)))
 
 ;; ----------------------------------------------------------[Info Back Button]
 (defun add-browser-backspace-key-to-Info-mode ()
@@ -2479,6 +2488,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;; set tab distance to something, so it doesn't change randomly and confuse people
 (setq c-basic-offset 2)
 (setq tab-width 2)
+(setq fill-column 120)
 
 ;; Tell Emacs to use the function above in certain editing modes.
 (add-hook 'lisp-mode-hook             (function newline-indents))
@@ -2511,8 +2521,8 @@ https://github.com/jaypei/emacs-neotree/pull/110"
               '(("\\.c$"   . c-mode))
               '(("\\.y$"   . c-mode))
               '(("\\.csv$"  . csv-mode))
+              '(("\\.java$"  . java-mode))
               '(("\\.py$"  . python-mode))
-              ;;'(("\\.py$"  . python-mode))
               '(("\\.py$"  . lsp-mode))
               '(("\\.py$"  . anaconda-mode))
               '(("\\.sl\\'" . slang-mode))
@@ -2732,12 +2742,12 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 ;; Would call Windows command interpreter. Change it.
 
-;;(setq shell-file-name
-;;      (if running-ms-windows ; Windows
-;;          "bash.exe" "bash"))
+(setq shell-file-name
+      (if running-ms-windows ; Windows
+          "bash.exe" "/usr/local/bin/bash"))
 
-;;(setenv "SHELL" shell-file-name)
-;;(setq explicit-shell-file-name shell-file-name)
+(setenv "SHELL" shell-file-name)
+(setq explicit-shell-file-name shell-file-name)
 
 (defun cygwin-shell ()
   "Run cygwin bash in shell mode."
@@ -2818,6 +2828,9 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;; (use-package shell-command)
 ;; (shell-command-completion-mode)
 
+(use-package bash-completion
+  :config
+  (bash-completion-setup))
 
 ;; And bury the scratch buffer, don't kill it
 (defadvice kill-buffer (around kill-buffer-around-advice activate)
@@ -2840,7 +2853,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   )
 
 (setq frame-title-format
-      '("EMACS: [" (:eval (getenv "USERNAME")) "@"
+      '("EMACS: [" (:eval (or (getenv "USERNAME") (getenv "USER"))) "@"
         (:eval (downcase (system-name))) "]: "
         (:eval (if (buffer-file-name)
                    (abbreviate-file-name (buffer-file-name))
@@ -3105,29 +3118,30 @@ by using nxml's indentation rules."
 ;; arguments starting on a new line are indented by 8 characters
 ;; (++ = 2 x normal offset) rather than lined up with the arguments on the
 ;; previous line
-(defconst eclipse-java-style
-  '((c-basic-offset . 4)
-    (c-comment-only-line-offset . (0 . 0))
-    ;; the following preserves Javadoc starter lines
-    (c-offsets-alist . ((inline-open . 0)
-                        (topmost-intro-cont    . +)
-                        (statement-block-intro . +)
-                        (knr-argdecl-intro     . 5)
-                        (substatement-open     . +)
-                        (substatement-label    . +)
-                        (label                 . +)
-                        (statement-case-open   . +)
-                        (statement-cont        . +)
-                        (arglist-intro  . c-lineup-arglist-intro-after-paren)
-                        (arglist-close  . c-lineup-arglist)
-                        (access-label   . 0)
-                        (inher-cont     . c-lineup-java-inher)
-                        (func-decl-cont . c-lineup-java-throws)
-                        (arglist-cont-nonempty . ++)
-                        )))
-  "Eclipse Java Programming Style")
-(c-add-style "ECLIPSE" eclipse-java-style)
-(customize-set-variable 'c-default-style (quote ((java-mode . "eclipse") (awk-mode . "awk") (other . "gnu"))))
+
+;; (defconst eclipse-java-style
+;;   '((c-basic-offset . 2)
+;;     (c-comment-only-line-offset . (0 . 0))
+;;     ;; the following preserves Javadoc starter lines
+;;     (c-offsets-alist . ((inline-open . 0)
+;;                         (topmost-intro-cont    . +)
+;;                         (statement-block-intro . +)
+;;                         (substatement-open     . +)
+;;                         (knr-argdecl-intro     . 5)
+;;                         (substatement-label    . +)
+;;                         (label                 . +)
+;;                         (statement-case-open   . +)
+;;                         (statement-cont        . +)
+;;                         (arglist-intro  . c-lineup-arglist-intro-after-paren)
+;;                         (arglist-close  . c-lineup-arglist)
+;;                         (access-label   . 0)
+;;                         (inher-cont     . c-lineup-java-inher)
+;;                         (func-decl-cont . c-lineup-java-throws)
+;;                         (arglist-cont-nonempty . ++)
+;;                         )))
+;;   "Eclipse Java Programming Style")
+;;(c-add-style "ECLIPSE" eclipse-java-style)
+;;(customize-set-variable 'c-default-style (quote ((java-mode . "eclipse") (awk-mode . "awk") (other . "gnu"))))
 
 ;; (use-package company-emacs-eclim
 ;;   :config

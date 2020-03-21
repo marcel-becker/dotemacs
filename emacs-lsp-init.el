@@ -1,6 +1,8 @@
 (require 'cc-mode)
+(require 'compile)
 
 (use-package lsp-mode
+  :ensure t
   :init
   (setq lsp-inhibit-message nil ; you may set this to t to hide messages from message area
         lsp-eldoc-render-all nil
@@ -30,6 +32,7 @@
   )
 
 (use-package company-lsp
+  :ensure t
   :after  company
   :config
   (push 'company-lsp company-backends)
@@ -38,44 +41,154 @@
   )
 
 (use-package lsp-ui
-  :commands lsp-ui-mode
+  :ensure t
+  ;;  :commands lsp-ui-mode
   :config
   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-  (require 'lsp-imenu)
   (require 'lsp-ui-imenu)
+  (require 'lsp-ui-sideline)
+  (require 'lsp-ui-doc)
   (require 'lsp-ui-flycheck)
   (require 'lsp-ui-peek)
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1)))
   (setq lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-diagnostics t
         lsp-ui-sideline-show-symbol t
         lsp-ui-sideline-show-hover t
         lsp-ui-sideline-show-code-actions t
         lsp-ui-sideline-ignore-duplicate t
-        lsp-ui-sideline-update-mode 'point)
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-  )
+        lsp-ui-sideline-update-mode 'point
+        lsp-ui-peek-enable t
+        lsp-ui-peek-show-directory t
+        lsp-ui-doc-enable t
+        lsp-ui-doc-position 'top
+        lsp-ui-imenu-enable t
+        )
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
 (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 (use-package helm-xref)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package lsp-treemacs
+  :ensure t
+  :config
+  (lsp-metals-treeview-enable t)
+  (lsp-treemacs-sync-mode 1)
+  (setq lsp-metals-treeview-show-when-views-received t))
+
+
+(use-package dap-mode
+  :ensure t
+  :after lsp-mode
+  :config
+  (dap-mode t)
+  (dap-ui-mode t)
+  ;; enables mouse hover support
+  (dap-tooltip-mode 1)
+  ;; use tooltips for mouse hover
+  ;; if it is not enabled `dap-mode' will use the minibuffer.
+  (tooltip-mode 1);; enables mouse hover support
+  (dap-tooltip-mode 1)
+  ;; use tooltips for mouse hover
+  ;; if it is not enabled `dap-mode' will use the minibuffer.
+  (tooltip-mode 1)
+  (require 'dap-java)
+  (require 'dap-python))
+
+
+
 ;; optionally if you want to use debugger
 
 (use-package lsp-java
-  :after lsp
+  :ensure t
   :requires (lsp-ui-flycheck lsp-ui-sideline)
   :config
-  (add-hook 'java-mode-hook  'lsp-java-enable)
+  (defun my-java-lsp-setup ()
+    (message "Setting up java lsp")
+    (setq tab-width 2
+          c-basic-offset 2
+          c-max-one-liner-length 120)
+    (toggle-truncate-lines 1)
+    (setq-local tab-width 2)
+    (setq-local c-basic-offset 2)
+    (setq fill-column 120)
+    ;;(setq lsp-java-format-settings-url "file://Users/marcelbecker/src/rspace-eclipse/scharp/eclipse-utils/EclipseRspaceFormatter.xml")
+    ;;(debug-on-variable-change lsp-java-format-settings-url)
+    (setq lsp-java-format-settings-url "file://Users/marcelbecker/Dropbox/.emacs.d/EclipseFormat.xml")
+    (setq lsp-java-format-settings-profile "Marcel-100-Width")
+    (setq lsp-java--workspace-folders (list "~/src/rspace-eclipse/scharp"))
+    (setq lsp-java-vmargs
+          (list "-noverify"
+                "-Xmx6G"
+                "-XX:+UseG1GC"
+                "-XX:+UseStringDeduplication"))
+    (setq lsp-file-watch-ignored
+          '(".idea" ".ensime_cache" ".eunit" "node_modules"
+            ".git" ".hg" ".fslckout" "_FOSSIL_"
+            ".bzr" "_darcs" ".tox" ".svn" ".stack-work"
+            "build"))
+    (setq lsp-java-import-order '["" "java" "javax" "#"])
+    ;; Don't organize imports on save
+    (setq lsp-java-save-action-organize-imports nil)
+    )
+  ;; (add-hook 'java-mode-hook  'lsp-java-enable)
   (add-hook 'java-mode-hook  #'lsp)
   (add-hook 'java-mode-hook  'flycheck-mode)
   (add-hook 'java-mode-hook  'company-mode)
   (add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
   (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
   (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-  (setq lsp-java-format-settings-url        "file://Users/marcelbecker/src/rspace-eclipse/scharp/eclipse-utils/EclipseRspaceFormatter.xml")
-  (setq lsp-java-format-settings-profile "Marcel 100 Width")
-  (setq lsp-java--workspace-folders (list "~/src/rspace-eclipse/scharp")))
+  (add-hook 'java-mode-hook 'my-java-lsp-setup)
+  )
+
+
+                                        ;(setq lsp-java-format-settings-url "file://Users/marcelbecker/Dropbox/.emacs.d/EclipseFormat.xml")
+                                        ;(setq lsp-java-format-settings-profile "Marcel-100-Width")
+
+;; use (regexp-quote "\[\w*\] \[\w*\] (ERROR) \w* \((\w*\.java):([0-9]+)\).*$")
+;; to print the escaped string.
+;; C-u C-x C-e to print the string in the buffer
+;; (defun re-seq (regexp string)
+;;   "Get a list of all regexp matches in a string"
+;;   (save-match-data
+;;     (let ((pos 0)
+;;           matches)
+;;       (while (string-match regexp string pos)
+;;         (push (match-string 0 string) matches)
+;;         (setq pos (match-end 0)))
+;;       matches)))
+
+;; ; Sample URL
+;; (setq urlreg "\\(?:http://\\)?www\\(?:[./#\+-]\\w*\\)+")
+;; ; Sample invocation
+;; (re-seq urlreg (buffer-string))
+
+;; (s-match-strings-all
+;; "\\[\\w*\\] \\[\\w*\\] \\(ERROR\\) \\w* (\\(\\w*.java\\):\\([0-9]+\\))\.*$"
+;; "[] [main] ERROR readScenarioFromJsonObject (ScenarioLoaderFromAvroJson.java:103) - St = Tue, 4 Sep 2018 06:00:00 GMT Et = Wed, 5 Sep 2018 06:00:00 GMT")
+
+
+(add-to-list 'compilation-error-regexp-alist 'my-message-error)
+(add-to-list 'compilation-error-regexp-alist-alist
+             '(my-message-error
+               "^\\[[_[:alnum:][:space:]-]*\\] \\[[_[:alnum:][:space:]-]*\\] \\(ERROR\\) <?\\w*>? (\\(\\w*.java\\):\\([0-9]+\\))\.*$"
+               2 3 nil nil nil
+               (1 compilation-error-face)))
+(add-to-list 'compilation-error-regexp-alist 'my-message-info)
+(add-to-list 'compilation-error-regexp-alist-alist
+             '(my-message-info
+               "^\\[[_[:alnum:][:space:]-]*\\] \\[[_[:alnum:][:space:]-]*\\] \\(INFO\\)  <?\\w*>? (\\(\\w*.java\\):\\([0-9]+\\))\.*$"
+               2 3 nil nil nil
+               (1 compilation-info-face)))
+
+(add-to-list 'compilation-error-regexp-alist 'my-message-warn)
+(add-to-list 'compilation-error-regexp-alist-alist
+             '(my-message-warn
+               "^\\[[_[:alnum:][:space:]-]*\\] \\[[_[:alnum:][:space:]-]*\\] \\(WARN\\)  <?\\w*>? (\\(\\w*.java\\):\\([0-9]+\\))\.*$"
+               2 3 nil nil nil
+               (1 compilation-info-face)))
 
 
 (defun my-load-ccl ()
@@ -87,14 +200,6 @@
     (setq ccls-executable "ccls")))
 
 
-
-(use-package dap-mode
-  :after lsp-mode
-  :config
-  (dap-mode t)
-  (dap-ui-mode t)
-  (require 'dap-java)
-  (require 'dap-python))
 
 
 ;; pip install python-language-server[all]

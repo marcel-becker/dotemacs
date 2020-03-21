@@ -1,5 +1,5 @@
 (use-package treemacs
-  :ensure nil
+  :ensure t
   :defer 10
   :init
   (with-eval-after-load 'winum
@@ -70,3 +70,17 @@
   :bind (([M-f8] . treemacs-projectile)
          :map projectile-command-map
          ("h" . treemacs-projectile)))
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
+
+(use-package treemacs-persp
+  :after treemacs persp-mode
+  :ensure t
+  :config (treemacs-set-scope-type 'Perspectives))
