@@ -24,11 +24,16 @@ var/
 .installed.cfg
 *.egg
 elpa/
+quelpa/
+.lsp-session*
+.mc-lists*
+.dap-breakpoints*
 el-get/
 request/
 eshell/
 savehistory-*
 *.elc
+*.xmi
 *.*~
 recentf*
 places*

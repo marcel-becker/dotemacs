@@ -95,7 +95,13 @@
   ;; if it is not enabled `dap-mode' will use the minibuffer.
   (tooltip-mode 1)
   (require 'dap-java)
-  (require 'dap-python))
+  (require 'dap-python)
+  (global-set-key (kbd "<f5>") 'dap-step-in)
+  (global-set-key (kbd "<f6>") 'dap-next)
+  (global-set-key (kbd "<f7>") 'dap-step-out)
+  (global-set-key (kbd "<f8>") 'dap-continue)
+  (global-set-key (kbd "<M-f2>") 'dap-delete-all-sessions)
+  )
 
 
 
