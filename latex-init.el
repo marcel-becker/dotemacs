@@ -45,9 +45,13 @@
   (auctex-latexmk-setup)
   (setq auctex-latexmk-inherit-TeX-PDF-mode t)
   )
+
 (use-package company-auctex
   :defer t
   :after (auctex company)
+  :hook
+  (latex-mode . (company-auctex-init))
+  (LaTeX-mode . (company-auctex-init))
   :config (company-auctex-init))
 
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
@@ -60,9 +64,11 @@
 (setq-default TeX-master nil) ; Query for master file.
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
-(add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
 (setq TeX-source-correlate-start-server t)
 (setq TeX-source-correlate-method 'synctex)
+(add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+
+
 (setq TeX-PDF-mode t)
 
 
@@ -74,6 +80,11 @@
 
 (add-hook 'LaTeX-mode-hook
           (lambda ()
+            (rainbow-delimiters-mode)
+            (turn-on-reftex)
+            (setq reftex-plug-into-AUCTeX t)
+            (set-fill-column 120)
+            (reftex-isearch-minor-mode)
             (push
              '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
                :help "Run latexmk on file")
@@ -91,30 +102,30 @@
                          (running-macos
                           ;;'((output-pdf "Skim"))
                           '((output-pdf "PDF Tools"))
-
                           )))))
-
-
-(use-package company-auctex
-  :hook
-  (latex-mode . (company-auctex-init)))
-
 
 (use-package company-bibtex
   :hook
   (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex))))
+  (LaTeX-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex))))
   (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex)))))
 
 (use-package company-reftex
   :hook
   (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations))))
+  (LaTeX-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations))))
   (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations)))))
 
 (use-package company-math
   :hook
   (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode))))
+  (LaTeX-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode))))
   (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode)))))
 
+
+(setq-local company-backends
+            (append '(company-math-symbols-latex company-latex-commands)
+                    company-backends))
 
 ;; Update PDF buffers after successful LaTeX runs
 (add-hook 'TeX-after-compilation-finished-functions
@@ -147,7 +158,7 @@
 ;; Customary Customization, p. 1 and 16 in the manual, and http://www.emacswiki.org/emacs/AUCTeX#toc2
 (setq TeX-parse-self t); Enable parse on load.
 (setq TeX-auto-save t); Enable parse on save.
-(setq-default TeX-master nil)
+(setq-default TeX-master t)
 
 (setq TeX-PDF-mode t); PDF mode (rather than DVI-mode)
 
@@ -164,10 +175,12 @@
 
 ;; LaTeX-math-mode http://www.gnu.org/s/auctex/manual/auctex/Mathematics.html
 (add-hook 'TeX-mode-hook 'LaTeX-math-mode)
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 
 ;;; RefTeX
 ;; Turn on RefTeX for AUCTeX http://www.gnu.org/s/auctex/manual/reftex/reftex_5.html
 (add-hook 'TeX-mode-hook 'turn-on-reftex)
+
 
 (eval-after-load 'reftex-vars; Is this construct really needed?
   '(progn
@@ -276,7 +289,7 @@ TeX-command-sequence.
 This forces a complete recompilation of the document, even if the source
 (.tex) is older than any existing outputs (.pdf etc)."
   (interactive)
-;;  (set-file-times (buffer-file-name)) ;; sets mod time to current time
+  ;;  (set-file-times (buffer-file-name)) ;; sets mod time to current time
   (set-buffer-modified-p t) (save-buffer)
   (TeX-command-sequence t t))
 

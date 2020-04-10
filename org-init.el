@@ -1,8 +1,8 @@
 (use-package org
   :defer t
   :config
-  ;;(use-package org-install)
-  ;;(use-package ob-tangle)
+  (require 'org-install)
+  (require 'ob-tangle)
   ;; make org mode allow eval of some langs
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -100,11 +100,37 @@
    bibtex-completion-notes-path "~/Dropbox/EmacsOrg/ref/notes.org")
   (unless (file-exists-p org-ref-pdf-directory)
     (make-directory org-ref-pdf-directory t))
+  (setq bibtex-completion-pdf-symbol "⌘")
+  (setq bibtex-completion-notes-symbol "✎")
+  (add-to-list 'org-latex-classes
+               '("beamer"
+                 "\\documentclass[presentation]{beamer}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+  (add-to-list 'org-beamer-environments-extra
+               '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))
+  (add-to-list 'org-beamer-environments-extra
+               '("textpos" "X" "\\begin{textblock}{10}(3,3) \\visible %a {" "} \\end{textblock}"))
+  (add-to-list 'org-beamer-environments-extra
+               '("textpos1" "w" "\\begin{textblock}{%h}(3,3) \\visible %a {" "} \\end{textblock}"))
+  (add-to-list 'org-latex-classes
+               '("memoir"
+                 "\\documentclass[12pt,article,oneside]{memoir}"
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+               )
+
+
   )
 
 ;; optional but very useful libraries in org-ref
 ;;  (use-package jmax-bibtex)
-;;  (use-package pubmed)
+(use-package pubmed)
 ;;  (use-package arxiv)
 ;;  (use-package sci-id)
 ;;  (setq reftex-default-bibliography '("/Users/vikas/ssercloud/bibliobase/bibliobase.bib"))
@@ -237,33 +263,6 @@
 ;;      (format "\\colorbox{%s}{%s}" path desc))))) ;; require \usepackage{color}
 
 
-(add-to-list 'org-latex-classes
-             '("beamer"
-               "\\documentclass[presentation]{beamer}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
-
-(add-to-list 'org-beamer-environments-extra
-             '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))
-(add-to-list 'org-beamer-environments-extra
-             '("textpos" "X" "\\begin{textblock}{10}(3,3) \\visible %a {" "} \\end{textblock}"))
-(add-to-list 'org-beamer-environments-extra
-             '("textpos1" "w" "\\begin{textblock}{%h}(3,3) \\visible %a {" "} \\end{textblock}"))
-
-
-(add-to-list 'org-latex-classes
-             '("article"
-               "\\documentclass[12pt,article,oneside]{memoir}"
-               ("\\chapter{%s}" . "\\chapter*{%s}")
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-             )
-
-
 ;; set value of the variable org-latex-pdf-process
 
                                         ; (setq org-latex-pdf-process
@@ -295,15 +294,11 @@
 (use-package reftex)
 (use-package bibretrieve)
 
-;;(add-to-list 'load-path "~/.emacs.d/elpa/bibretrieve-20170417.620/bibretrieve")
-;;(byte-recompile-directory "~/.emacs.d/elpa/bibretrieve-20170417.620" 0)
-;;(load "bibretrieve")
+
 (setq bibretrieve-backends '(("citebase" . 10) ("mrl" . 10) ("arxiv" . 5) ("zbm" . 5)))
 
 (defun bibretrieve-scholar-create-url (author title)
-
   (let ((tempfile (make-temp-file "scholar" nil ".bib")))
-
     (call-process-shell-command "~/bin/gscholar/gscholar/gscholar.py --all" nil nil nil
                                 (if (> (length author) 0) (concat "\"" author "\""))
                                 (if (> (length title) 0)  (concat "\"" title "\""))
@@ -376,8 +371,8 @@
         (decf columns))))
   row)
 
-(add-to-list 'org-export-filter-table-row-functions
-             'org-export-multicolumn-filter)
+;;(add-to-list 'org-export-filter-table-row-functions
+;;             'org-export-multicolumn-filter)
 
 
 (defun org-word-count (beg end
@@ -537,7 +532,7 @@ entries in articles."
        (mapconcat 'identity words " "))
       (bibtex-fill-entry))))
 
-(org-add-link-type
+(org-link-set-parameters
  "comment"
  (lambda (linkstring)
    (let ((elm (org-element-context))
@@ -589,3 +584,22 @@ entries in articles."
 (use-package org-present)
 (use-package org-pomodoro)
 (use-package org-projectile)
+
+
+(defun get-bibtex-from-doi (doi)
+  "Get a BibTeX entry from the DOI"
+  (interactive "MDOI: ")
+  (let ((url-mime-accept-string "text/bibliography;style=bibtex"))
+    (with-current-buffer
+        (url-retrieve-synchronously
+         (format "http://dx.doi.org/%s"
+                 (replace-regexp-in-string "http://dx.doi.org/" "" doi)))
+      (switch-to-buffer (current-buffer))
+      (goto-char (point-max))
+      (setq bibtex-entry
+            (buffer-substring
+             (string-match "@" (buffer-string))
+             (point)))
+      (kill-buffer (current-buffer))))
+  (insert (decode-coding-string bibtex-entry 'utf-8))
+  (bibtex-fill-entry))

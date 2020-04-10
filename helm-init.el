@@ -59,14 +59,15 @@
 (display-init-load-time-checkpoint "Done Loading helm etags")
 
 (use-package helm-bibtex
-  :defer t)
+  :defer t
+  :config
+  (setq helm-bibtex-full-frame nil))
 (display-init-load-time-checkpoint "Done Loading helm bibtex")
 
 
 (use-package swiper-helm
   :after helm
   :bind (("C-c C-s" . swiper-helm)))
-
 
 ;;(display-init-load-time-checkpoint "Loading helm spotify")
 ;;(use-package  helm-spotify-plus :ensure nil)
@@ -81,6 +82,7 @@
       helm-buffers-fuzzy-matching t  ; fuzzy matching buffer names when non-nil useful in helm-mini that lists buffers
       helm-recentf-fuzzy-match t
       helm-M-x-fuzzy-match t
+      helm-M-x-always-save-history t
       helm-candidate-number-limit 500 ; limit the number of displayed candidates
       helm-ff-auto-update-initial-value nil
       helm-ff-file-name-history-use-recentf t

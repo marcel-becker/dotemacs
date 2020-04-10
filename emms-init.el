@@ -392,6 +392,8 @@ is currently playing."
   (let ((cmd  "osascript -e 'set volume output muted not (output muted of (get volume settings))'"))
     (call-process-shell-command cmd nil nil nil)))
 
+;; change the volume by 1%
+;; osascript -e "set volume output volume (output volume of (get volume settings) + 1) --100%"
 (defun emms-player-mac-volume-query ()
   "Show the volume settings for mac"
   (interactive)

@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-03-19 Thu 18:50 marcelbecker on beckermac.local"
+;;; Time-stamp: "2020-04-09 Thu 17:16 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -3449,7 +3449,7 @@ Version 2017-01-27"
   (message ""))
 
 
-(defun open-dir-in-iterm ()
+(defun my-open-dir-in-iterm ()
   "Open the current directory of the buffer in iTerm."
   (interactive)
   (let* ((iterm-app-path "/Applications/iTerm.app")
@@ -3458,7 +3458,7 @@ Version 2017-01-27"
                          iterm-app-path
                        iterm-brew-path)))
     (shell-command (concat "open -a " iterm-path " ."))))
-(global-set-key (kbd "C-x t") 'open-dir-in-iterm)
+(global-set-key (kbd "C-x t") 'my-open-dir-in-iterm)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; EDIFF SETUP
