@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-04-09 Thu 17:16 marcelbecker on beckermac.local"
+;;; Time-stamp: "2020-04-10 Fri 16:56 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -272,7 +272,13 @@
 (setq indicate-buffer-boundaries t)
 
 ;; highlight trailing whitespaces in all modes
-(setq-default show-trailing-whitespace t)
+(setq-default show-trailing-whitespace nil)
+(defun my-buf-show-trailing-whitespace ()
+  (interactive)
+  (setq show-trailing-whitespace t))
+(add-hook 'prog-mode-hook #'my-buf-show-trailing-whitespace)
+(custom-set-faces '(trailing-whitespace ((t (:background "dim gray")))))
+
 ;; Delete trailing whitespace when saving (compliance with PEP8)
 ;;(add-hook 'before-save-hook 'delete-trailing-whitespace)
 ;;no extra whitespace after lines
@@ -3932,6 +3938,16 @@ Version 2017-01-27"
 ;;(my-load-company-box)
 ;;(my-load-org-toolkit)
 ;;(my-load-yasnippet)
+
+
+(defun fix-terminal-colors ()
+  "Installs a copy of eterm-color terminfo."
+  (interactive)
+  (let ((path-to-emacs-app "/Applications/Emacs.app"))
+    (shell-command
+     (format "tic -o ~/.terminfo %s/Contents/Resources/etc/e/eterm-color.ti"
+             path-to-emacs-app))))
+
 
 ;; "Loading custom file")
 (display-init-load-time-checkpoint "Loading custom file")

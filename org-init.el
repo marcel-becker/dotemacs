@@ -199,8 +199,34 @@
 
 ;; org capture and refile setup
 
-(define-key global-map "\C-cr" 'org-remember)
-(define-key global-map "\C-cc" 'org-capture)
+(global-set-key (kbd "C-c r") 'org-remember)
+(global-set-key (kbd "C-c c") 'org-capture)
+
+;; Default location for org capture
+(setq org-default-notes-file "~/Dropbox/EmacsOrg/MarcelNotes.org")
+
+;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+(setq org-capture-templates
+      (quote
+       (("t" "todo" entry (file "~/Dropbox/EmacsOrg/refile.org")
+         "* TODO %?\n%U\n%a\n" :empty-lines 1)
+        ("r" "respond" entry (file "~/Dropbox/EmacsOrg/refile.org")
+         "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n"
+         :empty-lines 1)
+         ("n" "note" entry (file "~/Dropbox/EmacsOrg/refile.org")
+          "* %? :NOTE:\n%U\n%a\n" :clock-in nil :clock-resume nil)
+         ("j" "Journal" entry (file+datetree "~/Dropbox/EmacsOrg/refile.org")
+          "* %?\n%U\n" :clock-in nil :clock-resume nil :empty-lines 1)
+        ;; ("w" "org-protocol" entry (file "~/Dropbox/EmacsOrg/refile.org")
+        ;;  "* TODO Review %c\n%U\n" :immediate-finish nil)
+        ;; ("m" "Meeting" entry (file "~/Dropbox/EmacsOrg/refile.org")
+        ;;  "* MEETING with %? :MEETING:\n%U" :clock-in nil :clock-resume nil)
+        ;; ("p" "Phone call" entry (file "~/Dropbox/EmacsOrg/refile.org")
+        ;;  "* PHONE %? :PHONE:\n%U" :clock-in nil :clock-resume nil)
+        ;;("h" "Habit" entry (file "~/Dropbox/EmacsOrg/refile.org")
+        ;; "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+        )))
+
 (global-set-key (kbd "<f12>") 'org-agenda)
 (setq org-agenda-include-diary t)
 

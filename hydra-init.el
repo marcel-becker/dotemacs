@@ -25,8 +25,11 @@
   (set-face-attribute 'hydra-face-pink     nil :foreground "HotPink1"   :bold t)
   (set-face-attribute 'hydra-face-teal     nil :foreground "#367588"    :bold t)
   (setq hydra-hint-display-type  'message
-        lv-use-separator t
-        )
+        lv-use-separator t)
+  (add-hook 'hydra-posframe-mode-hook
+            (lambda ()
+              (setq show-trailing-whitespace nil)))
+
   )
 
 (use-package major-mode-hydra
