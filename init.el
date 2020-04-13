@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-04-10 Fri 16:56 marcelbecker on BeckeriMacKestrel.local"
+;;; Time-stamp: "2020-04-13 Mon 13:28 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -1067,7 +1067,6 @@
   ;; file and jump to node.
   (setq-default neo-smart-open t)
   ;; change root automatically when running `projectile-switch-project`
-  (use-package projectile :diminish "PRJ")
   (setq projectile-switch-project-action 'neotree-projectile-action)
   (setq neo-theme (if window-system 'icons 'nerd)) ; 'classic, 'nerd, 'ascii, 'arrow
   (setq neo-vc-integration '(face char))
@@ -3947,7 +3946,6 @@ Version 2017-01-27"
     (shell-command
      (format "tic -o ~/.terminfo %s/Contents/Resources/etc/e/eterm-color.ti"
              path-to-emacs-app))))
-
 
 ;; "Loading custom file")
 (display-init-load-time-checkpoint "Loading custom file")

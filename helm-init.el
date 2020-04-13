@@ -26,8 +26,6 @@
 (use-package    helm-mode-manager )
 (display-init-load-time-checkpoint "Done Loading helm mode-manager")
 
-(use-package    helm-projectile )
-(display-init-load-time-checkpoint "Done Loading helm projectile")
 
 (use-package    helm-pydoc )
 (display-init-load-time-checkpoint "Done Loading helm pydoc")
@@ -207,14 +205,6 @@
 
 
 
-(setq helm-projectile-sources-list (cons 'helm-source-projectile-files-list
-                                         (remove 'helm-source-projectile-files-list
-                                                 helm-projectile-sources-list)))
-
-(define-key projectile-mode-map (kbd "C-c p /")
-  #'(lambda ()
-      (interactive)
-      (helm-ag (projectile-project-root))))
 
 
 
@@ -224,10 +214,28 @@
 
 
 (display-init-load-time-checkpoint "Loading helm projectile mode")
-(projectile-global-mode)
-(setq projectile-completion-system 'helm)
-(helm-projectile-on)
-(setq projectile-switch-project-action 'helm-projectile)
+(use-package projectile :diminish "PRJ"
+  :config
+  (projectile-mode +1)
+  (projectile-global-mode)
+  (setq projectile-indexing-method 'alien)
+  (setq projectile-enable-caching t)
+  (setq projectile-remember-window-configs t )
+  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (setq projectile-completion-system 'helm)
+  (helm-projectile-on)
+  (setq projectile-switch-project-action 'helm-projectile)
+  (use-package    helm-projectile )
+  (setq helm-projectile-sources-list (cons 'helm-source-projectile-files-list
+                                           (remove 'helm-source-projectile-files-list
+                                                   helm-projectile-sources-list)))
+
+  (define-key projectile-mode-map (kbd "C-c p /")
+    #'(lambda ()
+        (interactive)
+        (helm-ag (projectile-project-root))))
+  )
 (display-init-load-time-checkpoint "Done loading helm projectile mode")
 
 
