@@ -223,10 +223,10 @@
   (setq projectile-remember-window-configs t )
   (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (use-package    helm-projectile )
   (setq projectile-completion-system 'helm)
   (helm-projectile-on)
   (setq projectile-switch-project-action 'helm-projectile)
-  (use-package    helm-projectile )
   (setq helm-projectile-sources-list (cons 'helm-source-projectile-files-list
                                            (remove 'helm-source-projectile-files-list
                                                    helm-projectile-sources-list)))
