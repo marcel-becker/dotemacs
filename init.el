@@ -490,7 +490,7 @@
 ;;(package-refresh-contents))
 (when (version< emacs-version "28.0"))
 (display-init-load-time-checkpoint "Calling package-initialize")
-(setq package-quickstart t)
+;;(setq package-quickstart t)
 (package-initialize)
 (display-init-load-time-checkpoint "Done with package-initialize")
 ;;  (package-activate-all)
@@ -2753,8 +2753,12 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;; Would call Windows command interpreter. Change it.
 
 (setq shell-file-name
-      (if running-ms-windows ; Windows
-          "bash.exe" "/usr/local/bin/bash"))
+      (cond (running-ms-windows ; Windows
+             "bash.exe")
+            (running-macos
+             "/usr/local/bin/bash")
+            (t
+             "bash")))
 
 (setenv "SHELL" shell-file-name)
 (setq explicit-shell-file-name shell-file-name)
