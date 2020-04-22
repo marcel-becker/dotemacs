@@ -22,6 +22,8 @@
           treemacs-persist-file               (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
           treemacs-recenter-after-file-follow nil
           treemacs-recenter-after-tag-follow  nil
+          treemacs-recenter-after-project-jump   'always
+          treemacs-recenter-after-project-expand 'on-distance
           treemacs-show-hidden-files          t
           treemacs-silent-filewatch           nil
           treemacs-silent-refresh             nil
@@ -30,6 +32,7 @@
           treemacs-tag-follow-cleanup         t
           treemacs-tag-follow-delay           1.5
           treemacs-position                   'left
+          treemacs-user-mode-line-format      nil
           treemacs-width                      60)
 
     ;; The default width and height of the icons is 22 pixels. If you are
@@ -49,7 +52,7 @@
   (global-set-key (kbd "A-0") 'treemacs-select-window)
   :bind
   (:map global-map
-        ;;("M-0"       . treemacs-select-window)
+        ("A-t 0"   . treemacs-select-window)
         ("A-t 1"   . treemacs-delete-other-windows)
         ("A-t t"   . treemacs)
         ;; ("S-f8"   . treemacs)
