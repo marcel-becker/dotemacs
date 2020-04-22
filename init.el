@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-04-13 Mon 13:28 marcelbecker on beckermac.local"
+;;; Time-stamp: "2020-04-15 Wed 14:19 marcelbecker on MacBook-Pro-3.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -46,9 +46,14 @@
 (setq inhibit-compacting-font-caches t)
 ;;(message  (concat "Loading " load-file-name))
 
+;; UTF-8 support
 (prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
 (when (display-graphic-p)
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+
 
 
 ;;; PROFILE INIT
