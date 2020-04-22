@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-04-13 Mon 13:28 marcelbecker on beckermac.local"
+;;; Time-stamp: "2020-04-21 Tue 16:47 becker on ubuntu"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -485,7 +485,7 @@
 ;;(package-refresh-contents))
 (when (version< emacs-version "28.0"))
 (display-init-load-time-checkpoint "Calling package-initialize")
-(setq package-quickstart t)
+;;(setq package-quickstart t)
 (package-initialize)
 (display-init-load-time-checkpoint "Done with package-initialize")
 ;;  (package-activate-all)
@@ -2748,8 +2748,12 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;; Would call Windows command interpreter. Change it.
 
 (setq shell-file-name
-      (if running-ms-windows ; Windows
-          "bash.exe" "/usr/local/bin/bash"))
+      (cond (running-ms-windows ; Windows
+             "bash.exe")
+            (running-macos
+             "/usr/local/bin/bash")
+            (t
+             "bash")))
 
 (setenv "SHELL" shell-file-name)
 (setq explicit-shell-file-name shell-file-name)
