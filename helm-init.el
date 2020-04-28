@@ -11,8 +11,8 @@
 (display-init-load-time-checkpoint "Done Loading helm ag")
 
 
-;(display-init-load-time-checkpoint "Loading helm snippets")
-;(use-package    helm-c-yasnippet :after yasnippet)
+;;(display-init-load-time-checkpoint "Loading helm snippets")
+;;(use-package    helm-c-yasnippet :after yasnippet)
 
 (use-package    helm-company)
 (display-init-load-time-checkpoint "Done Loading helm company")
@@ -77,6 +77,7 @@
 
 (display-init-load-time-checkpoint "Configuring helm")
 (setq helm-adaptive-history-file (concat marcel-lisp-dir "helm-history")
+      helm-adaptive-mode t
       helm-buffers-fuzzy-matching t  ; fuzzy matching buffer names when non-nil useful in helm-mini that lists buffers
       helm-recentf-fuzzy-match t
       helm-M-x-fuzzy-match t
@@ -246,7 +247,7 @@
 (use-package helm-system-packages
   :config
   (when running-macos
-  ;; Unlike the Helm variant, we need to specify our OS pacman.
+    ;; Unlike the Helm variant, we need to specify our OS pacman.
     (setq system-packages-package-manager 'brew)))
 
 

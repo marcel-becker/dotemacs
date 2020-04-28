@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-04-15 Wed 14:19 marcelbecker on MacBook-Pro-3.local"
+;;; Time-stamp: "2020-04-23 Thu 09:24 marcelbecker on beckermac.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -490,7 +490,7 @@
 ;;(package-refresh-contents))
 (when (version< emacs-version "28.0"))
 (display-init-load-time-checkpoint "Calling package-initialize")
-;;(setq package-quickstart t)
+(setq package-quickstart t)
 (package-initialize)
 (display-init-load-time-checkpoint "Done with package-initialize")
 ;;  (package-activate-all)
