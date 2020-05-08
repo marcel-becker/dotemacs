@@ -1,10 +1,21 @@
-;;; Time-stamp: "2020-04-23 Thu 09:24 marcelbecker on beckermac.local"
+;;; Time-stamp: "2020-05-07 Thu 10:59 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
 
 ;;(load-file "profile-dotemacs.el")
 ;;(profile-dotemacs)
+;; To profile elisp functions:
+;;(use-package benchmark)
+;; in scratch buffer CTRL-J
+;;(benchmark-elapse (pcache-kill-emacs-hook))
+(defmacro measure-time (&rest body)
+  "Measure and return the running time of the code block."
+  (declare (indent defun))
+  (let ((start (make-symbol "start")))
+    `(let ((,start (float-time)))
+       ,@body
+       (- (float-time) ,start))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; set the load path
@@ -1048,6 +1059,23 @@
 ;;(all-the-icons-insert-icons-for 'faicon 1 0.5) ;; Prints all the icons for the `faicon' family
 ;; and also waits 0.5s between printing each one
 (use-package all-the-icons)
+(use-package all-the-icons-ibuffer
+  :ensure t
+  :init (all-the-icons-ibuffer-mode 1)
+  :config
+  ;; The default icon size in ibuffer.
+  (setq all-the-icons-ibuffer-icon-size 1.0)
+
+  ;; The default vertical adjustment of the icon in ibuffer.
+  (setq all-the-icons-ibuffer-icon-v-adjust 0.0)
+
+  ;; Use human readable file size in ibuffer.
+  (setq  all-the-icons-ibuffer-human-readable-size t)
+
+  ;; A list of ways to display buffer lines with `all-the-icons'.
+  ;; See `ibuffer-formats' for details.
+  ;;all-the-icons-ibuffer-formats
+  )
 (display-init-load-time-checkpoint "Done Loading all-the-icons")
 
 
@@ -1229,7 +1257,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   :commands popwin-mode
   :hook (after-init . popwin-mode)
   :config
-  (bind-key "C-z" popwin:keymap)
+  (bind-key "A-z" popwin:keymap)
 
   ;; don't use default value but manage it ourselves
   (setq popwin:special-display-config
@@ -1405,11 +1433,11 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (display-init-load-time-checkpoint "Done loading gitgutter"))
 
 
-(defun my-load-recentf()
-  (interactive)
-  (display-init-load-time-checkpoint "Loading recentf")
-  (my-load-init-file "recentf-init.el")
-  (display-init-load-time-checkpoint "Done loading recentf"))
+;; (defun my-load-recentf()
+;;   (interactive)
+;;   (display-init-load-time-checkpoint "Loading recentf")
+;;   (my-load-init-file "recentf-init.el")
+;;   (display-init-load-time-checkpoint "Done loading recentf"))
 
 
 (setenv "WORKON_HOME" "~/PythonEnvs")
@@ -1461,6 +1489,71 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 ;;(defun undo-tree-save-history-from-hook () nil)
 ;;(setq undo-tree-auto-save-history nil)
 
+
+(use-package recentf
+  :init
+  (progn
+    (setq recentf-save-file (concat marcel-lisp-dir "recentf-" machine-nickname))
+    (setq recentf-auto-cleanup 'never)
+    (recentf-mode 1)
+    (run-at-time nil (* 20 60) 'recentf-save-list)
+    (setq recentf-max-saved-items 100)
+    (setq recentf-max-menu-items 60)
+    ;;(global-set-key [?\e ?\M-x] 'lacarte-execute-menu-command)
+    ;;(global-set-key (kbd "C-x C-r") 'icicle-recent-file)
+    (global-set-key (kbd "C-x C-r") 'recentf-open-files)
+    (add-to-list 'recentf-exclude (concat marcel-lisp-dir "elpa"))
+    (add-to-list 'recentf-exclude  ".*-autoloads\\.el\\'")
+    (add-to-list 'recentf-exclude ".cache")
+    (add-to-list 'recentf-exclude ".cask")
+    (add-to-list 'recentf-exclude "bookmarks")
+    (add-to-list 'recentf-exclude "*.aux")
+    (add-to-list 'recentf-exclude "*.log")
+    (add-to-list 'recentf-exclude "recentf*")
+    (add-to-list 'recentf-exclude "*.gz")
+    (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
+    (use-package recentf-ext)
+    )
+  :config
+  (defun recentf-save-list ()
+    "Save the recent list.
+Load the list from the file specified by `recentf-save-file',
+merge the changes of your current session, and save it back to
+the file."
+    (interactive)
+    (let ((instance-list (copy-list recentf-list)))
+      (recentf-load-list)
+      (recentf-merge-with-default-list instance-list)
+      (recentf-write-list-to-file)))
+
+  (defun recentf-merge-with-default-list (other-list)
+    "Add all items from `other-list' to `recentf-list'."
+    (dolist (oitem other-list)
+      ;; add-to-list already checks for equal'ity
+      (add-to-list 'recentf-list oitem)))
+
+  (defun recentf-write-list-to-file ()
+    "Write the recent files list to file.
+Uses `recentf-list' as the list and `recentf-save-file' as the
+file to write to."
+    (condition-case error
+        (with-temp-buffer
+          (erase-buffer)
+          (set-buffer-file-coding-system recentf-save-file-coding-system)
+          (insert (format recentf-save-file-header (current-time-string)))
+          (recentf-dump-variable 'recentf-list recentf-max-saved-items)
+          (recentf-dump-variable 'recentf-filter-changer-current)
+          (insert "\n \n;;; Local Variables:\n"
+                  (format ";;; coding: %s\n" recentf-save-file-coding-system)
+                  ";;; End:\n")
+          (write-file (expand-file-name recentf-save-file))
+          (when recentf-save-file-modes
+            (set-file-modes recentf-save-file recentf-save-file-modes))
+          nil)
+      (error
+       (warn "recentf mode: %s" (error-message-string error)))))
+  )
+(display-init-load-time-checkpoint "Done Loading recentf")
 
 (use-package savehist
   :init
@@ -1648,8 +1741,10 @@ https://github.com/jaypei/emacs-neotree/pull/110"
    '(company-tooltip   ((t (:background "light gray" :foreground "black"))))
    '(company-tooltip-annotation ((t (:background "brightwhite" :foreground "black"))))
    '(company-tooltip-annotation-selection ((t (:background "color-253"))))
-   '(company-tooltip-common  ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip))))
-   '(company-tooltip-common-selection  ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection))))
+   '(company-tooltip-common  ((((type x)) (:inherit company-tooltip :weight bold))
+                              (t (:inherit company-tooltip :weight bold :underline nil))))
+   '(company-tooltip-common-selection  ((((type x)) (:inherit company-tooltip-selection :weight bold))
+                                        (t (:inherit company-tooltip-selection :weight bold :underline nil))))
    '(company-tooltip-mouse ((t (:foreground "black"))))
    '(company-tooltip-search ((t (:background "brightwhite" :foreground "black"))))
    '(company-tooltip-selection   ((t (:background "steel blue" :foreground "white" :weight bold))))
@@ -1674,13 +1769,6 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   ;;   :config
   ;;   (company-posframe-mode 1)
   ;;   )
-
-  ;; (custom-set-faces
-  ;;  '(company-tooltip-common
-  ;;    ((t (:inherit company-tooltip :weight bold :underline nil))))
-  ;;  '(company-tooltip-common-selection
-  ;;    ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
-
 
   ;; Popup documentation for completion candidates
   (when (display-graphic-p)
@@ -3929,9 +4017,6 @@ Version 2017-01-27"
                                         ;(my-load-gitgutter)
 (my-load-pdf-tools)
 (my-load-latex)
-
-
-(my-load-recentf)
 (my-load-modeline)
 (my-load-quelpa-packages)
 
