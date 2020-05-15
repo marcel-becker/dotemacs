@@ -37,7 +37,21 @@
 ;;(require 'python-environment)
 ;;(require 'pyvenv)
 
-(use-package virtualenvwrapper)
+;; https://github.com/porterjamesj/virtualenvwrapper.el
+;; venv-workon
+;; venv-deactivate
+;; venv-mkvirtualenv
+(use-package virtualenvwrapper
+  :config
+  (venv-initialize-interactive-shells) ;; if you want interactive shell support
+  (venv-initialize-eshell) ;; if you want eshell support
+  ;; (setq venv-location '("/path/to/project1-env/" "/path/to/ptoject2-env/"))
+  (setq venv-location "~/PythonEnvs")
+  )
+
+(use-package jedi)
+(use-package jedi-core)
+
 
 (use-package elpy
   :diminish "elpy"
@@ -55,14 +69,14 @@
    ;;   python-shell-interpreter "ipython"
    ;;   python-shell-interpreter-args "--colors Linux --pylab  --matplotlib"
 
-        python-shell-prompt-regexp "In \\[[0-9]+\\]: " ;; "In \: "
-        python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: " ;; "Out\: "
-        python-shell-completion-setup-code
-        "from IPython.core.completerlib import module_completion"
-        python-shell-completion-module-string-code
-        "';'.join(module_completion('''%s'''))"
-        python-shell-completion-string-code
-        "';'.join(get_ipython().Completer.all_completions('''%s'''))")
+   python-shell-prompt-regexp "In \\[[0-9]+\\]: " ;; "In \: "
+   python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: " ;; "Out\: "
+   python-shell-completion-setup-code
+   "from IPython.core.completerlib import module_completion"
+   python-shell-completion-module-string-code
+   "';'.join(module_completion('''%s'''))"
+   python-shell-completion-string-code
+   "';'.join(get_ipython().Completer.all_completions('''%s'''))")
   )
 
 
@@ -86,26 +100,32 @@
       company-tooltip-flip-when-above t)
 
 
-                                        ;(defun my/python-mode-hook ()
-                                        ;   (add-to-list 'company-backends 'company-jedi))
-                                        ;(add-hook 'python-mode-hook 'my/python-mode-hook)
+;;(defun my/python-mode-hook ()
+;;   (add-to-list 'company-backends 'company-jedi))
+;;(add-hook 'python-mode-hook 'my/python-mode-hook)
 
-(add-to-list 'company-backends '(company-jedi company-files))
+(use-package company-jedi
+  :config
+  (add-to-list 'company-backends '(company-jedi company-files)))
 
 
 
 ;; Use M-x venv-workon to activate virtualenvs and M-x venv-deactivate deactivate them.
 (setq python-shell-virtualenv-path "~/PythonEnvs")
-(venv-initialize-interactive-shells) ;; if you want interactive shell support
-(venv-initialize-eshell) ;; if you want eshell support
-
-(setq venv-location "~/PythonEnvs")
 (setq python-environment-directory "~/PythonEnvs")
-(setq python-environment-default-root-name  "planx-eclipse")
+
 (add-hook 'pyvenv-post-activate-hooks 'pyvenv-restart-python)
-(if (and (equal (getenv "VIRTUAL_ENV") nil)
-         (file-exists-p (concat (getenv "WORKON_HOME") "/planx-eclipse")))
-    (pyvenv-workon "planx-eclipse"))
+(when (and (equal (getenv "VIRTUAL_ENV") nil)
+           (file-exists-p (concat (getenv "WORKON_HOME") "/planx-eclipse")))
+  (pyvenv-workon "planx-eclipse")
+  (setq python-environment-default-root-name  "planx-eclipse"))
+
+(when (getenv "VIRTUAL_ENV")
+  (let ((virtual-env (getenv "VIRTUAL_ENV")))
+    (setq python-environment-default-root-name
+          (file-name-nondirectory (directory-file-name (file-name-directory (getenv "VIRTUAL_ENV")))))))
+
+
 (setq-default mode-line-format (cons '(:exec pyvenv-virtual-env-name) mode-line-format))
 (setq eshell-prompt-function
       (lambda ()  (concat pyvenv-virtual-env-name " $ ")))

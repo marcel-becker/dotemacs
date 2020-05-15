@@ -67,6 +67,8 @@
   :after helm
   :bind (("C-c C-s" . swiper-helm)))
 
+(use-package helm-fuzzier)
+
 ;;(display-init-load-time-checkpoint "Loading helm spotify")
 ;;(use-package  helm-spotify-plus :ensure nil)
 
@@ -160,17 +162,17 @@
 
 
 
-(define-key helm-map (kbd "M-o") #'helm-previous-source)
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
-(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-(define-key helm-map (kbd "C-p")   'helm-previous-line)
-(define-key helm-map (kbd "C-n")   'helm-next-line)
-(define-key helm-map (kbd "C-M-n") 'helm-next-source)
-(define-key helm-map (kbd "C-M-p") 'helm-previous-source)
-(define-key helm-map (kbd "M-N")   'helm-next-source)
-(define-key helm-map (kbd "M-P")   'helm-previous-source)
-(define-key helm-map (kbd "<S-down>")   'helm-next-source)
+(define-key helm-map (kbd "M-o")      'helm-previous-source)
+(define-key helm-map (kbd "<tab>")    'helm-execute-persistent-action) ; rebihnd tab to do persistent action
+(define-key helm-map (kbd "C-i")      'helm-execute-persistent-action) ; make TAB works in terminal
+(define-key helm-map (kbd "C-z")      'helm-select-action) ; list actions using C-z
+(define-key helm-map (kbd "C-p")      'helm-previous-line)
+(define-key helm-map (kbd "C-n")      'helm-next-line)
+(define-key helm-map (kbd "C-M-n")    'helm-next-source)
+(define-key helm-map (kbd "C-M-p")    'helm-previous-source)
+(define-key helm-map (kbd "M-N")      'helm-next-source)
+(define-key helm-map (kbd "M-P")      'helm-previous-source)
+(define-key helm-map (kbd "<S-down>") 'helm-next-source)
 (define-key helm-map (kbd "<S-up>")   'helm-previous-source)
 
 
