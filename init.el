@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-06-03 Wed 13:54 marcelbecker on BeckerMacBookPro.local"
+;;; Time-stamp: "2020-06-04 Thu 09:59 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -4116,6 +4116,8 @@ Version 2017-01-27"
   (balance-windows)
   (follow-mode t))
 
+
+(use-package moom)
 (use-package symon
   :config
   (symon-mode))
