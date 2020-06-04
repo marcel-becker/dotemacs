@@ -63,7 +63,7 @@
 
 (use-package treemacs-evil
   :after treemacs evil
-  :ensure nil)
+  :ensure t)
 
 (use-package treemacs-projectile
   :after treemacs projectile
