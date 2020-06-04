@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-05-15 Fri 10:54 marcelbecker on BeckeriMacKestrel.local"
+;;; Time-stamp: "2020-06-03 Wed 13:54 marcelbecker on BeckerMacBookPro.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -21,7 +21,7 @@
 ;; Read the contents of a buffer into a string
 (defun my-buffer-contents (&optional buffer-or-name)
   (with-current-buffer (if buffer-or-name buffer-or-name (current-buffer))
-    (buffer-substring-no-properties (point-min) (point-max)  )))
+    (buffer-substring-no-properties (point-min) (point-max))))
 
 ;; Open buffer in emacs.
 ;; In scratch buffer, CTRL-J
@@ -30,15 +30,15 @@
 ;; Read all the s-expressions in a buffer and add to a list
 (defun my-read-buffer-sexps (buffer-or-name)
   (let ((sexps '())
-	(sexp nil)
-	(buf (if buffer-or-name buffer-or-name (current-buffer))))
+        (sexp nil)
+        (buf (if buffer-or-name buffer-or-name (current-buffer))))
     (with-current-buffer buf
       (goto-char (point-min))
       (ignore-errors
-	(while (setq sexp (read (current-buffer)))
-	  ;;(message "%s" sexp)
-	  (print sexp)
-	  (push sexp sexps))))
+        (while (setq sexp (read (current-buffer)))
+          ;;(message "%s" sexp)
+          (print sexp)
+          (push sexp sexps))))
     sexps))
 ;; Open buffer in emacs,
 ;; In scratch buffer, CTRL-J
@@ -80,8 +80,8 @@
 ;; we increase it during initialization.
 (setq gc-cons-threshold 100000000)
 (add-hook 'after-init-hook #'(lambda ()
-			       ;; restore after startup
-			       (setq gc-cons-threshold 800000)))
+                               ;; restore after startup
+                               (setq gc-cons-threshold 800000)))
 (setq inhibit-compacting-font-caches t)
 ;;(message  (concat "Loading " load-file-name))
 
@@ -104,8 +104,8 @@
 ;; The time since the load began
 (defun time-since-load-start()
   (let* ((current (current-time))
-	 (delta-start  (float-time (time-subtract current emacs-start-time)))
-	 (delta-load (float-time (time-subtract current last-checkpoint-time))))
+         (delta-start  (float-time (time-subtract current emacs-start-time)))
+         (delta-load (float-time (time-subtract current last-checkpoint-time))))
     (setq last-checkpoint-time current)
     (list delta-start delta-load)
     ))
@@ -115,7 +115,7 @@
   (let ((deltas (time-since-load-start)))
     ;;    (message "%s %s %s" deltas (first deltas) (last deltas))
     (message "Loading init %s checkpoint %s Total Time (%.3fs) Load Time (%.3fs)"
-	     load-file-name checkpoint (car deltas) (cadr deltas))))
+             load-file-name checkpoint (car deltas) (cadr deltas))))
 (display-init-load-time-checkpoint "Loading init file")
 
 
@@ -148,18 +148,18 @@
 (unless (boundp 'marcel-lisp-dir)
   (defvar marcel-lisp-dir
     (if running-ms-windows ; Windows
-	(cond ((file-exists-p "C:/Dropbox/.emacs.d")
-	       (setenv "HOME" "C:/Dropbox")
-	       "C:/Dropbox/.emacs.d/")
-	      ((file-exists-p "D:/Dropbox/.emacs.d")
-	       (setenv "HOME" "D:/Dropbox")
-	       "D:/Dropbox/.emacs.d/")
-	      (t
-	       (expand-file-name "~/.emacs.d")))
+        (cond ((file-exists-p "C:/Dropbox/.emacs.d")
+               (setenv "HOME" "C:/Dropbox")
+               "C:/Dropbox/.emacs.d/")
+              ((file-exists-p "D:/Dropbox/.emacs.d")
+               (setenv "HOME" "D:/Dropbox")
+               "D:/Dropbox/.emacs.d/")
+              (t
+               (expand-file-name "~/.emacs.d")))
       (cond ((file-exists-p  "~/Dropbox/.emacs.d")
-	     "~/Dropbox/.emacs.d/")
-	    (t
-	     (expand-file-name "~/.emacs.d/"))))
+             "~/Dropbox/.emacs.d/")
+            (t
+             (expand-file-name "~/.emacs.d/"))))
     "Address of Marcel's lisp libraries."))
 
 
@@ -206,18 +206,18 @@
 ;;   LOGNAME and USER are expected in many Emacs packages
 ;;   Check these environment variables.
 (if (and (null (getenv "USER"))
-	 ;; Windows includes variable USERNAME, which is copied to
-	 ;; LOGNAME and USER respectively.
-	 (getenv "USERNAME"))
+         ;; Windows includes variable USERNAME, which is copied to
+         ;; LOGNAME and USER respectively.
+         (getenv "USERNAME"))
     (setenv "USER" (getenv "USERNAME")))
 
 (if (and (getenv "LOGNAME")
-	 ;;  Bash shell defines only LOGNAME
-	 (null (getenv "USER")))
+         ;;  Bash shell defines only LOGNAME
+         (null (getenv "USER")))
     (setenv "USER" (getenv "LOGNAME")))
 
 (if (and (getenv "USER")
-	 (null (getenv "LOGNAME")))
+         (null (getenv "LOGNAME")))
     (setenv "LOGNAME" (getenv "USER")))
 
 
@@ -269,8 +269,8 @@
 ;; whenever an external process changes a file underneath emacs, and there
 ;; was no unsaved changes in the corresponding buffer, just revert its
 ;; content to reflect what's on-disk.
-(global-auto-revert-mode 1)
 ;; Turn on font-lock in all modes that support it
+(global-auto-revert-mode 1)
 (global-font-lock-mode t)
 
 
@@ -357,13 +357,13 @@
 ;; use C-u C-x = to describe face at point.
 (setq default-frame-font
       (cond (running-ms-windows
-	     "DejaVu Sans Mono 11")
-	    (running-macos
-	     "Source Code Pro 16")
-	    ;;"DejaVu Sans Mono 18")
-	    ;;        "Geneva 13")
-	    ((not running-macos)
-	     "DejaVu Sans Mono 13")))
+             "DejaVu Sans Mono 11")
+            (running-macos
+             "Source Code Pro 16")
+            ;;"DejaVu Sans Mono 18")
+            ;;        "Geneva 13")
+            ((not running-macos)
+             "DejaVu Sans Mono 13")))
 
 (set-frame-font default-frame-font)
 
@@ -396,44 +396,44 @@
 ;; 2/3 of the workarea height
 (defun my-get-default-frame-height ()
   (let* ((workarea (frame-monitor-workarea))
-	 (height (nth 3 workarea)))
+         (height (nth 3 workarea)))
     (floor  (- height 200) (frame-char-height))))
 
 
 (defun my-get-default-x-frame-position ()
   (let* ((workarea (frame-monitor-workarea))
-	 (width (nth 2 workarea))
-	 (display-x (nth 0 workarea)))
+         (width (nth 2 workarea))
+         (display-x (nth 0 workarea)))
     (+ (floor width 6) display-x)))
 
 (defun my-get-default-y-frame-position ()
   (let* ((workarea (frame-monitor-workarea))
-	 (width (nth 3 workarea))
-	 (display-y (nth 1 workarea)))
+         (width (nth 3 workarea))
+         (display-y (nth 1 workarea)))
     (+ 100 display-y)))
 
 
 (setq default-frame-alist
       '((cursor-color . "white")
-	(mouse-color . "white")
-	(foreground-color . "white")
-	(cursor-type . box)
-	(tool-bar-lines . 0)
-	;;(top . 50)
-	;;(left . 50)
-	;;(width . 180)
-	))
+        (mouse-color . "white")
+        (foreground-color . "white")
+        (cursor-type . box)
+        (tool-bar-lines . 0)
+        ;;(top . 50)
+        ;;(left . 50)
+        ;;(width . 180)
+        ))
 
 (setq initial-frame-alist
       '((cursor-color . "white")
-	(mouse-color . "white")
-	(foreground-color . "white")
-	(cursor-type . box)
-	(tool-bar-lines . 0)
-	;;(top . 50)
-	;;(left . 50)
-	;;(width . 180)
-	))
+        (mouse-color . "white")
+        (foreground-color . "white")
+        (cursor-type . box)
+        (tool-bar-lines . 0)
+        ;;(top . 50)
+        ;;(left . 50)
+        ;;(width . 180)
+        ))
 
 
 ;; Set Frame width/height
@@ -456,9 +456,9 @@
        (frame-left (cons 'left (my-get-default-x-frame-position)))
        (bg-color  (if (eq (user-uid) 0) "gray38" "#09223F"))
        (frame-background-color (if (eq (user-uid) 0)
-				   '(background-color . "gray38")
-				 '(background-color . "#09223F")
-				 )))
+                                   '(background-color . "gray38")
+                                 '(background-color . "#09223F")
+                                 )))
   (add-to-list 'default-frame-alist frame-font)
   (add-to-list 'initial-frame-alist frame-font)
 
@@ -499,11 +499,11 @@
 (display-init-load-time-checkpoint "Setting up ELPA")
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-			 ("marmalade" . "https://marmalade-repo.org/packages/")
-			 ;;("melpa" . "https://stable.melpa.org/packages/")
-			 ("melpas" . "https://melpa.org/packages/")
-			 ("org" . "http://orgmode.org/elpa/")
-			 ))
+                         ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ;;("melpa" . "https://stable.melpa.org/packages/")
+                         ("melpas" . "https://melpa.org/packages/")
+                         ("org" . "http://orgmode.org/elpa/")
+                         ))
 
 
 
@@ -529,7 +529,7 @@
 ;;(package-refresh-contents))
 (when (version< emacs-version "28.0"))
 (display-init-load-time-checkpoint "Calling package-initialize")
-;(setq package-quickstart t)
+                                        ;(setq package-quickstart t)
 (package-initialize)
 (display-init-load-time-checkpoint "Done with package-initialize")
 ;;  (package-activate-all)
@@ -596,416 +596,416 @@
 
 (setq my-elpa-packages
       '(
-	;;ace-flyspell
-	;;ace-jump-helm-line
-	;;ace-jump-mode
-	;;ace-link
-	;;ace-window
-	;;adaptive-wrap
-	;;afternoon-theme
-	;;aggressive-indent
-	;;alect-themes
-	;;alert
-	;;all-the-icons
-	;;ample-regexps
-	;;ample-theme
-	;;ample-zen-theme
-	;;anaconda-mode
-	;;anti-zenburn-theme
-	;;anything
-	;;anzu
-	;;apropospriate-theme
-	;;async
-	;;auctex
-	;;auto-compile
-	;;auto-complete
-	;;auto-complete-auctex
-	;;auto-dictionary
-	;;auto-highlight-symbol
-	;;auto-yasnippet
-	;;autopair
-	;;autothemer
-	;;avy
-	;;badwolf-theme
-	;;bind-key
-	;;bind-map
-	;;birds-of-paradise-plus-theme
-	;;browse-kill-ring
-	;;bubbleberry-theme
-	;;buffer-move
-	;;busybee-theme
-	;;cherry-blossom-theme
-	;;cl-lib
-	;;clean-aindent-mode
-	;;clues-theme
-	;;coffee-mode
-	;;color-theme-modern
-	;;color-theme-sanityinc-solarized
-	;;color-theme-sanityinc-tomorrow
-	;;color-theme-tango
-	;;column-enforce-mode
-	;;company
-	;;company-anaconda
-	;;company-jedi
-	;;company-quickhelp
-	;;company-statistics
-	;;company-tern
-	;;counsel
-	;;csv-mode
-	;; ctable
-	;;cyberpunk-theme
-	;;cython-mode
-	;;dakrone-theme
-	;;darkburn-theme
-	;;darkmine-theme
-	;;darkokai-theme
-	;;darktooth-theme
-	;;dash
-	;;dash-functional
-	;;deferred
-	;;define-word
-	;;diff-hl
-	;;diminish
-	;;dired+
-	;;dired-atool
-	;;dired-avfs
-	;;dired-details
-	;;dired-details+
-	;;dired-dups
-	;;dired-efap
-	;;dired-explorer
-	;;dired-fdclone
-	;;dired-filetype-face
-	;;dired-filter
-	;;dired-hacks-utils
-	;;dired-imenu
-	;;dired-launch
-	;;dired-narrow
-	;;dired-nav-enhance
-	;;dired-open
-	;;dired-quick-sort
-	;;dired-rainbow
-	;;dired-single
-	;;dired-sort
-	;;dired-sort-menu
-	;;dired-sort-menu+
-	;;dired-subtree
-	;;dired-toggle
-	;;dired-toggle-sudo
-	;;diredful
-	;;direx
-	;;direx-grep
-	;;django-theme
-	;;dockerfile-mode
-	;;doremi
-	;;doremi-frm
-	;;doremi-cmd
-	;;dracula-theme
-	;;dumb-jump
-	;;el-get
-	;;elisp-slime-nav
-	;;elpy
-	;;emacs-eclim
-	;;epc
-	;;epl
-	;;escreen
-	;;espresso-theme
-	;;eval-sexp-fu
-	;; evil
-	;; evil-anzu
-	;; evil-args
-	;; evil-ediff
-	;; evil-escape
-	;; evil-exchange
-	;; evil-iedit-state
-	;; evil-indent-plus
-	;; evil-indent-textobject
-	;; evil-leader
-	;; evil-lisp-state
-	;; evil-magit
-	;; evil-matchit
-	;; evil-mc
-	;; evil-nerd-commenter
-	;; evil-numbers
-	;; evil-search-highlight-persist
-	;; evil-surround
-	;; evil-tutor
-	;; evil-unimpaired
-	;; evil-visual-mark-mode
-	;; evil-visualstar
-	;;exec-path-from-shell
-	;;expand-region
-	;;eyebrowse
-	;;f
-	;;fancy-battery
-	;;farmhouse-theme
-	;;fill-column-indicator
-	;;find-file-in-project
-	;;firebelly-theme
-	;;flatland-theme
-	;;flatui-theme
-	;;flx
-	;;flx-ido
-	;;flycheck
-	;;flycheck-pos-tip
-	;;flymake
-	;;flyspell-correct
-	;;flyspell-correct-helm
-	;;frame-cmds
-	;;frame-fns
-	;;fringe-helper
-	;;fuzzy
-	;;gandalf-theme
-	;;gh-md
-	;;git-commit
-	;;git-gutter
-	;;git-gutter+
-	;;git-gutter-fringe
-	;;git-gutter-fringe+
-	;;git-link
-	;;git-messenger
-	;;git-timemachine
-	;;gitattributes-mode
-	;;gitconfig-mode
-	;;gitignore-mode
-	;;gntp
-	;;gnuplot
-	;;golden-ratio
-	;;google-translate
-	;;gotham-theme
-	;;goto-chg
-	;;goto-last-change
-	;;grandshell-theme
-	;;gruber-darker-theme
-	;;gruvbox-theme
-	;;hc-zenburn-theme
-	;;header2
-	;;helm
-	;;helm-ag
-	;;helm-c-yasnippet
-	;;helm-company
-	;;helm-core
-	;;helm-descbinds
-	;;helm-flx
-	;;helm-git
-	;;helm-git-files
-	;;helm-gitignore
-	;;helm-helm-commands
-	;;helm-ls-git
-	;;helm-make
-	;;helm-mode-manager
-	;;helm-package
-	;;helm-projectile
-	;;helm-pydoc
-	;; helm-spotify
-	;;helm-swoop
-	;;helm-themes
-	;;help-fns+
-	;;hemisu-theme
-	;;heroku-theme
-	;;hexrgb
-	hide-comnt
-	highlight
-	highlight-indentation
-	highlight-numbers
-	highlight-parentheses
-	hl-todo
-	;;hlinum
-	htmlize
-	hungry-delete
-	hy-mode
-	;;hydra
-	;;icicles
-	;;ido-vertical-mode
-	;;idomenu
-	;;iedit
-	indent-guide
-	;;info+
-	;;inkpot-theme
-	;;ir-black-theme
-	;;jazz-theme
-	;;jbeans-theme
-	jedi
-	jedi-core
-	js-doc
-	js2-mode
-	js2-refactor
-	json
-	json-mode
-	json-reformat
-	json-rpc
-	json-snatcher
-	latex-preview-pane
-	let-alist
-	;;leuven-theme
-	;;light-soap-theme
-	link-hint
-	linum-relative
-	livid-mode
-	log4e
-	lorem-ipsum
-	;;lua-mode
-	;;lush-theme
-	macrostep
-	;;madhat2r-theme
-	;;magit
-	;;magit-gitflow
-	;;magit-popup
-	;;majapahit-theme
-	;;makey
-	;;markdown-mode
-	;;markdown-toc
-	;;material-theme
-	;;menu-bar+
-	;;minimal-theme
-	mmm-mode
-	;;moe-theme
-	;;molokai-theme
-	;;monochrome-theme
-	;;monokai-theme
-	;;move-text
-	;;  multiple-cursors
-	;;mustang-theme
-	;;mwim
-	;;naquadah-theme
-	;;neotree
-	;;nginx-mode
-	;;niflheim-theme
-	;;noctilux-theme
-	nose
-	;;nxml-mode
-	;;obsidian-theme
-	;;occidental-theme
-	;;oldlace-theme
-	;;omtose-phellack-theme
-	;;open-junk-file
-	;;org
-	;;org-bullets
-	;;org-download
-	;;org-plus-contrib
-	;;org-pomodoro
-	;;org-present
-	;;org-projectile
-	;;organic-green-theme
-	;;orgit
-	;;package
-	;;package-build
-	packed
-	page-break-lines
-	paradox
-	parent-mode
-	;;pastels-on-dark-theme
-	;;pcache
-	pcre2el
-	persp-mode
-	;;phoenix-dark-mono-theme
-	;;phoenix-dark-pink-theme
-	pip-requirements
-	pkg-info
-	;;planet-theme
-	popup
-	popup-kill-ring
-	popwin
-	pos-tip
-	powerline
-	;;professional-theme
-	projectile
-	;;purple-haze-theme
-	py-autopep8
-	;;pycomplete
-	pydoc
-	pydoc-info
-	pyenv-mode
-	pytest
-	python-environment
-	python-mode
-	python-pep8
-	pythonic
-	pyvenv
-	;;quelpa
-	;;railscasts-theme
-	;;rainbow-delimiters
-	;;rainbow-mode
-	;;recentf-ext
-	;;redo+
-	;;request
-	;;restart-emacs
-	;;reverse-theme
-	;;s
-	;;seq
-	;;seti-theme
-	;;shell-command
-	;;simple-httpd
-	;;skewer-mode
-	;;        smartparens
-	;;smartrep
-	;;smart-mode-line
-	;;smart-mode-line-powerline-theme
-	;;smeargle
-	;;smooth-scroll
-	;;smooth-scrolling
-	;;smyx-theme
-	;;soft-charcoal-theme
-	;;soft-morning-theme
-	;;soft-stone-theme
-	;;solarized-theme
-	;;soothe-theme
-	;;spacegray-theme
-	;;spaceline
-	;;spaceline-all-the-icons
-	;;spaceline-segments
-	;;spaceline-config
-	;;spacemacs-theme
-	;;spinner
-	;;spotify
-	;;spray
-	;;sr-speedbar
-	;;subatomic-theme
-	;;subatomic256-theme
-	;;sublime-themes
-	;;sunny-day-theme
-	;;swiper
-	;;swiper-helm
-	;;switch-window
-	;;tabbar
-	;;tango-2-theme
-	;;tango-plus-theme
-	;;tangotango-theme
-	;;tao-theme
-	;;tern
-	;;toc-org
-	;;toxi-theme
-	;;tronesque-theme
-	;;twilight-anti-bright-theme
-	;;twilight-bright-theme
-	;;twilight-theme
-	;;ujelly-theme
-	;;unbound
-	;;underwater-theme
-	;;undo-tree
-	unfill
-	;;use-package
-	;;use-package-el-get
-	uuidgen
-	;;vi-tilde-fringe
-	;;virtualenvwrapper
-	;;vline
-	volatile-highlights
-	web-beautify
-	websocket
-	;;which-key
-	;;window-number
-	;;window-numbering
-	;;winum
-	;;with-editor
-	;;ws-butler
-	;;yaml-mode
-	;;yasnippet
-	;;zen-and-art-theme
-	;;zenburn-theme
-	;;zencoding-mode
-	;;zonokai-theme
-	))
+        ;;ace-flyspell
+        ;;ace-jump-helm-line
+        ;;ace-jump-mode
+        ;;ace-link
+        ;;ace-window
+        ;;adaptive-wrap
+        ;;afternoon-theme
+        ;;aggressive-indent
+        ;;alect-themes
+        ;;alert
+        ;;all-the-icons
+        ;;ample-regexps
+        ;;ample-theme
+        ;;ample-zen-theme
+        ;;anaconda-mode
+        ;;anti-zenburn-theme
+        ;;anything
+        ;;anzu
+        ;;apropospriate-theme
+        ;;async
+        ;;auctex
+        ;;auto-compile
+        ;;auto-complete
+        ;;auto-complete-auctex
+        ;;auto-dictionary
+        ;;auto-highlight-symbol
+        ;;auto-yasnippet
+        ;;autopair
+        ;;autothemer
+        ;;avy
+        ;;badwolf-theme
+        ;;bind-key
+        ;;bind-map
+        ;;birds-of-paradise-plus-theme
+        ;;browse-kill-ring
+        ;;bubbleberry-theme
+        ;;buffer-move
+        ;;busybee-theme
+        ;;cherry-blossom-theme
+        ;;cl-lib
+        ;;clean-aindent-mode
+        ;;clues-theme
+        ;;coffee-mode
+        ;;color-theme-modern
+        ;;color-theme-sanityinc-solarized
+        ;;color-theme-sanityinc-tomorrow
+        ;;color-theme-tango
+        ;;column-enforce-mode
+        ;;company
+        ;;company-anaconda
+        ;;company-jedi
+        ;;company-quickhelp
+        ;;company-statistics
+        ;;company-tern
+        ;;counsel
+        ;;csv-mode
+        ;; ctable
+        ;;cyberpunk-theme
+        ;;cython-mode
+        ;;dakrone-theme
+        ;;darkburn-theme
+        ;;darkmine-theme
+        ;;darkokai-theme
+        ;;darktooth-theme
+        ;;dash
+        ;;dash-functional
+        ;;deferred
+        ;;define-word
+        ;;diff-hl
+        ;;diminish
+        ;;dired+
+        ;;dired-atool
+        ;;dired-avfs
+        ;;dired-details
+        ;;dired-details+
+        ;;dired-dups
+        ;;dired-efap
+        ;;dired-explorer
+        ;;dired-fdclone
+        ;;dired-filetype-face
+        ;;dired-filter
+        ;;dired-hacks-utils
+        ;;dired-imenu
+        ;;dired-launch
+        ;;dired-narrow
+        ;;dired-nav-enhance
+        ;;dired-open
+        ;;dired-quick-sort
+        ;;dired-rainbow
+        ;;dired-single
+        ;;dired-sort
+        ;;dired-sort-menu
+        ;;dired-sort-menu+
+        ;;dired-subtree
+        ;;dired-toggle
+        ;;dired-toggle-sudo
+        ;;diredful
+        ;;direx
+        ;;direx-grep
+        ;;django-theme
+        ;;dockerfile-mode
+        ;;doremi
+        ;;doremi-frm
+        ;;doremi-cmd
+        ;;dracula-theme
+        ;;dumb-jump
+        ;;el-get
+        ;;elisp-slime-nav
+        ;;elpy
+        ;;emacs-eclim
+        ;;epc
+        ;;epl
+        ;;escreen
+        ;;espresso-theme
+        ;;eval-sexp-fu
+        ;; evil
+        ;; evil-anzu
+        ;; evil-args
+        ;; evil-ediff
+        ;; evil-escape
+        ;; evil-exchange
+        ;; evil-iedit-state
+        ;; evil-indent-plus
+        ;; evil-indent-textobject
+        ;; evil-leader
+        ;; evil-lisp-state
+        ;; evil-magit
+        ;; evil-matchit
+        ;; evil-mc
+        ;; evil-nerd-commenter
+        ;; evil-numbers
+        ;; evil-search-highlight-persist
+        ;; evil-surround
+        ;; evil-tutor
+        ;; evil-unimpaired
+        ;; evil-visual-mark-mode
+        ;; evil-visualstar
+        ;;exec-path-from-shell
+        ;;expand-region
+        ;;eyebrowse
+        ;;f
+        ;;fancy-battery
+        ;;farmhouse-theme
+        ;;fill-column-indicator
+        ;;find-file-in-project
+        ;;firebelly-theme
+        ;;flatland-theme
+        ;;flatui-theme
+        ;;flx
+        ;;flx-ido
+        ;;flycheck
+        ;;flycheck-pos-tip
+        ;;flymake
+        ;;flyspell-correct
+        ;;flyspell-correct-helm
+        ;;frame-cmds
+        ;;frame-fns
+        ;;fringe-helper
+        ;;fuzzy
+        ;;gandalf-theme
+        ;;gh-md
+        ;;git-commit
+        ;;git-gutter
+        ;;git-gutter+
+        ;;git-gutter-fringe
+        ;;git-gutter-fringe+
+        ;;git-link
+        ;;git-messenger
+        ;;git-timemachine
+        ;;gitattributes-mode
+        ;;gitconfig-mode
+        ;;gitignore-mode
+        ;;gntp
+        ;;gnuplot
+        ;;golden-ratio
+        ;;google-translate
+        ;;gotham-theme
+        ;;goto-chg
+        ;;goto-last-change
+        ;;grandshell-theme
+        ;;gruber-darker-theme
+        ;;gruvbox-theme
+        ;;hc-zenburn-theme
+        ;;header2
+        ;;helm
+        ;;helm-ag
+        ;;helm-c-yasnippet
+        ;;helm-company
+        ;;helm-core
+        ;;helm-descbinds
+        ;;helm-flx
+        ;;helm-git
+        ;;helm-git-files
+        ;;helm-gitignore
+        ;;helm-helm-commands
+        ;;helm-ls-git
+        ;;helm-make
+        ;;helm-mode-manager
+        ;;helm-package
+        ;;helm-projectile
+        ;;helm-pydoc
+        ;; helm-spotify
+        ;;helm-swoop
+        ;;helm-themes
+        ;;help-fns+
+        ;;hemisu-theme
+        ;;heroku-theme
+        ;;hexrgb
+        hide-comnt
+        highlight
+        highlight-indentation
+        highlight-numbers
+        highlight-parentheses
+        hl-todo
+        ;;hlinum
+        htmlize
+        hungry-delete
+        hy-mode
+        ;;hydra
+        ;;icicles
+        ;;ido-vertical-mode
+        ;;idomenu
+        ;;iedit
+        indent-guide
+        ;;info+
+        ;;inkpot-theme
+        ;;ir-black-theme
+        ;;jazz-theme
+        ;;jbeans-theme
+        jedi
+        jedi-core
+        js-doc
+        js2-mode
+        js2-refactor
+        json
+        json-mode
+        json-reformat
+        json-rpc
+        json-snatcher
+        latex-preview-pane
+        let-alist
+        ;;leuven-theme
+        ;;light-soap-theme
+        link-hint
+        linum-relative
+        livid-mode
+        log4e
+        lorem-ipsum
+        ;;lua-mode
+        ;;lush-theme
+        macrostep
+        ;;madhat2r-theme
+        ;;magit
+        ;;magit-gitflow
+        ;;magit-popup
+        ;;majapahit-theme
+        ;;makey
+        ;;markdown-mode
+        ;;markdown-toc
+        ;;material-theme
+        ;;menu-bar+
+        ;;minimal-theme
+        mmm-mode
+        ;;moe-theme
+        ;;molokai-theme
+        ;;monochrome-theme
+        ;;monokai-theme
+        ;;move-text
+        ;;  multiple-cursors
+        ;;mustang-theme
+        ;;mwim
+        ;;naquadah-theme
+        ;;neotree
+        ;;nginx-mode
+        ;;niflheim-theme
+        ;;noctilux-theme
+        nose
+        ;;nxml-mode
+        ;;obsidian-theme
+        ;;occidental-theme
+        ;;oldlace-theme
+        ;;omtose-phellack-theme
+        ;;open-junk-file
+        ;;org
+        ;;org-bullets
+        ;;org-download
+        ;;org-plus-contrib
+        ;;org-pomodoro
+        ;;org-present
+        ;;org-projectile
+        ;;organic-green-theme
+        ;;orgit
+        ;;package
+        ;;package-build
+        packed
+        page-break-lines
+        paradox
+        parent-mode
+        ;;pastels-on-dark-theme
+        ;;pcache
+        pcre2el
+        persp-mode
+        ;;phoenix-dark-mono-theme
+        ;;phoenix-dark-pink-theme
+        pip-requirements
+        pkg-info
+        ;;planet-theme
+        popup
+        popup-kill-ring
+        popwin
+        pos-tip
+        powerline
+        ;;professional-theme
+        projectile
+        ;;purple-haze-theme
+        py-autopep8
+        ;;pycomplete
+        pydoc
+        pydoc-info
+        pyenv-mode
+        pytest
+        python-environment
+        python-mode
+        python-pep8
+        pythonic
+        pyvenv
+        ;;quelpa
+        ;;railscasts-theme
+        ;;rainbow-delimiters
+        ;;rainbow-mode
+        ;;recentf-ext
+        ;;redo+
+        ;;request
+        ;;restart-emacs
+        ;;reverse-theme
+        ;;s
+        ;;seq
+        ;;seti-theme
+        ;;shell-command
+        ;;simple-httpd
+        ;;skewer-mode
+        ;;        smartparens
+        ;;smartrep
+        ;;smart-mode-line
+        ;;smart-mode-line-powerline-theme
+        ;;smeargle
+        ;;smooth-scroll
+        ;;smooth-scrolling
+        ;;smyx-theme
+        ;;soft-charcoal-theme
+        ;;soft-morning-theme
+        ;;soft-stone-theme
+        ;;solarized-theme
+        ;;soothe-theme
+        ;;spacegray-theme
+        ;;spaceline
+        ;;spaceline-all-the-icons
+        ;;spaceline-segments
+        ;;spaceline-config
+        ;;spacemacs-theme
+        ;;spinner
+        ;;spotify
+        ;;spray
+        ;;sr-speedbar
+        ;;subatomic-theme
+        ;;subatomic256-theme
+        ;;sublime-themes
+        ;;sunny-day-theme
+        ;;swiper
+        ;;swiper-helm
+        ;;switch-window
+        ;;tabbar
+        ;;tango-2-theme
+        ;;tango-plus-theme
+        ;;tangotango-theme
+        ;;tao-theme
+        ;;tern
+        ;;toc-org
+        ;;toxi-theme
+        ;;tronesque-theme
+        ;;twilight-anti-bright-theme
+        ;;twilight-bright-theme
+        ;;twilight-theme
+        ;;ujelly-theme
+        ;;unbound
+        ;;underwater-theme
+        ;;undo-tree
+        unfill
+        ;;use-package
+        ;;use-package-el-get
+        uuidgen
+        ;;vi-tilde-fringe
+        ;;virtualenvwrapper
+        ;;vline
+        volatile-highlights
+        web-beautify
+        websocket
+        ;;which-key
+        ;;window-number
+        ;;window-numbering
+        ;;winum
+        ;;with-editor
+        ;;ws-butler
+        ;;yaml-mode
+        ;;yasnippet
+        ;;zen-and-art-theme
+        ;;zenburn-theme
+        ;;zencoding-mode
+        ;;zonokai-theme
+        ))
 
 
 (use-package discover)
@@ -1135,12 +1135,12 @@
     "Open NeoTree using the git root."
     (interactive)
     (let ((project-dir (ffip-project-root))
-	  (file-name (buffer-file-name)))
+          (file-name (buffer-file-name)))
       (if project-dir
-	  (progn
-	    (neotree-dir project-dir)
-	    (neotree-find file-name))
-	(message "Could not find git project root."))))
+          (progn
+            (neotree-dir project-dir)
+            (neotree-find file-name))
+        (message "Could not find git project root."))))
 
   (global-set-key (kbd "C-c C-p") 'neotree-project-dir)
   ;; every time when the neotree window is  opened, it will try to find current
@@ -1246,7 +1246,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
     :config
     ;; Global settings (defaults)
     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-	  doom-themes-enable-italic t) ; if nil, italics is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
     ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
     ;; may have their own settings.
@@ -1272,9 +1272,9 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   :diminish " " ;;"DIM"
   :init
   (add-hook 'after-init-hook
-	    (lambda ()
-	      (when (fboundp 'auto-dim-other-buffers-mode)
-		(auto-dim-other-buffers-mode t)))))
+            (lambda ()
+              (when (fboundp 'auto-dim-other-buffers-mode)
+                (auto-dim-other-buffers-mode t)))))
 (display-init-load-time-checkpoint "Done Loading auto-dim-other-buffers")
 
 
@@ -1308,78 +1308,78 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
   ;; don't use default value but manage it ourselves
   (setq popwin:special-display-config
-	'(;; Emacs
-	  ("*Help*" :dedicated t :position bottom :stick t :noselect t)
-	  ("*compilation*" :dedicated t :position bottom :stick t :noselect t :height 0.4)
-	  ("*Compile-Log*" :dedicated t :position bottom :stick t :noselect t :height 0.4)
-	  ("*Warnings*" :dedicated t :position bottom :stick t :noselect t)
-	  ("*Completions*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("*Pp Eval Output*" :dedicated t :position bottom :stick t :noselect t)
-	  ("*Shell Command Output*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("\*Async Shell Command\*.+" :regexp t :position bottom :stick t :noselect nil)
-	  ("^*Man.+*$" :regexp t :position bottom :stick t :noselect t :height 0.4)
-	  ("^*WoMan.+*$" :regexp t :position bottom)
-	  ("^*Backtrace.+*$" :regexp t :dedicated t :position bottom :stick t :noselect nil)
-	  ("^*helpful .+*$" :regexp t :position bottom :stick t :noselect t :height 0.4)
+        '(;; Emacs
+          ("*Help*" :dedicated t :position bottom :stick t :noselect t)
+          ("*compilation*" :dedicated t :position bottom :stick t :noselect t :height 0.4)
+          ("*Compile-Log*" :dedicated t :position bottom :stick t :noselect t :height 0.4)
+          ("*Warnings*" :dedicated t :position bottom :stick t :noselect t)
+          ("*Completions*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*Pp Eval Output*" :dedicated t :position bottom :stick t :noselect t)
+          ("*Shell Command Output*" :dedicated t :position bottom :stick t :noselect nil)
+          ("\*Async Shell Command\*.+" :regexp t :position bottom :stick t :noselect nil)
+          ("^*Man.+*$" :regexp t :position bottom :stick t :noselect t :height 0.4)
+          ("^*WoMan.+*$" :regexp t :position bottom)
+          ("^*Backtrace.+*$" :regexp t :dedicated t :position bottom :stick t :noselect nil)
+          ("^*helpful .+*$" :regexp t :position bottom :stick t :noselect t :height 0.4)
 
-	  ;; Kill Ring
-	  ("*Kill Ring*" :dedicated t :position bottom)
+          ;; Kill Ring
+          ("*Kill Ring*" :dedicated t :position bottom)
 
-	  ;; Org
-	  ("*Org todo*" :dedicated t :position bottom :stick t :noselect nil :height 0.2)
+          ;; Org
+          ("*Org todo*" :dedicated t :position bottom :stick t :noselect nil :height 0.2)
 
-	  ;; Flycheck
-	  ("\*flycheck errors\*.+*$" :regexp t :position bottom :stick t :noselect nil)
+          ;; Flycheck
+          ("\*flycheck errors\*.+*$" :regexp t :position bottom :stick t :noselect nil)
 
-	  ;; Youdao dict
-	  ("*Youdao Dictionary*" :dedicated t :position bottom)
+          ;; Youdao dict
+          ("*Youdao Dictionary*" :dedicated t :position bottom)
 
-	  ;; Paradox
-	  ("*Paradox Report*" :dedicated t :position bottom :noselect nil)
+          ;; Paradox
+          ("*Paradox Report*" :dedicated t :position bottom :noselect nil)
 
-	  ;; List
-	  ("*Colors*" :dedicated t :position bottom)
-	  ("*Process List*" :dedicated t :position bottom)
-	  ("*Process-Environment*" :dedicated t :position bottom)
+          ;; List
+          ("*Colors*" :dedicated t :position bottom)
+          ("*Process List*" :dedicated t :position bottom)
+          ("*Process-Environment*" :dedicated t :position bottom)
 
-	  ;; undo-tree
-	  (" *undo-tree*" :dedicated t :position right :stick t :noselect nil :width 60)
+          ;; undo-tree
+          (" *undo-tree*" :dedicated t :position right :stick t :noselect nil :width 60)
 
-	  ;; Search
-	  ("*grep*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("*ag search*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
-	  ("*rg*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
-	  ("*pt-search*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
-	  ("*Occur*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("\*ivy-occur.+*$" :regexp t :position bottom :stick t :noselect nil)
-	  ;; ("*xref*" :dedicated t :position bottom :stick t :noselect nil)
+          ;; Search
+          ("*grep*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*ag search*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*rg*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*pt-search*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*Occur*" :dedicated t :position bottom :stick t :noselect nil)
+          ("\*ivy-occur.+*$" :regexp t :position bottom :stick t :noselect nil)
+          ;; ("*xref*" :dedicated t :position bottom :stick t :noselect nil)
 
-	  ;; VC
-	  ("*vc-diff*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("*vc-change-log*" :dedicated t :position bottom :stick t :noselect nil)
+          ;; VC
+          ("*vc-diff*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*vc-change-log*" :dedicated t :position bottom :stick t :noselect nil)
 
-	  ;; Magit
-	  ;; (magit-status-mode :dedicated t :position bottom :stick t :height 0.5)
-	  ;; (magit-diff-mode :dedicated t :position bottom :stick t :noselect t :height 0.5)
+          ;; Magit
+          ;; (magit-status-mode :dedicated t :position bottom :stick t :height 0.5)
+          ;; (magit-diff-mode :dedicated t :position bottom :stick t :noselect t :height 0.5)
 
-	  ;; Script
-	  ("*eshell*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
-	  ("*shell*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
-	  ("*Python*" :dedicated t :position bottom :stick t :noselect t)
-	  ("*Ruby*" :dedicated t :position bottom :stick t :noselect t)
-	  ("*quickrun*" :dedicated t :position bottom :stick t :noselect t)
+          ;; Script
+          ("*eshell*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*shell*" :dedicated t :position bottom :stick t :noselect nil :height 0.4)
+          ("*Python*" :dedicated t :position bottom :stick t :noselect t)
+          ("*Ruby*" :dedicated t :position bottom :stick t :noselect t)
+          ("*quickrun*" :dedicated t :position bottom :stick t :noselect t)
 
-	  ;; Go
-	  ("^*godoc.+*$" :regexp t :position bottom :stick nil :noselect nil)
-	  ("*golint*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("*govet*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("*go-guru-output*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("*Gofmt Errors*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("*Go Test*" :dedicated t :position bottom :stick t :noselect nil)
+          ;; Go
+          ("^*godoc.+*$" :regexp t :position bottom :stick nil :noselect nil)
+          ("*golint*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*govet*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*go-guru-output*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*Gofmt Errors*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*Go Test*" :dedicated t :position bottom :stick t :noselect nil)
 
-	  ;; Test
-	  ("*ert*" :dedicated t :position bottom :stick t :noselect nil)
-	  ("*nosetests*" :dedicated t :position bottom :stick t :noselect nil))))
+          ;; Test
+          ("*ert*" :dedicated t :position bottom :stick t :noselect nil)
+          ("*nosetests*" :dedicated t :position bottom :stick t :noselect nil))))
 
 
 (display-init-load-time-checkpoint "Done Loading popwin")
@@ -1584,19 +1584,19 @@ the file."
 Uses `recentf-list' as the list and `recentf-save-file' as the
 file to write to."
     (condition-case error
-	(with-temp-buffer
-	  (erase-buffer)
-	  (set-buffer-file-coding-system recentf-save-file-coding-system)
-	  (insert (format recentf-save-file-header (current-time-string)))
-	  (recentf-dump-variable 'recentf-list recentf-max-saved-items)
-	  (recentf-dump-variable 'recentf-filter-changer-current)
-	  (insert "\n \n;;; Local Variables:\n"
-		  (format ";;; coding: %s\n" recentf-save-file-coding-system)
-		  ";;; End:\n")
-	  (write-file (expand-file-name recentf-save-file))
-	  (when recentf-save-file-modes
-	    (set-file-modes recentf-save-file recentf-save-file-modes))
-	  nil)
+        (with-temp-buffer
+          (erase-buffer)
+          (set-buffer-file-coding-system recentf-save-file-coding-system)
+          (insert (format recentf-save-file-header (current-time-string)))
+          (recentf-dump-variable 'recentf-list recentf-max-saved-items)
+          (recentf-dump-variable 'recentf-filter-changer-current)
+          (insert "\n \n;;; Local Variables:\n"
+                  (format ";;; coding: %s\n" recentf-save-file-coding-system)
+                  ";;; End:\n")
+          (write-file (expand-file-name recentf-save-file))
+          (when recentf-save-file-modes
+            (set-file-modes recentf-save-file recentf-save-file-modes))
+          nil)
       (error
        (warn "recentf mode: %s" (error-message-string error)))))
   )
@@ -1608,7 +1608,7 @@ file to write to."
   (setq history-delete-duplicates t)
   (setq savehist-save-minibuffer-history 1)
   (setq savehist-additional-variables
-	'(kill-ring search-ring regexp-search-ring))
+        '(kill-ring search-ring regexp-search-ring))
   (savehist-mode 1))
 (display-init-load-time-checkpoint "Done Loading savehist")
 
@@ -1672,7 +1672,7 @@ file to write to."
   (progn
     (global-anzu-mode +1)
     (set-face-attribute 'anzu-mode-line nil
-			:foreground "yellow" :weight 'bold))
+                        :foreground "yellow" :weight 'bold))
   :config
   (define-key isearch-mode-map [remap isearch-query-replace]  #'anzu-isearch-query-replace)
   (define-key isearch-mode-map [remap isearch-query-replace-regexp] #'anzu-isearch-query-replace-regexp))
@@ -1704,8 +1704,8 @@ file to write to."
     that is 10% darker than the default face's background."
     (interactive)
     (set-face-attribute 'hl-line nil
-			:foreground nil
-			:background (color-darken-name (face-background 'default) 10)))
+                        :foreground nil
+                        :background (color-darken-name (face-background 'default) 10)))
 
 
   (defun my-set-hl-line-color-lighten-based-on-theme ()
@@ -1713,8 +1713,8 @@ file to write to."
     that is 10% darker than the default face's background."
     (interactive)
     (set-face-attribute 'hl-line nil
-			:foreground nil
-			:background (color-lighten-name (face-background 'default) 10)))
+                        :foreground nil
+                        :background (color-lighten-name (face-background 'default) 10)))
   (my-set-hl-line-color-based-on-theme)
   )
 (display-init-load-time-checkpoint "Done Loading hlinum")
@@ -1735,8 +1735,8 @@ file to write to."
 
 (when (boundp 'window-divider-mode)
   (setq window-divider-default-places t
-	window-divider-default-bottom-width 2
-	window-divider-default-right-width 5)
+        window-divider-default-bottom-width 2
+        window-divider-default-right-width 5)
   (custom-set-faces
    '(window-divider ((t (:foreground "orange"))))
    '(window-divider-first-pixel ((t (:foreground "orange"))))
@@ -1746,89 +1746,93 @@ file to write to."
 (display-init-load-time-checkpoint "Done setting window divider mode")
 
 
+(defun my-load-company ()
+  (interactive)
+  (use-package company
+    :diminish " Ⓒ" ;;"CIA"
+    :bind (("A-." . company-complete)
+           ("C-c C-y" . company-yasnippet)
+           :map company-active-map
+           ("<escape>" . company-abort)
+           ("C-p" . company-select-previous)
+           ("C-n" . company-select-next)
+           ("TAB" . company-complete-common-or-cycle)
+           ("<tab>" . company-complete-common-or-cycle)
+           ("S-TAB" . company-select-previous)
+           ("<backtab>" . company-select-previous)
+           ("C-g" . company-abort)
+           ("<left>" . company-abort)
+           ("C-/" . company-search-candidates)
+           ("C-M-/" . company-filter-candidates)
+           ("C-d" .  company-show-doc-buffer)
+           :map company-search-map
+           ("C-p" . company-select-previous)
+           ("C-n" . company-select-next))
+    :hook (after-init . global-company-mode)
+    :config
+    (setq company-tooltip-align-annotations t ; aligns annotation to the right
+          company-tooltip-limit 12            ; bigger popup window
+          company-idle-delay .2               ; decrease delay before autocompletion popup shows
+          company-echo-delay 0                ; remove annoying blinking
+          company-minimum-prefix-length 2
+          company-require-match 'never
+          company-dabbrev-ignore-case nil
+          company-show-numbers t
+          company-dabbrev-downcase nil)
 
+    (custom-set-faces
+     '(company-preview  ((t (:foreground "dark gray" :underline t))))
+     '(company-preview-common ((t (:inherit company-preview))))
+     '(company-preview-search ((t (:inherit company-preview :background "yellow"))))
+     '(company-scrollbar-bg ((t (:inherit 'company-tooltip :background "gray20" :foreground "black" :weight bold))))
+     '(company-scrollbar-fg ((t ( :background "gray40" :foreground "black" :weight bold))))
+     '(company-template-field ((t (:background "magenta" :foreground "black"))))
+     '(company-tooltip   ((t (:background "light gray" :foreground "black"))))
+     '(company-tooltip-annotation ((t (:background "brightwhite" :foreground "black"))))
+     '(company-tooltip-annotation-selection ((t (:background "color-253"))))
+     '(company-tooltip-common  ((((type x)) (:inherit company-tooltip :weight bold))
+                                (t (:inherit company-tooltip :weight bold :underline nil))))
+     '(company-tooltip-common-selection  ((((type x)) (:inherit company-tooltip-selection :weight bold))
+                                          (t (:inherit company-tooltip-selection :weight bold :underline nil))))
+     '(company-tooltip-mouse ((t (:foreground "black"))))
+     '(company-tooltip-search ((t (:background "brightwhite" :foreground "black"))))
+     '(company-tooltip-selection   ((t (:background "steel blue" :foreground "white" :weight bold))))
+     '(popup-menu-face     ((t :foreground "red"   :background "#49483E")))
+     '(popup-menu-selection-face     ((t :background "#349B8D"   :foreground "#BBF7EF"))))
 
-(use-package company
-  :diminish " Ⓒ" ;;"CIA"
-  :bind (("A-." . company-complete)
-	 ("C-c C-y" . company-yasnippet)
-	 :map company-active-map
-	 ("<escape>" . company-abort)
-	 ("C-p" . company-select-previous)
-	 ("C-n" . company-select-next)
-	 ("TAB" . company-complete-common-or-cycle)
-	 ("<tab>" . company-complete-common-or-cycle)
-	 ("S-TAB" . company-select-previous)
-	 ("<backtab>" . company-select-previous)
-	 ("C-g" . company-abort)
-	 ("<left>" . company-abort)
+    (add-hook 'after-init-hook 'global-company-mode)
+    (add-to-list 'company-backends 'company-dabbrev t)
+    (add-to-list 'company-backends 'company-ispell t)
+    (add-to-list 'company-backends 'company-files t)
+    (use-package company-shell)
+    (add-to-list 'company-backends 'company-shell t)
+    ;;  (use-package company-anaconda)
+    ;;(add-to-list 'company-backends 'company-anaconda t)
+    ;;(use-package company-jedi)
+    ;;(add-to-list 'company-backends 'company-jedi t)
+    ;;(use-package company-tern)
+    ;;(add-to-list 'company-backends 'company-tern t)
+    (global-company-mode)
+    ;; (use-package company-posframe
+    ;;   :diminish "PosFr"
+    ;;   :config
+    ;;   (company-posframe-mode 1)
+    ;;   )
 
-	 :map company-search-map
-	 ("C-p" . company-select-previous)
-	 ("C-n" . company-select-next))
-  :hook (after-init . global-company-mode)
-  :config
-  (setq company-tooltip-align-annotations t ; aligns annotation to the right
-	company-tooltip-limit 12            ; bigger popup window
-	company-idle-delay .2               ; decrease delay before autocompletion popup shows
-	company-echo-delay 0                ; remove annoying blinking
-	company-minimum-prefix-length 2
-	company-require-match 'never
-	company-dabbrev-ignore-case nil
-	company-show-numbers t
-	company-dabbrev-downcase nil)
+    ;; Popup documentation for completion candidates
+    (when (display-graphic-p)
+      (use-package company-quickhelp
+        :bind (:map company-active-map
+                    ("M-h" . company-quickhelp-manual-begin))
+        :hook (global-company-mode . company-quickhelp-mode)
+        :config
+        (company-quickhelp-mode 1)
+        (setq company-quickhelp-use-propertized-text nil)
+        ;;(setq company-quickhelp-color-foreground "white")
+        ;;(setq company-quickhelp-color-background "black")
+        (setq company-quickhelp-delay 0.4))))
+  )
 
-  (custom-set-faces
-   '(company-preview  ((t (:foreground "dark gray" :underline t))))
-   '(company-preview-common ((t (:inherit company-preview))))
-   '(company-preview-search ((t (:inherit company-preview :background "yellow"))))
-   '(company-scrollbar-bg ((t (:inherit 'company-tooltip :background "gray20" :foreground "black" :weight bold))))
-   '(company-scrollbar-fg ((t ( :background "gray40" :foreground "black" :weight bold))))
-   '(company-template-field ((t (:background "magenta" :foreground "black"))))
-   '(company-tooltip   ((t (:background "light gray" :foreground "black"))))
-   '(company-tooltip-annotation ((t (:background "brightwhite" :foreground "black"))))
-   '(company-tooltip-annotation-selection ((t (:background "color-253"))))
-   '(company-tooltip-common  ((((type x)) (:inherit company-tooltip :weight bold))
-			      (t (:inherit company-tooltip :weight bold :underline nil))))
-   '(company-tooltip-common-selection  ((((type x)) (:inherit company-tooltip-selection :weight bold))
-					(t (:inherit company-tooltip-selection :weight bold :underline nil))))
-   '(company-tooltip-mouse ((t (:foreground "black"))))
-   '(company-tooltip-search ((t (:background "brightwhite" :foreground "black"))))
-   '(company-tooltip-selection   ((t (:background "steel blue" :foreground "white" :weight bold))))
-   '(popup-menu-face     ((t :foreground "red"   :background "#49483E")))
-   '(popup-menu-selection-face     ((t :background "#349B8D"   :foreground "#BBF7EF"))))
-
-  (add-hook 'after-init-hook 'global-company-mode)
-  (add-to-list 'company-backends 'company-dabbrev t)
-  (add-to-list 'company-backends 'company-ispell t)
-  (add-to-list 'company-backends 'company-files t)
-  (use-package company-shell)
-  (add-to-list 'company-backends 'company-shell t)
-  ;;  (use-package company-anaconda)
-  ;;(add-to-list 'company-backends 'company-anaconda t)
-  ;;(use-package company-jedi)
-  ;;(add-to-list 'company-backends 'company-jedi t)
-  ;;(use-package company-tern)
-  ;;(add-to-list 'company-backends 'company-tern t)
-  (global-company-mode)
-  ;; (use-package company-posframe
-  ;;   :diminish "PosFr"
-  ;;   :config
-  ;;   (company-posframe-mode 1)
-  ;;   )
-
-  ;; Popup documentation for completion candidates
-  (when (display-graphic-p)
-    (use-package company-quickhelp
-      :bind (:map company-active-map
-		  ("M-h" . company-quickhelp-manual-begin))
-      :hook (global-company-mode . company-quickhelp-mode)
-      :config
-      (company-quickhelp-mode 1)
-      (setq company-quickhelp-use-propertized-text t)
-      (setq company-quickhelp-color-foreground "white")
-      (setq company-quickhelp-color-background "black")
-      (setq company-quickhelp-delay 0.4))))
 
 (display-init-load-time-checkpoint "Done Loading company")
 
@@ -1840,48 +1844,48 @@ file to write to."
     :after (all-the-icons company)
     :hook (company-mode . company-box-mode)
     :functions (my-company-box--make-line
-		my-company-box-icons--elisp)
+                my-company-box-icons--elisp)
     :commands (company-box--get-color
-	       company-box--resolve-colors
-	       company-box--add-icon
-	       company-box--apply-color
-	       company-box--make-line
-	       company-box-icons--elisp)
+               company-box--resolve-colors
+               company-box--add-icon
+               company-box--apply-color
+               company-box--make-line
+               company-box-icons--elisp)
 
     :init
     (setq company-box-frame-parameters
-	  '((left . -1)
-	    (no-accept-focus . t)
-	    (no-focus-on-map . t)
-	    (min-width  . t)
-	    (min-height  . t)
-	    (width  . 30)
-	    (height  . 30)
-	    (internal-border-width . 5)
-	    (vertical-scroll-bars . nil)
-	    (horizontal-scroll-bars . nil)
-	    (menu-bar-lines . 0)
-	    (tool-bar-lines . 0)
-	    (line-spacing . 1)
-	    ;; (unsplittable . nil)
-	    (undecorated . t)
-	    (top . -1)
-	    (visibility . nil)
-	    (mouse-wheel-frame . nil)
-	    (no-other-frame . t)
-	    (cursor-type . nil)
-	    (drag-internal-border . t)
-	    (left-fringe . 5)
-	    (right-fringe . 5)
-	    (no-special-glyphs . t)))
+          '((left . -1)
+            (no-accept-focus . t)
+            (no-focus-on-map . t)
+            (min-width  . t)
+            (min-height  . t)
+            (width  . 30)
+            (height  . 30)
+            (internal-border-width . 5)
+            (vertical-scroll-bars . nil)
+            (horizontal-scroll-bars . nil)
+            (menu-bar-lines . 0)
+            (tool-bar-lines . 0)
+            (line-spacing . 1)
+            ;; (unsplittable . nil)
+            (undecorated . t)
+            (top . -1)
+            (visibility . nil)
+            (mouse-wheel-frame . nil)
+            (no-other-frame . t)
+            (cursor-type . nil)
+            (drag-internal-border . t)
+            (left-fringe . 5)
+            (right-fringe . 5)
+            (no-special-glyphs . t)))
     (setq company-box-doc-frame-parameters
-	  '((internal-border-width . 5)
-	    (foreground-color . "white")
-	    (background-color . "black")
-	    (no-accept-focus . t)
-	    (no-focus-on-map . t)
-	    )
-	  )
+          '((internal-border-width . 5)
+            (foreground-color . "white")
+            (background-color . "black")
+            (no-accept-focus . t)
+            (no-focus-on-map . t)
+            )
+          )
 
     (setq company-box-icons-alist 'company-box-icons-all-the-icons)
     :config
@@ -1897,70 +1901,70 @@ file to write to."
     (set-frame-parameter nil 'company-box-doc-frame nil)
 
     (setq company-box-backends-colors nil
-	  company-box-show-single-candidate t
-	  company-box-max-candidates 50
-	  company-box-doc-delay 0.4)
+          company-box-show-single-candidate t
+          company-box-max-candidates 50
+          company-box-doc-delay 0.4)
 
     (setq company-box-icons-unknown (concat (all-the-icons-material "find_in_page") " "))
     (setq company-box-icons-elisp
-	  (list
-	   (concat (all-the-icons-faicon "tag") " ")
-	   (concat (all-the-icons-faicon "cog") " ")
-	   (concat (all-the-icons-faicon "cube") " ")
-	   (concat (all-the-icons-material "color_lens") " ")))
+          (list
+           (concat (all-the-icons-faicon "tag") " ")
+           (concat (all-the-icons-faicon "cog") " ")
+           (concat (all-the-icons-faicon "cube") " ")
+           (concat (all-the-icons-material "color_lens") " ")))
     (setq company-box-icons-yasnippet (concat (all-the-icons-faicon "bookmark") " "))
     (setq company-box-icons-lsp
-	  `((1 .  ,(concat (all-the-icons-faicon   "text-height")    " ")) ;; Text
-	    (2 .  ,(concat (all-the-icons-faicon   "tags")           " ")) ;; Method
-	    (3 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Function
-	    (4 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Constructor
-	    (5 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Field
-	    (6 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Variable
-	    (7 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Class
-	    (8 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Interface
-	    (9 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Module
-	    (10 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Property
-	    (11 . ,(concat (all-the-icons-material "settings_system_daydream") " ")) ;; Unit
-	    (12 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Value
-	    (13 . ,(concat (all-the-icons-material "storage")        " ")) ;; Enum
-	    (14 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; Keyword
-	    (15 . ,(concat (all-the-icons-faicon   "bookmark")       " ")) ;; Snippet
-	    (16 . ,(concat (all-the-icons-material "color_lens")     " ")) ;; Color
-	    (17 . ,(concat (all-the-icons-faicon   "file-text-o")    " ")) ;; File
-	    (18 . ,(concat (all-the-icons-material "refresh")        " ")) ;; Reference
-	    (19 . ,(concat (all-the-icons-faicon   "folder-open")    " ")) ;; Folder
-	    (20 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; EnumMember
-	    (21 . ,(concat (all-the-icons-faicon   "square")         " ")) ;; Constant
-	    (22 . ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Struct
-	    (23 . ,(concat (all-the-icons-faicon   "calendar")       " ")) ;; Event
-	    (24 . ,(concat (all-the-icons-faicon   "square-o")       " ")) ;; Operator
-	    (25 . ,(concat (all-the-icons-faicon   "arrows")         " "))) ;; TypeParameter
-	  ))
+          `((1 .  ,(concat (all-the-icons-faicon   "text-height")    " ")) ;; Text
+            (2 .  ,(concat (all-the-icons-faicon   "tags")           " ")) ;; Method
+            (3 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Function
+            (4 .  ,(concat (all-the-icons-faicon   "tag" )           " ")) ;; Constructor
+            (5 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Field
+            (6 .  ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Variable
+            (7 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Class
+            (8 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Interface
+            (9 .  ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Module
+            (10 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Property
+            (11 . ,(concat (all-the-icons-material "settings_system_daydream") " ")) ;; Unit
+            (12 . ,(concat (all-the-icons-faicon   "cog" )           " ")) ;; Value
+            (13 . ,(concat (all-the-icons-material "storage")        " ")) ;; Enum
+            (14 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; Keyword
+            (15 . ,(concat (all-the-icons-faicon   "bookmark")       " ")) ;; Snippet
+            (16 . ,(concat (all-the-icons-material "color_lens")     " ")) ;; Color
+            (17 . ,(concat (all-the-icons-faicon   "file-text-o")    " ")) ;; File
+            (18 . ,(concat (all-the-icons-material "refresh")        " ")) ;; Reference
+            (19 . ,(concat (all-the-icons-faicon   "folder-open")    " ")) ;; Folder
+            (20 . ,(concat (all-the-icons-material "closed_caption") " ")) ;; EnumMember
+            (21 . ,(concat (all-the-icons-faicon   "square")         " ")) ;; Constant
+            (22 . ,(concat (all-the-icons-faicon   "cube")           " ")) ;; Struct
+            (23 . ,(concat (all-the-icons-faicon   "calendar")       " ")) ;; Event
+            (24 . ,(concat (all-the-icons-faicon   "square-o")       " ")) ;; Operator
+            (25 . ,(concat (all-the-icons-faicon   "arrows")         " "))) ;; TypeParameter
+          ))
 
   ;; Support `company-common'
   (defun my-company-box--make-line (candidate)
     (-let* (((candidate annotation len-c len-a backend) candidate)
-	    (color (company-box--get-color backend))
-	    ((c-color a-color i-color s-color) (company-box--resolve-colors color))
-	    (icon-string (and company-box--with-icons-p (company-box--add-icon candidate)))
-	    (candidate-string (concat (propertize (or company-common "") 'face 'company-tooltip-common)
-				      (substring (propertize candidate 'face 'company-box-candidate) (length company-common) nil)))
-	    (align-string (when annotation
-			    (concat " " (and company-tooltip-align-annotations
-					     (propertize " " 'display `(space :align-to (- right-fringe ,(or len-a 0) 1)))))))
-	    (space company-box--space)
-	    (icon-p company-box-enable-icon)
-	    (annotation-string (and annotation (propertize annotation 'face 'company-box-annotation)))
-	    (line (concat (unless (or (and (= space 2) icon-p) (= space 0))
-			    (propertize " " 'display `(space :width ,(if (or (= space 1) (not icon-p)) 1 0.75))))
-			  (company-box--apply-color icon-string i-color)
-			  (company-box--apply-color candidate-string c-color)
-			  align-string
-			  (company-box--apply-color annotation-string a-color)))
-	    (len (length line)))
+            (color (company-box--get-color backend))
+            ((c-color a-color i-color s-color) (company-box--resolve-colors color))
+            (icon-string (and company-box--with-icons-p (company-box--add-icon candidate)))
+            (candidate-string (concat (propertize (or company-common "") 'face 'company-tooltip-common)
+                                      (substring (propertize candidate 'face 'company-box-candidate) (length company-common) nil)))
+            (align-string (when annotation
+                            (concat " " (and company-tooltip-align-annotations
+                                             (propertize " " 'display `(space :align-to (- right-fringe ,(or len-a 0) 1)))))))
+            (space company-box--space)
+            (icon-p company-box-enable-icon)
+            (annotation-string (and annotation (propertize annotation 'face 'company-box-annotation)))
+            (line (concat (unless (or (and (= space 2) icon-p) (= space 0))
+                            (propertize " " 'display `(space :width ,(if (or (= space 1) (not icon-p)) 1 0.75))))
+                          (company-box--apply-color icon-string i-color)
+                          (company-box--apply-color candidate-string c-color)
+                          align-string
+                          (company-box--apply-color annotation-string a-color)))
+            (len (length line)))
       (add-text-properties 0 len (list 'company-box--len (+ len-c len-a)
-				       'company-box--color s-color)
-			   line)
+                                       'company-box--color s-color)
+                           line)
       line))
   (advice-add #'company-box--make-line :override #'my-company-box--make-line)
 
@@ -1968,45 +1972,45 @@ file to write to."
   (defun my-company-box-icons--elisp (candidate)
     (when (derived-mode-p 'emacs-lisp-mode)
       (let ((sym (intern candidate)))
-	(cond ((fboundp sym) 'Function)
-	      ((featurep sym) 'Module)
-	      ((facep sym) 'Color)
-	      ((boundp sym) 'Variable)
-	      ((symbolp sym) 'Text)
-	      (t . nil)))))
+        (cond ((fboundp sym) 'Function)
+              ((featurep sym) 'Module)
+              ((facep sym) 'Color)
+              ((boundp sym) 'Variable)
+              ((symbolp sym) 'Text)
+              (t . nil)))))
   (advice-add #'company-box-icons--elisp :override #'my-company-box-icons--elisp)
 
   (with-eval-after-load 'all-the-icons
     (declare-function all-the-icons-faicon 'all-the-icons)
     (declare-function all-the-icons-material 'all-the-icons)
     (setq company-box-icons-all-the-icons
-	  `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.9 :v-adjust -0.2))
-	    (Text . ,(all-the-icons-faicon "text-width" :height 0.85 :v-adjust -0.05))
-	    (Method . ,(all-the-icons-faicon "cube" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-purple))
-	    (Function . ,(all-the-icons-faicon "cube" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-purple))
-	    (Constructor . ,(all-the-icons-faicon "cube" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-purple))
-	    (Field . ,(all-the-icons-faicon "tag" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-lblue))
-	    (Variable . ,(all-the-icons-faicon "tag" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-lblue))
-	    (Class . ,(all-the-icons-material "settings_input_component" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-orange))
-	    (Interface . ,(all-the-icons-material "share" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
-	    (Module . ,(all-the-icons-material "view_module" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
-	    (Property . ,(all-the-icons-faicon "wrench" :height 0.85 :v-adjust -0.05))
-	    (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.9 :v-adjust -0.2))
-	    (Value . ,(all-the-icons-material "format_align_right" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
-	    (Enum . ,(all-the-icons-material "storage" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-orange))
-	    (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.9 :v-adjust -0.2))
-	    (Snippet . ,(all-the-icons-material "format_align_center" :height 0.9 :v-adjust -0.2))
-	    (Color . ,(all-the-icons-material "palette" :height 0.9 :v-adjust -0.2))
-	    (File . ,(all-the-icons-faicon "file-o" :height 0.9 :v-adjust -0.05))
-	    (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.9 :v-adjust -0.2))
-	    (Folder . ,(all-the-icons-faicon "folder-open" :height 0.9 :v-adjust -0.05))
-	    (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
-	    (Constant . ,(all-the-icons-faicon "square-o" :height 0.9 :v-adjust -0.05))
-	    (Struct . ,(all-the-icons-material "settings_input_component" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-orange))
-	    (Event . ,(all-the-icons-faicon "bolt" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-orange))
-	    (Operator . ,(all-the-icons-material "control_point" :height 0.9 :v-adjust -0.2))
-	    (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.85 :v-adjust -0.05))
-	    (Template . ,(all-the-icons-material "format_align_center" :height 0.9 :v-adjust -0.2)))))
+          `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.9 :v-adjust -0.2))
+            (Text . ,(all-the-icons-faicon "text-width" :height 0.85 :v-adjust -0.05))
+            (Method . ,(all-the-icons-faicon "cube" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-purple))
+            (Function . ,(all-the-icons-faicon "cube" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-purple))
+            (Constructor . ,(all-the-icons-faicon "cube" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-purple))
+            (Field . ,(all-the-icons-faicon "tag" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-lblue))
+            (Variable . ,(all-the-icons-faicon "tag" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-lblue))
+            (Class . ,(all-the-icons-material "settings_input_component" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-orange))
+            (Interface . ,(all-the-icons-material "share" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
+            (Module . ,(all-the-icons-material "view_module" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
+            (Property . ,(all-the-icons-faicon "wrench" :height 0.85 :v-adjust -0.05))
+            (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.9 :v-adjust -0.2))
+            (Value . ,(all-the-icons-material "format_align_right" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
+            (Enum . ,(all-the-icons-material "storage" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-orange))
+            (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.9 :v-adjust -0.2))
+            (Snippet . ,(all-the-icons-material "format_align_center" :height 0.9 :v-adjust -0.2))
+            (Color . ,(all-the-icons-material "palette" :height 0.9 :v-adjust -0.2))
+            (File . ,(all-the-icons-faicon "file-o" :height 0.9 :v-adjust -0.05))
+            (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.9 :v-adjust -0.2))
+            (Folder . ,(all-the-icons-faicon "folder-open" :height 0.9 :v-adjust -0.05))
+            (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-lblue))
+            (Constant . ,(all-the-icons-faicon "square-o" :height 0.9 :v-adjust -0.05))
+            (Struct . ,(all-the-icons-material "settings_input_component" :height 0.9 :v-adjust -0.2 :face 'all-the-icons-orange))
+            (Event . ,(all-the-icons-faicon "bolt" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-orange))
+            (Operator . ,(all-the-icons-material "control_point" :height 0.9 :v-adjust -0.2))
+            (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.85 :v-adjust -0.05))
+            (Template . ,(all-the-icons-material "format_align_center" :height 0.9 :v-adjust -0.2)))))
   )
 
 
@@ -2017,7 +2021,7 @@ file to write to."
 (use-package visual-regexp
   :defer t
   :bind (("A-%" . vr/replace)
-	 ("M-%" . vr/query-replace)))
+         ("M-%" . vr/query-replace)))
 (display-init-load-time-checkpoint "Done Loading visual-regex")
 ;; ----------------------------------------------------------[Window Number]
 
@@ -2045,19 +2049,19 @@ file to write to."
 (use-package winum
   :init
   (setq winum-keymap
-	(let ((map (make-sparse-keymap)))
-	  (define-key map (kbd "C-`") 'winum-select-window-by-number)
-	  (define-key map (kbd "C-²") 'winum-select-window-by-number)
-	  (define-key map (kbd "M-0") 'winum-select-window-0-or-10)
-	  (define-key map (kbd "M-1") 'winum-select-window-1)
-	  (define-key map (kbd "M-2") 'winum-select-window-2)
-	  (define-key map (kbd "M-3") 'winum-select-window-3)
-	  (define-key map (kbd "M-4") 'winum-select-window-4)
-	  (define-key map (kbd "M-5") 'winum-select-window-5)
-	  (define-key map (kbd "M-6") 'winum-select-window-6)
-	  (define-key map (kbd "M-7") 'winum-select-window-7)
-	  (define-key map (kbd "M-8") 'winum-select-window-8)
-	  map))
+        (let ((map (make-sparse-keymap)))
+          (define-key map (kbd "C-`") 'winum-select-window-by-number)
+          (define-key map (kbd "C-²") 'winum-select-window-by-number)
+          (define-key map (kbd "M-0") 'winum-select-window-0-or-10)
+          (define-key map (kbd "M-1") 'winum-select-window-1)
+          (define-key map (kbd "M-2") 'winum-select-window-2)
+          (define-key map (kbd "M-3") 'winum-select-window-3)
+          (define-key map (kbd "M-4") 'winum-select-window-4)
+          (define-key map (kbd "M-5") 'winum-select-window-5)
+          (define-key map (kbd "M-6") 'winum-select-window-6)
+          (define-key map (kbd "M-7") 'winum-select-window-7)
+          (define-key map (kbd "M-8") 'winum-select-window-8)
+          map))
   (setq winum-auto-setup-mode-line nil)
   :config
   (defun winum-assign-0-to-neotree ()
@@ -2066,12 +2070,12 @@ file to write to."
   (set-face-attribute 'winum-face nil :weight 'bold)
 
   (setq winum-scope            'global
-	winum-reverse-frame-list          nil
-	winum-auto-assign-0-to-minibuffer t
-	winum-assign-func            'my-winum-assign-func
-	winum-auto-setup-mode-line        t
-	winum-mode-line-position          1
-	winum-ignored-buffers             '(" *which-key*"))
+        winum-reverse-frame-list          nil
+        winum-auto-assign-0-to-minibuffer t
+        winum-assign-func            'my-winum-assign-func
+        winum-auto-setup-mode-line        t
+        winum-mode-line-position          1
+        winum-ignored-buffers             '(" *which-key*"))
   (winum-mode))
 
 (display-init-load-time-checkpoint "Done Loading winum")
@@ -2133,21 +2137,21 @@ file to write to."
     (unless (buffer-live-p which-key--buffer)
       (setq which-key--buffer (get-buffer-create which-key-buffer-name))
       (with-current-buffer which-key--buffer
-	;; suppress confusing minibuffer message
-	(let (message-log-max)
-	  (toggle-truncate-lines 1)
-	  (message ""))
-	(setq-local cursor-type nil)
-	(setq-local cursor-in-non-selected-windows nil)
-	(setq-local mode-line-format nil)
-	(setq-local header-line-format nil)
-	(setq-local word-wrap nil)
-	(setq-local show-trailing-whitespace nil)
-	(run-hooks 'which-key-init-buffer-hook))))
+        ;; suppress confusing minibuffer message
+        (let (message-log-max)
+          (toggle-truncate-lines 1)
+          (message ""))
+        (setq-local cursor-type nil)
+        (setq-local cursor-in-non-selected-windows nil)
+        (setq-local mode-line-format nil)
+        (setq-local header-line-format nil)
+        (setq-local word-wrap nil)
+        (setq-local show-trailing-whitespace nil)
+        (run-hooks 'which-key-init-buffer-hook))))
 
   (setq which-key-side-window-max-height 0.5
-	which-key-show-prefix 'modeline
-	which-key-min-display-lines 5)
+        which-key-show-prefix 'modeline
+        which-key-min-display-lines 5)
 
   ;; (use-package ivy-posframe)
   ;; (use-package which-key-posframe
@@ -2224,14 +2228,14 @@ file to write to."
 (use-package origami
   :commands (origami-mode)
   :bind (:map origami-mode-map
-	      ("C-c o :" . origami-recursively-toggle-node)
-	      ("C-c o a" . origami-toggle-all-nodes)
-	      ("C-c o t" . origami-toggle-node)
-	      ("C-c o o" . origami-show-only-node)
-	      ("C-c o u" . origami-undo)
-	      ("C-c o U" . origami-redo)
-	      ("C-c o C-r" . origami-reset)
-	      )
+              ("C-c o :" . origami-recursively-toggle-node)
+              ("C-c o a" . origami-toggle-all-nodes)
+              ("C-c o t" . origami-toggle-node)
+              ("C-c o o" . origami-show-only-node)
+              ("C-c o u" . origami-undo)
+              ("C-c o U" . origami-redo)
+              ("C-c o C-r" . origami-reset)
+              )
   :config
   (setq origami-show-fold-header t)
   ;; The python parser currently doesn't fold if/for/etc. blocks, which is
@@ -2285,8 +2289,8 @@ file to write to."
 (setq minibuffer-max-depth nil)
 
 (add-hook 'json-mode-hook
-	  (lambda ()
-	    (setq js-indent-level 2)))
+          (lambda ()
+            (setq js-indent-level 2)))
 
 
 (defun newline-indents ()
@@ -2314,7 +2318,7 @@ file to write to."
 (defun fullscreen ()
   (interactive)
   (set-frame-parameter nil 'fullscreen
-		       (if (frame-parameter nil 'fullscreen) nil 'fullboth)))
+                       (if (frame-parameter nil 'fullscreen) nil 'fullboth)))
 
 
 ;; An all-in-one comment command to rule them all
@@ -2340,29 +2344,29 @@ file to write to."
 (use-package iedit
   :defines desktop-minor-mode-table
   :bind (("C-c i" . iedit-mode)
-	 ("C-x r RET" . iedit-rectangle-mode)
-	 :map isearch-mode-map ("C-;" . iedit-mode-from-isearch)
-	 :map esc-map ("C-;" . iedit-execute-last-modification)
-	 :map help-map ("C-;" . iedit-mode-toggle-on-function))
+         ("C-x r RET" . iedit-rectangle-mode)
+         :map isearch-mode-map ("C-;" . iedit-mode-from-isearch)
+         :map esc-map ("C-;" . iedit-execute-last-modification)
+         :map help-map ("C-;" . iedit-mode-toggle-on-function))
   :config
   ;; Avoid restoring `iedit-mode'
   (with-eval-after-load 'desktop
     (add-to-list 'desktop-minor-mode-table
-		 '(iedit-mode nil))))
+                 '(iedit-mode nil))))
 (display-init-load-time-checkpoint "Done loading iedit")
 
 ;; Multiple cursors
 (use-package multiple-cursors
   :bind (("C-S-c C-S-c"   . mc/edit-lines)
-	 ("C->"           . mc/mark-next-like-this)
-	 ("C-<"           . mc/mark-previous-like-this)
-	 ("C-c C-<"       . mc/mark-all-like-this)
-	 ("C-M->"         . mc/skip-to-next-like-this)
-	 ("C-M-<"         . mc/skip-to-previous-like-this)
-	 ("s-<mouse-1>"   . mc/add-cursor-on-click)
-	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)
-	 :map mc/keymap
-	 ("C-|" . mc/vertical-align-with-space)))
+         ("C->"           . mc/mark-next-like-this)
+         ("C-<"           . mc/mark-previous-like-this)
+         ("C-c C-<"       . mc/mark-all-like-this)
+         ("C-M->"         . mc/skip-to-next-like-this)
+         ("C-M-<"         . mc/skip-to-previous-like-this)
+         ("s-<mouse-1>"   . mc/add-cursor-on-click)
+         ("C-S-<mouse-1>" . mc/add-cursor-on-click)
+         :map mc/keymap
+         ("C-|" . mc/vertical-align-with-space)))
 (display-init-load-time-checkpoint "Done Loading multiple cursors")
 
 ;; Smartly select region, rectangle, multi cursors
@@ -2400,7 +2404,7 @@ file to write to."
 ;; Discover key bindings and their meaning for the current Emacs major mode
 (use-package discover-my-major
   :bind (("C-h M-m" . discover-my-major)
-	 ("C-h M-M" . discover-my-mode)))
+         ("C-h M-M" . discover-my-mode)))
 (display-init-load-time-checkpoint "Done Loading discover-my-mode")
 
 (global-set-key [f6] 'line-to-top-of-window)
@@ -2492,14 +2496,14 @@ file to write to."
    (if mark-active (list (region-beginning) (region-end))
      (message "Copied line")
      (list (line-beginning-position)
-	   (line-beginning-position 2)))))
+           (line-beginning-position 2)))))
 
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
   (interactive
    (if mark-active (list (region-beginning) (region-end))
      (list (line-beginning-position)
-	   (line-beginning-position 2)))))
+           (line-beginning-position 2)))))
 ;;--------------------------------------------
 
 ;; https://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs
@@ -2510,7 +2514,7 @@ file to write to."
   (setq buffer-undo-list (cons (point) buffer-undo-list))
   ;; local variables for start and end of line
   (let ((bol (save-excursion (beginning-of-line) (point)))
-	eol)
+        eol)
     (save-excursion
       ;; don't use forward-line for this, because you would have
       ;; to check whether you are at the end of the buffer
@@ -2518,13 +2522,13 @@ file to write to."
       (setq eol (point))
       ;; store the line and disable the recording of undo information
       (let ((line (buffer-substring bol eol))
-	    (buffer-undo-list t)
-	    (count arg))
-	;; insert the line arg times
-	(while (> count 0)
-	  (newline)         ;; because there is no newline in 'line'
-	  (insert line)
-	  (setq count (1- count))))
+            (buffer-undo-list t)
+            (count arg))
+        ;; insert the line arg times
+        (while (> count 0)
+          (newline)         ;; because there is no newline in 'line'
+          (insert line)
+          (setq count (1- count))))
       ;; create the undo information
       (setq buffer-undo-list (cons (cons eol (point)) buffer-undo-list)))
     ) ; end-of-let
@@ -2540,19 +2544,19 @@ file to write to."
   (let ((use-region (use-region-p)))
     (save-excursion
       (let ((text (if use-region        ;Get region if active, otherwise line
-		      (buffer-substring (region-beginning) (region-end))
-		    (prog1 (thing-at-point 'line)
-		      (end-of-line)
-		      (if (< 0 (forward-line 1)) ;Go to beginning of next line, or make a new one
-			  (newline))))))
-	(dotimes (i (abs (or n 1)))     ;Insert N times, or once if not specified
-	  (insert text))))
+                      (buffer-substring (region-beginning) (region-end))
+                    (prog1 (thing-at-point 'line)
+                      (end-of-line)
+                      (if (< 0 (forward-line 1)) ;Go to beginning of next line, or make a new one
+                          (newline))))))
+        (dotimes (i (abs (or n 1)))     ;Insert N times, or once if not specified
+          (insert text))))
     (if use-region nil                  ;Only if we're working with a line (not a region)
       (let ((pos (- (point) (line-beginning-position)))) ;Save column
-	(if (> 0 n)                             ;Comment out original with negative arg
-	    (comment-region (line-beginning-position) (line-end-position)))
-	(forward-line 1)
-	(forward-char pos)))))
+        (if (> 0 n)                             ;Comment out original with negative arg
+            (comment-region (line-beginning-position) (line-end-position)))
+        (forward-line 1)
+        (forward-char pos)))))
 
 
 ;; http://emacsredux.com/blog/2013/04/02/move-current-line-up-or-down/
@@ -2653,45 +2657,45 @@ file to write to."
 ;; This is how emacs tells the file type by the file suffix.
 (setq auto-mode-alist
       (append '(("\\.mss$" . scribe-mode))
-	      '(("\\.bib$" . bibtex-mode))
-	      '(("\\.tex$" . latex-mode))
-	      '(("\\.obj$" . lisp-mode))
-	      '(("\\.st$"  . smalltalk-mode))
-	      '(("\\.Z$"   . uncompress-while-visiting))
-	      '(("\\.cs$"  . indented-text-mode))
-	      '(("\\.C$"   . c++-mode))
-	      '(("\\.cc$"  . c++-mode))
-	      '(("\\.icc$" . c++-mode))
-	      '(("\\.h$"   . c++-mode))
-	      '(("\\.c$"   . c-mode))
-	      '(("\\.y$"   . c-mode))
-	      '(("\\.csv$"  . csv-mode))
-	      '(("\\.java$"  . java-mode))
-	      '(("\\.py$"  . python-mode))
-	      '(("\\.py$"  . lsp-mode))
-	      '(("\\.py$"  . anaconda-mode))
-	      '(("\\.sl\\'" . slang-mode))
-	      '(("\\.sml$" . sml-mode))
-	      '(("\\.sig$" . sml-mode))
-	      '(("\\.ML$"  . sml-mode))
-	      '(("\\.cm\\'" . sml-cm-mode))
-	      '(("\\.grm\\'" . sml-yacc-mode))
-	      '(("\\.g\\'" . antlr-mode))
-	      '(("\\.scala$" . scala-mode))
-	      '(("\\.gradle$" . groovy-mode))
-	      '(("\\.gradle$" . gradle-mode))
-	      auto-mode-alist))
+              '(("\\.bib$" . bibtex-mode))
+              '(("\\.tex$" . latex-mode))
+              '(("\\.obj$" . lisp-mode))
+              '(("\\.st$"  . smalltalk-mode))
+              '(("\\.Z$"   . uncompress-while-visiting))
+              '(("\\.cs$"  . indented-text-mode))
+              '(("\\.C$"   . c++-mode))
+              '(("\\.cc$"  . c++-mode))
+              '(("\\.icc$" . c++-mode))
+              '(("\\.h$"   . c++-mode))
+              '(("\\.c$"   . c-mode))
+              '(("\\.y$"   . c-mode))
+              '(("\\.csv$"  . csv-mode))
+              '(("\\.java$"  . java-mode))
+              '(("\\.py$"  . python-mode))
+              '(("\\.py$"  . lsp-mode))
+              '(("\\.py$"  . anaconda-mode))
+              '(("\\.sl\\'" . slang-mode))
+              '(("\\.sml$" . sml-mode))
+              '(("\\.sig$" . sml-mode))
+              '(("\\.ML$"  . sml-mode))
+              '(("\\.cm\\'" . sml-cm-mode))
+              '(("\\.grm\\'" . sml-yacc-mode))
+              '(("\\.g\\'" . antlr-mode))
+              '(("\\.scala$" . scala-mode))
+              '(("\\.gradle$" . groovy-mode))
+              '(("\\.gradle$" . gradle-mode))
+              auto-mode-alist))
 
 ;;  html-mode
 (add-hook 'html-mode-hook
-	  '(lambda ()
-	     (auto-fill-mode 1)
-	     (define-key html-mode-map [(<)] 'self-insert-command)
-	     (define-key html-mode-map [(>)] 'self-insert-command)
-	     (define-key html-mode-map [(&)] 'self-insert-command)
-	     (define-key html-mode-map [(control c) (<)] 'html-less-than)
-	     (define-key html-mode-map [(control c) (>)] 'html-greater-than)
-	     (define-key html-mode-map [(control c) (&)] 'html-ampersand)))
+          '(lambda ()
+             (auto-fill-mode 1)
+             (define-key html-mode-map [(<)] 'self-insert-command)
+             (define-key html-mode-map [(>)] 'self-insert-command)
+             (define-key html-mode-map [(&)] 'self-insert-command)
+             (define-key html-mode-map [(control c) (<)] 'html-less-than)
+             (define-key html-mode-map [(control c) (>)] 'html-greater-than)
+             (define-key html-mode-map [(control c) (&)] 'html-ampersand)))
 
 
 (display-init-load-time-checkpoint "Done loading programming mode stuff")
@@ -2703,8 +2707,8 @@ file to write to."
      (print buffer-file-name (get-buffer "scratch"))
      ;;(format t "~%~A" buffer-file-name)(edebug)
      (if (string= (file-name-extension buffer-file-name) "lisp")
-	 (insert
-	  ";;;-*- Mode: common-lisp ; Package: USER ; Base: 10; Syntax: lisp  -*-
+         (insert
+          ";;;-*- Mode: common-lisp ; Package: USER ; Base: 10; Syntax: lisp  -*-
 ;;;-------------------------------------------------------------------------
 ;;;               Copyright (C) 2012 by Kestrel Technology
 ;;;                          All Rights Reserved
@@ -2720,8 +2724,8 @@ file to write to."
 ;;;
 ")
        (if (string= (file-name-extension buffer-file-name) "sl")
-	   (insert
-	    "%%%-*- Mode: slang-mode ; Package: USER ; Base: 10; Syntax: slang  -*-
+           (insert
+            "%%%-*- Mode: slang-mode ; Package: USER ; Base: 10; Syntax: slang  -*-
 %%%-------------------------------------------------------------------------
 %%%               Copyright (C) 2012 by Kestrel Technology
 %%%                          All Rights Reserved
@@ -2735,7 +2739,7 @@ file to write to."
 %%%
 %%%
 "
-	    )))))
+            )))))
 
 
 ;; ;; (autoload 'auto-make-header "header2")
@@ -2803,9 +2807,9 @@ file to write to."
 
 (setq ediff-diff-program ; your Lisp system
       (cond (running-ms-windows
-	     "c:/cygwin/bin/diff")
-	    (t
-	     "diff")))
+             "c:/cygwin/bin/diff")
+            (t
+             "diff")))
 
 (setq grep-command "grep -i -nH -e -r ")
 
@@ -2819,15 +2823,15 @@ file to write to."
   :config
   (setq ispell-list-command "--list")
   (setq-default ispell-program-name
-		(cond (running-ms-windows
-		       ;;"c:/Program Files/Aspell6/x64/bin/aspell.exe"
-		       "aspell")
-		      (running-macos
-		       "/usr/local/bin/aspell")
-		      (t
-		       (if (file-executable-p "/usr/bin/hunspell")
-			   "/usr/bin/hunspell"
-			 "/usr/bin/aspell"))))
+                (cond (running-ms-windows
+                       ;;"c:/Program Files/Aspell6/x64/bin/aspell.exe"
+                       "aspell")
+                      (running-macos
+                       "/usr/local/bin/aspell")
+                      (t
+                       (if (file-executable-p "/usr/bin/hunspell")
+                           "/usr/bin/hunspell"
+                         "/usr/bin/aspell"))))
 
   (flyspell-mode-off)
   (flyspell-mode 0)
@@ -2889,11 +2893,11 @@ file to write to."
 
 (setq shell-file-name
       (cond (running-ms-windows ; Windows
-	     "bash.exe")
-	    (running-macos
-	     "/usr/local/bin/bash")
-	    (t
-	     "bash")))
+             "bash.exe")
+            (running-macos
+             "/usr/local/bin/bash")
+            (t
+             "bash")))
 
 (setenv "SHELL" shell-file-name)
 (setq explicit-shell-file-name shell-file-name)
@@ -2904,8 +2908,8 @@ file to write to."
   (when running-ms-windows
     (let ((explicit-shell-file-name "C:/cygwin/bin/bash"))
       (use-package cygwin-mount
-	:init
-	(cygwin-mount-activate))
+        :init
+        (cygwin-mount-activate))
       (setq binary-process-input t)
       (setq w32-quote-process-args ?\")
       ;; (setenv "PATH"
@@ -2985,12 +2989,12 @@ file to write to."
 (defadvice kill-buffer (around kill-buffer-around-advice activate)
   (let ((buffer-to-kill (ad-get-arg 0)))
     (if (equal buffer-to-kill "*scratch*")
-	(bury-buffer)
+        (bury-buffer)
       ad-do-it)))
 
 
 (set-default 'mode-line-buffer-identification
-	     (list (concat "Emacs[" machine-nickname "]: %17b")))
+             (list (concat "Emacs[" machine-nickname "]: %17b")))
 
 
 (defun my-load-modeline ()
@@ -3003,10 +3007,10 @@ file to write to."
 
 (setq frame-title-format
       '("EMACS: [" (:eval (or (getenv "USERNAME") (getenv "USER"))) "@"
-	(:eval (downcase (system-name))) "]: "
-	(:eval (if (buffer-file-name)
-		   (abbreviate-file-name (buffer-file-name))
-		 "%b")) " [%*]"))
+        (:eval (downcase (system-name))) "]: "
+        (:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b")) " [%*]"))
 
 (defun unix-file ()
   "Change the current buffer to Latin 1 with Unix line-ends."
@@ -3028,12 +3032,12 @@ file to write to."
   "Put the current file name on the clipboard"
   (interactive)
   (let ((filename (if (equal major-mode 'dired-mode)
-		      default-directory
-		    (buffer-file-name))))
+                      default-directory
+                    (buffer-file-name))))
     (when filename
       (with-temp-buffer
-	(insert filename)
-	(clipboard-kill-region (point-min) (point-max)))
+        (insert filename)
+        (clipboard-kill-region (point-min) (point-max)))
       (message filename))))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;[Latex/Tex]
@@ -3089,14 +3093,14 @@ file to write to."
   ;;(ctags-auto-update-mode 1)
   :config
   (setq path-to-ctags
-	(if running-ms-windows
-	    "etags.exe"
-	  "/usr/local/bin/ctags"))
+        (if running-ms-windows
+            "etags.exe"
+          "/usr/local/bin/ctags"))
 
   (setq default-tags-file
-	(if running-ms-windows "D:/Source/TAGS" (expand-file-name "~/src/TAGS")))
+        (if running-ms-windows "D:/Source/TAGS" (expand-file-name "~/src/TAGS")))
   (setq tags-table-list (list default-tags-file (expand-file-name "~/src/rspace-eclipse/scharp/TAGS")
-			      ))
+                              ))
 
   (defun my-create-ctags (dir-name)
     "Create tags file."
@@ -3121,7 +3125,7 @@ file to write to."
   "Switches from a horizontal split to a vertical split."
   (interactive)
   (let ((one-buf (window-buffer (selected-window)))
-	(buf-point (point)))
+        (buf-point (point)))
     (other-window 1)
     (delete-other-windows)
     (split-window-horizontally)
@@ -3134,7 +3138,7 @@ file to write to."
   "Switches from a vertical split to a horizontal split."
   (interactive)
   (let ((one-buf (window-buffer (selected-window)))
-	(buf-point (point)))
+        (buf-point (point)))
     (other-window 1)
     (delete-other-windows)
     (split-window-vertically)
@@ -3149,26 +3153,26 @@ frames with exactly two windows."
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
-	     (next-win-buffer (window-buffer (next-window)))
-	     (this-win-edges (window-edges (selected-window)))
-	     (next-win-edges (window-edges (next-window)))
-	     (this-win-2nd (not (and (<= (car this-win-edges)
-					 (car next-win-edges))
-				     (<= (cadr this-win-edges)
-					 (cadr next-win-edges)))))
-	     (splitter
-	      (if (= (car this-win-edges)
-		     (car (window-edges (next-window))))
-		  'split-window-horizontally
-		'split-window-vertically)))
-	(delete-other-windows)
-	(let ((first-win (selected-window)))
-	  (funcall splitter)
-	  (if this-win-2nd (other-window 1))
-	  (set-window-buffer (selected-window) this-win-buffer)
-	  (set-window-buffer (next-window) next-win-buffer)
-	  (select-window first-win)
-	  (if this-win-2nd (other-window 1))))))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
 
 (setq split-height-threshold 0)
 (setq split-width-threshold nil)
@@ -3197,8 +3201,8 @@ frames with exactly two windows."
 (use-package transpose-frame)
 
 
-					;(display-init-load-time-checkpoint "Loading menubar+")
-					;(require 'menu-bar+)
+                                        ;(display-init-load-time-checkpoint "Loading menubar+")
+                                        ;(require 'menu-bar+)
 
 
 
@@ -3217,10 +3221,10 @@ frames with exactly two windows."
     "Insert a time stamp."
     (interactive "*")
     (insert (format "%s %s %s %s"
-		    comment-start
-		    (format-time-string "%Y-%m-%d %a %H:%M")
-		    (user-login-name)
-		    comment-end)))
+                    comment-start
+                    (format-time-string "%Y-%m-%d %a %H:%M")
+                    (user-login-name)
+                    comment-end)))
 
   (defun my-insert-date (prefix)
     "Insert the current date in ISO format. With prefix-argument,
@@ -3228,8 +3232,8 @@ add day of week. With two prefix arguments, add day of week and
 time."
     (interactive "P")
     (let ((format (cond ((not prefix) "%Y-%m-%d")
-			((equal prefix '(4)) "%Y-%m-%d %a")
-			((equal prefix '(16)) "%Y-%m-%d %a %H:%M"))))
+                        ((equal prefix '(4)) "%Y-%m-%d %a")
+                        ((equal prefix '(16)) "%Y-%m-%d %a %H:%M"))))
       (insert (format-time-string format)))))
 
 (display-init-load-time-checkpoint "Done Loading time-stamp")
@@ -3341,58 +3345,58 @@ by using nxml's indentation rules."
   (interactive "sEnter a modifier string:")
   (with-output-to-temp-buffer "*Key table*"
     (let* ((i 0)
-	   (keys (list "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
-		       "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
-		       "<return>" "<down>" "<up>" "<right>" "<left>"
-		       "<home>" "<end>" "<f1>" "<f2>" "<f3>" "<f4>" "<f5>"
-		       "<f6>" "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
-		       "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
-		       "`" "~" "!" "@" "#" "$" "%" "^" "&" "*" "(" ")" "-"
-		       "_" "=" "+" "\\" "|" "{" "[" "]" "}" ";" "'" ":"
-		       "\"" "<" ">" "," "." "/" "?"))
-	   (n (length keys))
-	   (modifiers (list "" "S-" "C-" "M-" "M-C-"))
-	   (k))
+           (keys (list "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
+                       "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
+                       "<return>" "<down>" "<up>" "<right>" "<left>"
+                       "<home>" "<end>" "<f1>" "<f2>" "<f3>" "<f4>" "<f5>"
+                       "<f6>" "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
+                       "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
+                       "`" "~" "!" "@" "#" "$" "%" "^" "&" "*" "(" ")" "-"
+                       "_" "=" "+" "\\" "|" "{" "[" "]" "}" ";" "'" ":"
+                       "\"" "<" ">" "," "." "/" "?"))
+           (n (length keys))
+           (modifiers (list "" "S-" "C-" "M-" "M-C-"))
+           (k))
       (or (string= arg "") (setq modifiers (list arg)))
       (setq k (length modifiers))
       (princ (format " %-10.10s |" "Key"))
       (let ((j 0))
-	(while (< j k)
-	  (princ (format " %-28.28s |" (nth j modifiers)))
-	  (setq j (1+ j))))
+        (while (< j k)
+          (princ (format " %-28.28s |" (nth j modifiers)))
+          (setq j (1+ j))))
       (princ "\n")
       (princ (format "_%-10.10s_|" "__________"))
       (let ((j 0))
-	(while (< j k)
-	  (princ (format "_%-28.28s_|"
-			 "_______________________________"))
-	  (setq j (1+ j))))
+        (while (< j k)
+          (princ (format "_%-28.28s_|"
+                         "_______________________________"))
+          (setq j (1+ j))))
       (princ "\n")
       (while (< i n)
-	(princ (format " %-10.10s |" (nth i keys)))
-	(let ((j 0))
-	  (while (< j k)
-	    (let* ((binding
-		    (key-binding (read-kbd-macro (concat (nth j modifiers)
-							 (nth i keys)))))
-		   (binding-string "_"))
-	      (when binding
-		(if (eq binding 'self-insert-command)
-		    (setq binding-string (concat "'" (nth i keys) "'"))
-		  (setq binding-string (format "%s" binding))))
-	      (setq binding-string
-		    (substring binding-string 0 (min (length
-						      binding-string) 28)))
-	      (princ (format " %-28.28s |" binding-string))
-	      (setq j (1+ j)))))
-	(princ "\n")
-	(setq i (1+ i)))
+        (princ (format " %-10.10s |" (nth i keys)))
+        (let ((j 0))
+          (while (< j k)
+            (let* ((binding
+                    (key-binding (read-kbd-macro (concat (nth j modifiers)
+                                                         (nth i keys)))))
+                   (binding-string "_"))
+              (when binding
+                (if (eq binding 'self-insert-command)
+                    (setq binding-string (concat "'" (nth i keys) "'"))
+                  (setq binding-string (format "%s" binding))))
+              (setq binding-string
+                    (substring binding-string 0 (min (length
+                                                      binding-string) 28)))
+              (princ (format " %-28.28s |" binding-string))
+              (setq j (1+ j)))))
+        (princ "\n")
+        (setq i (1+ i)))
       (princ (format "_%-10.10s_|" "__________"))
       (let ((j 0))
-	(while (< j k)
-	  (princ (format "_%-28.28s_|"
-			 "_______________________________"))
-	  (setq j (1+ j))))))
+        (while (< j k)
+          (princ (format "_%-28.28s_|"
+                         "_______________________________"))
+          (setq j (1+ j))))))
   (delete-window)
   ;;(hscroll-mode)
   (setq truncate-lines t))
@@ -3403,58 +3407,58 @@ by using nxml's indentation rules."
   (interactive "sEnter a modifier string:")
   (with-output-to-temp-buffer "*Key table*"
     (let* ((i 0)
-	   (keys (list "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
-		       "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
-		       "<return>" "<down>" "<up>" "<right>" "<left>"
-		       "<home>" "<end>" "<f1>" "<f2>" "<f3>" "<f4>" "<f5>"
-		       "<f6>" "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
-		       "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
-		       "`" "~" "!" "@" "#" "$" "%" "^" "&" "*" "(" ")" "-"
-		       "_" "=" "+" "\\" "|" "{" "[" "]" "}" ";" "'" ":"
-		       "\"" "<" ">" "," "." "/" "?"))
-	   (n (length keys))
-	   (modifiers (list "" "S-" "s-" "C-" "C-S-" "M-" "M-C-" "M-S-" "A-"))
-	   (k))
+           (keys (list "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
+                       "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
+                       "<return>" "<down>" "<up>" "<right>" "<left>"
+                       "<home>" "<end>" "<f1>" "<f2>" "<f3>" "<f4>" "<f5>"
+                       "<f6>" "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
+                       "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
+                       "`" "~" "!" "@" "#" "$" "%" "^" "&" "*" "(" ")" "-"
+                       "_" "=" "+" "\\" "|" "{" "[" "]" "}" ";" "'" ":"
+                       "\"" "<" ">" "," "." "/" "?"))
+           (n (length keys))
+           (modifiers (list "" "S-" "s-" "C-" "C-S-" "M-" "M-C-" "M-S-" "A-"))
+           (k))
       (or (string= arg "") (setq modifiers (list arg)))
       (setq k (length modifiers))
       (princ (format " %-10.10s |" "Key"))
       (let ((j 0))
-	(while (< j k)
-	  (princ (format " %-28.28s |" (nth j modifiers)))
-	  (setq j (1+ j))))
+        (while (< j k)
+          (princ (format " %-28.28s |" (nth j modifiers)))
+          (setq j (1+ j))))
       (princ "\n")
       (princ (format "_%-10.10s_|" "__________"))
       (let ((j 0))
-	(while (< j k)
-	  (princ (format "_%-28.28s_|"
-			 "_______________________________"))
-	  (setq j (1+ j))))
+        (while (< j k)
+          (princ (format "_%-28.28s_|"
+                         "_______________________________"))
+          (setq j (1+ j))))
       (princ "\n")
       (while (< i n)
-	(princ (format " %-10.10s |" (nth i keys)))
-	(let ((j 0))
-	  (while (< j k)
-	    (let* ((binding
-		    (key-binding (read-kbd-macro (concat (nth j modifiers)
-							 (nth i keys)))))
-		   (binding-string "_"))
-	      (when binding
-		(if (eq binding 'self-insert-command)
-		    (setq binding-string (concat "'" (nth i keys) "'"))
-		  (setq binding-string (format "%s" binding))))
-	      (setq binding-string
-		    (substring binding-string 0 (min (length
-						      binding-string) 28)))
-	      (princ (format " %-28.28s |" binding-string))
-	      (setq j (1+ j)))))
-	(princ "\n")
-	(setq i (1+ i)))
+        (princ (format " %-10.10s |" (nth i keys)))
+        (let ((j 0))
+          (while (< j k)
+            (let* ((binding
+                    (key-binding (read-kbd-macro (concat (nth j modifiers)
+                                                         (nth i keys)))))
+                   (binding-string "_"))
+              (when binding
+                (if (eq binding 'self-insert-command)
+                    (setq binding-string (concat "'" (nth i keys) "'"))
+                  (setq binding-string (format "%s" binding))))
+              (setq binding-string
+                    (substring binding-string 0 (min (length
+                                                      binding-string) 28)))
+              (princ (format " %-28.28s |" binding-string))
+              (setq j (1+ j)))))
+        (princ "\n")
+        (setq i (1+ i)))
       (princ (format "_%-10.10s_|" "__________"))
       (let ((j 0))
-	(while (< j k)
-	  (princ (format "_%-28.28s_|"
-			 "_______________________________"))
-	  (setq j (1+ j))))))
+        (while (< j k)
+          (princ (format "_%-28.28s_|"
+                         "_______________________________"))
+          (setq j (1+ j))))))
   (delete-window)
   ;;  (hscroll-mode)
   (setq truncate-lines t))
@@ -3464,56 +3468,56 @@ by using nxml's indentation rules."
   "Determine in which keymap KEY is defined."
   (interactive "kPress key: ")
   (let ((ret
-	 (list
-	  (key-binding-at-point key)
-	  (minor-mode-key-binding key)
-	  (local-key-binding key)
-	  (global-key-binding key))))
+         (list
+          (key-binding-at-point key)
+          (minor-mode-key-binding key)
+          (local-key-binding key)
+          (global-key-binding key))))
     (when (called-interactively-p 'any)
       (message "At Point: %s\nMinor-mode: %s\nLocal: %s\nGlobal: %s"
-	       (or (nth 0 ret) "")
-	       (or (mapconcat (lambda (x) (format "%s: %s" (car x) (cdr x)))
-			      (nth 1 ret) "\n             ")
-		   "")
-	       (or (nth 2 ret) "")
-	       (or (nth 3 ret) "")))
+               (or (nth 0 ret) "")
+               (or (mapconcat (lambda (x) (format "%s: %s" (car x) (cdr x)))
+                              (nth 1 ret) "\n             ")
+                   "")
+               (or (nth 2 ret) "")
+               (or (nth 3 ret) "")))
     ret))
 
 (defun key-binding-at-point (key)
   (mapcar (lambda (keymap) (when (keymapp keymap)
-			     (lookup-key keymap key)))
-	  (list
-	   ;; More likely
-	   (get-text-property (point) 'keymap)
-	   (mapcar (lambda (overlay)
-		     (overlay-get overlay 'kleymap))
-		   (overlays-at (point)))
-	   ;; Less likely
-	   (get-text-property (point) 'local-map)
-	   (mapcar (lambda (overlay)
-		     (overlay-get overlay 'local-map))
-		   (overlays-at (point))))))
+                             (lookup-key keymap key)))
+          (list
+           ;; More likely
+           (get-text-property (point) 'keymap)
+           (mapcar (lambda (overlay)
+                     (overlay-get overlay 'kleymap))
+                   (overlays-at (point)))
+           ;; Less likely
+           (get-text-property (point) 'local-map)
+           (mapcar (lambda (overlay)
+                     (overlay-get overlay 'local-map))
+                   (overlays-at (point))))))
 
 (defun my-keymaps-at-point ()
   "List entire keymaps present at point."
   (interactive)
   (let ((map-list
-	 (list
-	  (mapcar (lambda (overlay)
-		    (overlay-get overlay 'keymap))
-		  (overlays-at (point)))
-	  (mapcar (lambda (overlay)
-		    (overlay-get overlay 'local-map))
-		  (overlays-at (point)))
-	  (get-text-property (point) 'keymap)
-	  (get-text-property (point) 'local-map))))
+         (list
+          (mapcar (lambda (overlay)
+                    (overlay-get overlay 'keymap))
+                  (overlays-at (point)))
+          (mapcar (lambda (overlay)
+                    (overlay-get overlay 'local-map))
+                  (overlays-at (point)))
+          (get-text-property (point) 'keymap)
+          (get-text-property (point) 'local-map))))
     (apply #'message
-	   (concat
-	    "Overlay keymap: %s\n"
-	    "Overlay local-map: %s\n"
-	    "Text-property keymap: %s\n"
-	    "Text-property local-map: %s")
-	   map-list)))
+           (concat
+            "Overlay keymap: %s\n"
+            "Overlay local-map: %s\n"
+            "Text-property keymap: %s\n"
+            "Text-property local-map: %s")
+           map-list)))
 
 
 (defun my-display-minor-mode-key-priority  ()
@@ -3568,8 +3572,8 @@ Version 2017-01-27"
   :config
   (browse-kill-ring-default-keybindings)
   (global-set-key "\C-cy" '(lambda ()
-			     (interactive)
-			     (popup-menu 'yank-menu))))
+                             (interactive)
+                             (popup-menu 'yank-menu))))
 (display-init-load-time-checkpoint "Done Loading browse-kill-ring")
 
 
@@ -3602,10 +3606,10 @@ Version 2017-01-27"
   "Open the current directory of the buffer in iTerm."
   (interactive)
   (let* ((iterm-app-path "/Applications/iTerm.app")
-	 (iterm-brew-path "/opt/homebrew-cask/Caskroom/iterm2/2.1.4/iTerm.app")
-	 (iterm-path (if (file-directory-p iterm-app-path)
-			 iterm-app-path
-		       iterm-brew-path)))
+         (iterm-brew-path "/opt/homebrew-cask/Caskroom/iterm2/2.1.4/iTerm.app")
+         (iterm-path (if (file-directory-p iterm-app-path)
+                         iterm-app-path
+                       iterm-brew-path)))
     (shell-command (concat "open -a " iterm-path " ."))))
 (global-set-key (kbd "C-x t") 'my-open-dir-in-iterm)
 
@@ -3617,15 +3621,15 @@ Version 2017-01-27"
       (autoload 'ediff-files "ediff")
       (autoload 'ediff-buffers "ediff")
       (eval-after-load "ediff" '(progn
-				  (message "doing ediff customisation")
-				  (setq diff-switches               "-u"
-					ediff-custom-diff-options   "-U3"
-					ediff-split-window-function 'split-window-horizontally
-					ediff-window-setup-function 'ediff-setup-windows-plain)
+                                  (message "doing ediff customisation")
+                                  (setq diff-switches               "-u"
+                                        ediff-custom-diff-options   "-U3"
+                                        ediff-split-window-function 'split-window-horizontally
+                                        ediff-window-setup-function 'ediff-setup-windows-plain)
 
-				  (add-hook 'ediff-startup-hook 'ediff-toggle-wide-display)
-				  (add-hook 'ediff-cleanup-hook 'ediff-toggle-wide-display)
-				  (add-hook 'ediff-suspend-hook 'ediff-toggle-wide-display)))))
+                                  (add-hook 'ediff-startup-hook 'ediff-toggle-wide-display)
+                                  (add-hook 'ediff-cleanup-hook 'ediff-toggle-wide-display)
+                                  (add-hook 'ediff-suspend-hook 'ediff-toggle-wide-display)))))
 (display-init-load-time-checkpoint "Done loading ediff")
 
 (defun my-package-reinstall-activated ()
@@ -3634,8 +3638,8 @@ Version 2017-01-27"
   (dolist (package-name package-activated-list)
     (when (package-installed-p package-name)
       (unless (ignore-errors                   ;some packages may fail to install
-		(package-reinstall package-name)
-		(warn "Package %s failed to reinstall" package-name))))))
+                (package-reinstall package-name)
+                (warn "Package %s failed to reinstall" package-name))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -3673,8 +3677,8 @@ Version 2017-01-27"
   :defer t
   :config
   (add-hook 'outline-minor-mode-hook
-	    (lambda ()
-	      (define-key outline-minor-mode-map [(f10)] 'outline-cycle))))
+            (lambda ()
+              (define-key outline-minor-mode-map [(f10)] 'outline-cycle))))
 (display-init-load-time-checkpoint "Done Loading outline-magic")
 
 
@@ -3686,10 +3690,10 @@ Version 2017-01-27"
 ;; Use this to print all fonts
 (defun my-print-all-fonts ()
   (let ((str "The quick brown fox jumps over the lazy dog ´`''\"\"1lI|¦!Ø0Oo{[()]}.,:; ")
-	(font-families (cl-remove-duplicates
-			(sort (font-family-list)
-			      (lambda(x y) (string< (upcase x) (upcase y))))
-			:test 'string=)))
+        (font-families (cl-remove-duplicates
+                        (sort (font-family-list)
+                              (lambda(x y) (string< (upcase x) (upcase y))))
+                        :test 'string=)))
     (dolist (ff font-families)
       (insert
        (propertize str 'font-lock-face `(:family ,ff))               ff "\n"
@@ -3859,11 +3863,11 @@ Version 2017-01-27"
 (use-package dumb-jump
   :after hydra helm
   :bind (("M-g o" . dumb-jump-go-other-window)
-	 ("M-g j" . dumb-jump-go)
-	 ("M-g i" . dumb-jump-go-prompt)
-	 ("M-g x" . dumb-jump-go-prefer-external)
-	 ("M-g z" . dumb-jump-go-prefer-external-other-window)
-	 ("C-z j" . hydra-dumb-jump/body))
+         ("M-g j" . dumb-jump-go)
+         ("M-g i" . dumb-jump-go-prompt)
+         ("M-g x" . dumb-jump-go-prefer-external)
+         ("M-g z" . dumb-jump-go-prefer-external-other-window)
+         ("C-z j" . hydra-dumb-jump/body))
   :config
   (setq dumb-jump-selector 'helm) ;; (setq dumb-jump-selector 'ivy)
   (defhydra hydra-dumb-jump (:color blue :columns 3)
@@ -4029,7 +4033,7 @@ Version 2017-01-27"
 
   (set (make-local-variable 'minibuffer-mode-line-face-remap-cookie)
        (face-remap-add-relative
-	'mode-line '((:foreground "ivory" :background "red") mode-line)))
+        'mode-line '((:foreground "ivory" :background "red") mode-line)))
   )
 
 (defun exit-minibuffer-setup ()
@@ -4050,14 +4054,14 @@ Version 2017-01-27"
 
 (my-load-hydra)
 (my-load-emms)
-					;(my-load-python)
+                                        ;(my-load-python)
 ;; CTRL-Backspace disables auto-expansion
 (my-load-helm)
 (my-load-bookmarks)
 (my-load-treemacs)
 (my-load-shackle)
-					;(my-load-org)
-					;(my-load-gitgutter)
+                                        ;(my-load-org)
+                                        ;(my-load-gitgutter)
 (my-load-pdf-tools)
 (my-load-latex)
 (my-load-modeline)
@@ -4082,7 +4086,7 @@ Version 2017-01-27"
   (let ((path-to-emacs-app "/Applications/Emacs.app"))
     (shell-command
      (format "tic -o ~/.terminfo %s/Contents/Resources/etc/e/eterm-color.ti"
-	     path-to-emacs-app))))
+             path-to-emacs-app))))
 
 ;; "Loading custom file")
 (display-init-load-time-checkpoint "Loading custom file")
@@ -4096,9 +4100,22 @@ Version 2017-01-27"
   (psession-mode 1)
   (psession-savehist-mode 1)
   (psession-autosave-mode 1)
-;;  (setq psession-elisp-objects-default-directory
-;;        (locate-user-emacs-file "elisp-objects/"))
+  ;;  (setq psession-elisp-objects-default-directory
+  ;;        (locate-user-emacs-file "elisp-objects/"))
   )
 
 
 (display-init-load-time-checkpoint "Done loading init file")
+
+;;; I want a key to open the current buffer all over the screen.
+(defun my-all-over-the-screen ()
+  (interactive)
+  (delete-other-windows)
+  (split-window-horizontally)
+  (split-window-horizontally)
+  (balance-windows)
+  (follow-mode t))
+
+(use-package symon
+  :config
+  (symon-mode))
