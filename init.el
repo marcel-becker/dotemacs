@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-06-04 Thu 09:59 marcelbecker on BeckeriMacKestrel.local"
+;;; Time-stamp: "2020-06-10 Wed 16:13 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -550,6 +550,7 @@
       use-package-compute-statistics nil)
 (display-init-load-time-checkpoint "Done loading use-package")
 
+(use-package package-utils)
 
 (use-package quelpa
   :ensure t

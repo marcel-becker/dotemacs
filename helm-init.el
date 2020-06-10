@@ -1,10 +1,81 @@
 (setq tramp-verbose 6)
 
 ;;(use-package helm :ensure nil :diminish "H")
-(use-package helm :diminish " ")
-(display-init-load-time-checkpoint "Loading helm")
+(use-package helm :diminish " "
+  :ensure t
+  :config
+  (require 'helm-config)
+  ;;   )
 
-(use-package helm-config :ensure helm :demand t :diminish "H")
+
+  ;; (use-package helm-config
+  ;;   :after helm
+  ;;   :defer nil
+  ;;   :demand t
+  ;;   :diminish "H"
+  ;;   :config
+  (set-face-attribute 'helm-selection nil :background "purple" :foreground "white" :weight 'bold)
+  (set-face-attribute 'helm-header nil :background "SkyBlue4" :foreground "wheat1" :weight 'ultra-bold :height 1.2)
+  (set-face-attribute 'helm-source-header nil :height 1.2)
+  (set-face-attribute 'helm-match nil :foreground "dark cyan" :weight 'bold)
+
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "A-x") 'helm-M-x)
+  ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+  ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+  ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+  (global-set-key (kbd "C-c h") 'helm-command-prefix)
+  (global-unset-key (kbd "C-x c"))
+  (global-set-key (kbd "C-h a") 'helm-apropos)
+  (global-set-key (kbd "C-h i") 'helm-info-emacs)
+  (global-set-key (kbd "C-h A") 'helm-ag)
+  (global-set-key (kbd "C-h b") 'helm-descbinds)
+  ;; use mdfind for mac
+  (setq helm-locate-command
+        (case system-type
+          ('gnu/linux "locate -i -r %s")
+          ('berkeley-unix "locate -i %s")
+          ('windows-nt "es %s")
+          ('darwin "mdfind -name %s %s")
+          (t "locate %s")))
+
+  (global-set-key (kbd "C-x b")   'helm-mini)
+  (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+  (global-set-key (kbd "C-x C-m") 'helm-M-x)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "C-x f")   'helm-for-files)
+  (global-set-key (kbd "C-x C-r") 'helm-recentf)
+  (global-set-key (kbd "C-x r l") 'helm-filtered-bookmarks)
+  (global-set-key (kbd "M-y")     'helm-show-kill-ring)
+  (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+  (global-set-key (kbd "C-c h o") 'helm-occur)
+  (global-set-key (kbd "M-s o")   'helm-swoop)
+  (global-set-key (kbd "M-s /")   'helm-multi-swoop)
+  (global-set-key (kbd "M-s s")   'helm-multi-swoop-all)
+  (global-set-key (kbd "C-x c!")  'helm-calcul-expression)
+  (global-set-key (kbd "C-x c:")  'helm-eval-expression-with-eldoc)
+  (global-set-key (kbd "C-c h C-c w") 'helm-wikipedia-suggest)
+  (global-set-key (kbd "C-c h x") 'helm-register)
+  ;; (global-set-key (kbd "C-x r j") 'jump-to-register)
+
+  (define-key helm-map (kbd "M-o")      'helm-previous-source)
+  (define-key helm-map (kbd "<tab>")    'helm-execute-persistent-action) ; rebihnd tab to do persistent action
+  (define-key helm-map (kbd "C-i")      'helm-execute-persistent-action) ; make TAB works in terminal
+  (define-key helm-map (kbd "C-z")      'helm-select-action) ; list actions using C-z
+  (define-key helm-map (kbd "C-p")      'helm-previous-line)
+  (define-key helm-map (kbd "C-n")      'helm-next-line)
+  (define-key helm-map (kbd "C-M-n")    'helm-next-source)
+  (define-key helm-map (kbd "C-M-p")    'helm-previous-source)
+  (define-key helm-map (kbd "M-N")      'helm-next-source)
+  (define-key helm-map (kbd "M-P")      'helm-previous-source)
+  (define-key helm-map (kbd "<S-down>") 'helm-next-source)
+  (define-key helm-map (kbd "<S-up>")   'helm-previous-source)
+
+  (define-key 'help-command (kbd "C-f") 'helm-apropos)
+  (define-key 'help-command (kbd "r") 'helm-info-emacs)
+  (define-key 'help-command (kbd "C-l") 'helm-locate-library)
+  )
+(display-init-load-time-checkpoint "Loading helm")
 (display-init-load-time-checkpoint "Done Loading helm config")
 
 (use-package    helm-ag)
@@ -30,7 +101,20 @@
 (use-package    helm-pydoc )
 (display-init-load-time-checkpoint "Done Loading helm pydoc")
 
-(use-package    helm-swoop )
+(use-package    helm-swoop
+  :config
+  ;; When doing isearch, hand the word over to helm-swoop
+  (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+  ;; From helm-swoop to helm-multi-swoop-all
+  (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+  ;; Instead of helm-multi-swoop-all, you can also use helm-multi-swoop-current-mode
+  (define-key helm-swoop-map (kbd "M-m") 'helm-multi-swoop-current-mode-from-helm-swoop)
+  ;; Move up and down like isearch
+  (define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
+  (define-key helm-swoop-map (kbd "C-s") 'helm-next-line)
+  (define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
+  (define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
+  )
 (display-init-load-time-checkpoint "Done Loading helm swoop")
 
 (use-package    helm-themes)
@@ -109,71 +193,9 @@
 
 (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
 
-(set-face-attribute 'helm-selection nil :background "purple" :foreground "white" :weight 'bold)
-(set-face-attribute 'helm-header nil :background "SkyBlue4" :foreground "wheat1" :weight 'ultra-bold :height 1.2)
-(set-face-attribute 'helm-source-header nil :height 1.2)
-(set-face-attribute 'helm-match nil :foreground "dark cyan" :weight 'bold)
-
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "A-x") 'helm-M-x)
-;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
-(global-unset-key (kbd "C-x c"))
-(global-set-key (kbd "C-h a") 'helm-apropos)
-(global-set-key (kbd "C-h i") 'helm-info-emacs)
-(global-set-key (kbd "C-h b") 'helm-descbinds)
-(global-set-key (kbd "C-h A") 'helm-ag)
-
-
-;; use mdfind for mac
-(setq helm-locate-command
-      (case system-type
-        ('gnu/linux "locate -i -r %s")
-        ('berkeley-unix "locate -i %s")
-        ('windows-nt "es %s")
-        ('darwin "mdfind -name %s %s")
-        (t "locate %s")))
-
-
-(global-set-key (kbd "C-x b")   'helm-mini)
-(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
-(global-set-key (kbd "C-x C-m") 'helm-M-x)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "C-x f")   'helm-for-files)
-(global-set-key (kbd "C-x C-r") 'helm-recentf)
-(global-set-key (kbd "C-x r l") 'helm-filtered-bookmarks)
-(global-set-key (kbd "M-y")     'helm-show-kill-ring)
-(global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
-(global-set-key (kbd "C-c h o") 'helm-occur)
-(global-set-key (kbd "M-s o")   'helm-swoop)
-(global-set-key (kbd "M-s /")   'helm-multi-swoop)
-(global-set-key (kbd "M-s s")   'helm-multi-swoop-all)
-(global-set-key (kbd "C-x c!")  'helm-calcul-expression)
-(global-set-key (kbd "C-x c:")  'helm-eval-expression-with-eldoc)
-(global-set-key (kbd "C-c h C-c w") 'helm-wikipedia-suggest)
-(global-set-key (kbd "C-c h x") 'helm-register)
-;; (global-set-key (kbd "C-x r j") 'jump-to-register)
-
-(define-key 'help-command (kbd "C-f") 'helm-apropos)
-(define-key 'help-command (kbd "r") 'helm-info-emacs)
-(define-key 'help-command (kbd "C-l") 'helm-locate-library)
 
 
 
-(define-key helm-map (kbd "M-o")      'helm-previous-source)
-(define-key helm-map (kbd "<tab>")    'helm-execute-persistent-action) ; rebihnd tab to do persistent action
-(define-key helm-map (kbd "C-i")      'helm-execute-persistent-action) ; make TAB works in terminal
-(define-key helm-map (kbd "C-z")      'helm-select-action) ; list actions using C-z
-(define-key helm-map (kbd "C-p")      'helm-previous-line)
-(define-key helm-map (kbd "C-n")      'helm-next-line)
-(define-key helm-map (kbd "C-M-n")    'helm-next-source)
-(define-key helm-map (kbd "C-M-p")    'helm-previous-source)
-(define-key helm-map (kbd "M-N")      'helm-next-source)
-(define-key helm-map (kbd "M-P")      'helm-previous-source)
-(define-key helm-map (kbd "<S-down>") 'helm-next-source)
-(define-key helm-map (kbd "<S-up>")   'helm-previous-source)
 
 
 (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
@@ -190,21 +212,6 @@
 (define-key minibuffer-local-map (kbd "M-n") 'helm-minibuffer-history)
 
 
-
-;; When doing isearch, hand the word over to helm-swoop
-(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
-
-;; From helm-swoop to helm-multi-swoop-all
-(define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
-
-;; Instead of helm-multi-swoop-all, you can also use helm-multi-swoop-current-mode
-(define-key helm-swoop-map (kbd "M-m") 'helm-multi-swoop-current-mode-from-helm-swoop)
-
-;; Move up and down like isearch
-(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
-(define-key helm-swoop-map (kbd "C-s") 'helm-next-line)
-(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
-(define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
 
 
 
