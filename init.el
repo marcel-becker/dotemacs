@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-06-10 Wed 16:13 marcelbecker on BeckeriMacKestrel.local"
+;;; Time-stamp: "2020-09-11 Fri 13:02 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -330,6 +330,8 @@
 ;;'whitespace-cleanup is better than delete-trailing-whitespace
 ;;(add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'before-save-hook 'whitespace-cleanup)
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
 
 
 (setq suggest-key-bindings 10)
@@ -4119,6 +4121,13 @@ Version 2017-01-27"
 
 
 (use-package moom)
-(use-package symon
-  :config
-  (symon-mode))
+;;(use-package symon
+;;  :config
+;;  (symon-mode))
+
+
+(set-default 'server-socket-dir "~/.emacs.d/server")
+(if (functionp 'window-system)
+    (when (and (window-system)
+           (>= emacs-major-version 24))
+      (server-start)))
