@@ -90,7 +90,7 @@
                :help "Run latexmk on file")
              TeX-command-list)))
 (add-hook 'TeX-mode-hook
-          '(lambda ()
+          (lambda ()
              (setq TeX-command-default "latexmk")
              (setq TeX-view-program-selection
                    (cond (running-ms-windows

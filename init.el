@@ -1,7 +1,27 @@
-;;; Time-stamp: "2020-09-11 Fri 13:02 marcelbecker on BeckeriMacKestrel.local"
+;; -*- lexical-binding: t -*-
+;;; Time-stamp: "2021-11-18 Thu 19:15 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
+
+;; Use this to create a new prefix
+;; (fset     'my-cmds-prefix (make-sparse-keymap))
+;; (defconst  my-cmds-map    (symbol-function 'my-cmds-prefix))
+;; (let ((former-ctrl-r (key-binding "\C-r")))
+;;   (and (not (equal 'my-cmds-prefix former-ctrl-r))
+;;    (define-key my-cmds-map "\C-r"  former-ctrl-r)))
+;; (define-key global-map   "\C-r"     'my-cmds-prefix)
+;; (define-key my-cmds-map "."        'set-mark-command)
+;; or from https://www.masteringemacs.org/article/mastering-key-bindings-emacs
+;; (defun mp-insert-date ()
+;;   (interactive)
+;;   (insert (format-time-string "%x")))
+;; (defun mp-insert-time ()
+;;   (interactive)
+;;   (insert (format-time-string "%X")))
+;; (global-set-key (kbd "C-c i d") 'mp-insert-date)
+;; (global-set-key (kbd "C-c i t") 'mp-insert-time)
+
 
 ;;(load-file "profile-dotemacs.el")
 ;;(profile-dotemacs)
@@ -83,6 +103,7 @@
                                ;; restore after startup
                                (setq gc-cons-threshold 800000)))
 (setq inhibit-compacting-font-caches t)
+(setq frame-inhibit-implied-resize t)
 ;;(message  (concat "Loading " load-file-name))
 
 ;; UTF-8 support
@@ -131,8 +152,10 @@
 ;; key bindings
 (when (eq system-type 'darwin) ;; mac specific settings
   (setq mac-option-modifier 'alt)
-  (setq mac-right-option-modifier 'super)
-  (setq mac-right-command-modifier 'super)
+  (setq mac-right-control-modifier 'super)
+  ;;  (setq mac-right-option-modifier 'super)
+  ;;(setq mac-right-command-modifier 'super)
+  (setq mac-right-command-modifier 'meta)
   (setq mac-command-modifier 'meta)
   (global-set-key [kp-delete] 'delete-char)
 
@@ -233,6 +256,8 @@
 (global-linum-mode 1)
 (linum-mode 1)
 
+
+
 ;; Non-nil means draw block cursor as wide as the glyph under it.
 ;; For example, if a block cursor is over a tab, it will be drawn as
 ;; wide as that tab on the display.
@@ -277,6 +302,8 @@
 
 (setq stack-trace-on-error t)
 (setq debug-on-error t)
+;;(setq debug-on-signal t)
+;;(setq debug-on-message "quote")
 (setq max-lisp-eval-depth 1000)
 (setq inhibit-startup-message t)
 ;;; Make sure there is a newline at the end of each file!
@@ -331,7 +358,7 @@
 ;;(add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'before-save-hook 'whitespace-cleanup)
 (add-hook 'after-save-hook
-  'executable-make-buffer-file-executable-if-script-p)
+          'executable-make-buffer-file-executable-if-script-p)
 
 
 (setq suggest-key-bindings 10)
@@ -361,11 +388,12 @@
       (cond (running-ms-windows
              "DejaVu Sans Mono 11")
             (running-macos
-             "Source Code Pro 16")
-            ;;"DejaVu Sans Mono 18")
-            ;;        "Geneva 13")
+             "Source Code Pro-16:medium"
+             ;;"DejaVu Sans Mono 18")
+             ;;        "Geneva 13")
+             )
             ((not running-macos)
-             "DejaVu Sans Mono 13")))
+             "DejaVu Sans Mono 14")))
 
 (set-frame-font default-frame-font)
 
@@ -468,8 +496,9 @@
   (add-to-list 'initial-frame-alist frame-height)
 
   (add-to-list 'default-frame-alist frame-background-color)
-
   (add-to-list 'initial-frame-alist frame-background-color)
+  (set-face-attribute 'default nil :background bg-color :foreground "white")
+
 
   (add-to-list 'default-frame-alist frame-width)
   (add-to-list 'initial-frame-alist frame-width)
@@ -483,11 +512,29 @@
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
-  (set-face-attribute 'default nil :background bg-color :foreground "white")
+
   ;;(message  "Frame alist %s" initial-frame-alist)
   (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
   )
 
+(defun my-example-make-frame ()
+  "Doc-string."
+  (interactive)
+  (make-frame '((name . "HELLO-WORLD")
+                (font . "-*-Courier-normal-normal-normal-*-18-*-*-*-m-0-iso10646-1")
+                (top . 100)
+                (left . 100)
+                (left-fringe . 8)
+                (right-fringe . 8)
+                (vertical-scroll-bars . right)
+                (cursor-color . "yellow")
+                (cursor-type . (bar . 1))
+                (background-color . "black")
+                (foreground-color . "white")
+                (tool-bar-lines . 0)
+                (menu-bar-lines . 0)
+                (width . (text-pixels . 400))
+                (height . (text-pixels . 400)))))
 
 (display-init-load-time-checkpoint "Finished configuring emacs frame")
 
@@ -501,8 +548,9 @@
 (display-init-load-time-checkpoint "Setting up ELPA")
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ;;("marmalade" . "https://marmalade-repo.org/packages/")
                          ;;("melpa" . "https://stable.melpa.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpas" . "https://melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")
                          ))
@@ -1011,8 +1059,9 @@
         ))
 
 
-(use-package discover)
-(global-discover-mode 1)
+(use-package discover
+  :config
+  (global-discover-mode 1))
 
 (use-package diminish
   :diminish "")
@@ -1108,10 +1157,13 @@
 ;; and makes the icons height 10
 ;;(all-the-icons-insert-icons-for 'faicon 1 0.5) ;; Prints all the icons for the `faicon' family
 ;; and also waits 0.5s between printing each one
+
+
 (use-package all-the-icons)
 (use-package all-the-icons-ibuffer
   :ensure t
   :init (all-the-icons-ibuffer-mode 1)
+  :hook (dired-mode . all-the-icons-dired-mode)
   :config
   ;; The default icon size in ibuffer.
   (setq all-the-icons-ibuffer-icon-size 1.0)
@@ -1175,64 +1227,6 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 (display-init-load-time-checkpoint "Done Loading neotree")
 
-
-
-
-;; (setq my-el-get-packages
-;;       '(
-;;         ;;diff+
-;;         ;;dired+
-;;         ;;dired-column-widths
-;;         ;;dired-details
-;;         ;;dired-details+
-;;         ;;dired-sort
-;;         ;;dired-sort-menu
-;;         ;;dired-sort-menu+
-;;         doremi
-;;         doremi-cmd
-;;         doremi-frm
-;;         doremi-mac
-;;         escreen
-;;         facemenu+
-;;         faces+
-;;         ffap-
-;;         file-template
-;;         frame-cmds
-;;         frame-fns
-;;         ;;helm-anything
-;;         help-fns+
-;;         menu-bar+
-;;         pycomplete+
-;;         recentf-buffer
-;;         ring+
-;;         setup-keys
-;;         zoom-frm
-;;         ))
-
-
-;; Install new packages and init already installed packages
-;;(message  "Initializing el-get packages")
-;;(display-init-load-time-checkpoint "Initializing el-get packages")
-;;(el-get 'sync my-el-get-packages)
-;;(display-init-load-time-checkpoint "Done initializing el-get packages")
-
-
-;; (let ((fit-frame-lib (concat marcel-lisp-dir "/el-get/fit-frame")))
-;;   (if (file-exists-p fit-frame-lib)
-;;       (add-to-list 'load-path fit-frame-lib)))
-
-
-;; (dolist (p my-el-get-packages)
-;;    (progn
-;;      (when (not (package-installed-p p))
-;;       (message "installing package %s" p)
-;;       ;;(package-install p)
-;;       )
-;;      (when (featurep p)
-;;        (message "loading package %s" p)
-;;        (condition-case nil
-;;     (require p nil :noerror)
-;;   (error nil)))))
 
 
 ;; open my Emacs init file
@@ -1475,6 +1469,11 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (display-init-load-time-checkpoint "Loading language server")
   (my-load-init-file "emacs-lsp-init.el")
   (display-init-load-time-checkpoint "Done loading language server"))
+(defun my-load-lsp ()
+  (interactive)
+  (my-load-language-server))
+
+
 
 (defun my-load-gitgutter ()
   (interactive)
@@ -1619,7 +1618,9 @@ file to write to."
 ;; find convenient unbound keystrokes
 (use-package unbound)                  ; `M-x describe-unbound-keys'
 (display-init-load-time-checkpoint "Done Loading unbound")
-(use-package free-keys)
+(use-package free-keys
+  :config
+  (setq free-keys-modifiers '("" "C" "M" "C-M" "C-S" "C-M-S" "A" "s" "H")))
 (display-init-load-time-checkpoint "Done Loading free-keys")
 
 (use-package switch-window
@@ -1748,6 +1749,8 @@ file to write to."
   (window-divider-mode t))
 (display-init-load-time-checkpoint "Done setting window divider mode")
 
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
 
 (defun my-load-company ()
   (interactive)
@@ -1780,7 +1783,7 @@ file to write to."
           company-minimum-prefix-length 2
           company-require-match 'never
           company-dabbrev-ignore-case nil
-          company-show-numbers t
+          company-show-quick-access t
           company-dabbrev-downcase nil)
 
     (custom-set-faces
@@ -1802,6 +1805,15 @@ file to write to."
      '(company-tooltip-selection   ((t (:background "steel blue" :foreground "white" :weight bold))))
      '(popup-menu-face     ((t :foreground "red"   :background "#49483E")))
      '(popup-menu-selection-face     ((t :background "#349B8D"   :foreground "#BBF7EF"))))
+
+
+    (let ((bg (face-attribute 'default :background)))
+      (custom-set-faces
+       `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 2)))))
+       `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
+       `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
+       `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+       `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
 
     (add-hook 'after-init-hook 'global-company-mode)
     (add-to-list 'company-backends 'company-dabbrev t)
@@ -1834,9 +1846,26 @@ file to write to."
         ;;(setq company-quickhelp-color-foreground "white")
         ;;(setq company-quickhelp-color-background "black")
         (setq company-quickhelp-delay 0.4))))
+  (defun --set-emoji-font (frame)
+    "Adjust the font settings of FRAME so Emacs can display emoji properly."
+    (if (eq system-type 'darwin)
+        ;; For NS/Cocoa
+        (set-fontset-font t 'symbol (font-spec :family "Apple Color Emoji") frame 'prepend)
+      ;; For Linux
+      (set-fontset-font t 'symbol (font-spec :family "Symbola") frame 'prepend)))
+
+  ;; For when Emacs is started in GUI mode:
+  (--set-emoji-font nil)
+  ;; Hook for when a frame is created with emacsclient
+  ;; see https://www.gnu.org/software/emacs/manual/html_node/elisp/Creating-Frames.html
+  (add-hook 'after-make-frame-functions '--set-emoji-font)
+  (use-package company-emoji
+    :config
+    (add-to-list 'company-backends 'company-emoji))
   )
 
 
+(my-load-company)
 (display-init-load-time-checkpoint "Done Loading company")
 
 (defun my-load-company-box ()
@@ -2167,6 +2196,13 @@ file to write to."
   ;;   (setq which-key-posframe-poshandler 'posframe-poshandler-window-bottom-left-corner))
   )
 
+(global-set-key (kbd "C-c h b") 'describe-personal-keybindings)
+(use-package remind-bindings
+  :hook (after-init . remind-bindings-initialise)
+  :bind (("C-c C-b" . remind-bindings-togglebuffer)
+         ("C-c C-d" . 'remind-bindings-specific-mode)))
+
+
 (display-init-load-time-checkpoint "Done loading which-key")
 
 ;; ;; ;;smex - A smarter M-x completion ------------
@@ -2212,7 +2248,9 @@ file to write to."
    '(rainbow-delimiters-depth-5-face ((t (:foreground "yellow"))))
    '(rainbow-delimiters-depth-6-face ((t (:foreground "orchid"))))
    '(rainbow-delimiters-depth-7-face ((t (:foreground "spring green"))))
-   '(rainbow-delimiters-depth-8-face ((t (:foreground "sienna1")))))
+   '(rainbow-delimiters-depth-8-face ((t (:foreground "NavajoWhite3"))))
+   '(rainbow-delimiters-depth-9-face ((t (:foreground "slate gray"))))
+   )
   ;;:config
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 (display-init-load-time-checkpoint "Done Loading rainbow-delimiters")
@@ -2261,6 +2299,11 @@ file to write to."
     ;; Silence missing function warnings
     (declare-function beacon-mode "beacon.el"))
   :config
+  (setq
+   beacon-blink-when-window-scrolls t
+   beacon-blink-when-window-changes t
+   beacon-blink-when-point-moves t
+   beacon-size 60)
   (beacon-mode t))
 (display-init-load-time-checkpoint "Done loading beacon")
 
@@ -2379,7 +2422,7 @@ file to write to."
 
 ;; Goto last change
 (use-package goto-chg
-  :bind ("C-," . goto-last-change)
+  :bind ("C-." . goto-last-change)
   :config
   (global-set-key [(control ?.)] 'goto-last-change)
   (global-set-key [(control ?,)] 'goto-last-change-reverse)
@@ -2390,7 +2433,7 @@ file to write to."
 ;; Framework for mode-specific buffer indexes
 
 (use-package imenu
-  :bind (("C-." . imenu)))
+  :bind (("C-'" . imenu)))
 (display-init-load-time-checkpoint "Done Loading imenu")
 ;; Windows-scroll commands
 ;;( use-package pager
@@ -2623,7 +2666,10 @@ file to write to."
 
 (display-init-load-time-checkpoint "Loading programming mode stuff")
 
-(use-package gradle-mode)
+(use-package gradle-mode
+  :config
+  (setq gradle-use-gradlew t)
+  (setq gradle-gradlew-executable "./gradlew"))
 (use-package groovy-mode)
 
 (autoload 'c++-mode "cc-mode" "C++ Editing Mode" t)
@@ -2691,14 +2737,14 @@ file to write to."
 
 ;;  html-mode
 (add-hook 'html-mode-hook
-          '(lambda ()
-             (auto-fill-mode 1)
-             (define-key html-mode-map [(<)] 'self-insert-command)
-             (define-key html-mode-map [(>)] 'self-insert-command)
-             (define-key html-mode-map [(&)] 'self-insert-command)
-             (define-key html-mode-map [(control c) (<)] 'html-less-than)
-             (define-key html-mode-map [(control c) (>)] 'html-greater-than)
-             (define-key html-mode-map [(control c) (&)] 'html-ampersand)))
+          (lambda ()
+            (auto-fill-mode 1)
+            (define-key html-mode-map [(<)] 'self-insert-command)
+            (define-key html-mode-map [(>)] 'self-insert-command)
+            (define-key html-mode-map [(&)] 'self-insert-command)
+            (define-key html-mode-map [(control c) (<)] 'html-less-than)
+            (define-key html-mode-map [(control c) (>)] 'html-greater-than)
+            (define-key html-mode-map [(control c) (&)] 'html-ampersand)))
 
 
 (display-init-load-time-checkpoint "Done loading programming mode stuff")
@@ -2706,12 +2752,12 @@ file to write to."
 (setq next-number 0)
 
 (define-key global-map [S-f1]
-  '(lambda nil (interactive)
-     (print buffer-file-name (get-buffer "scratch"))
-     ;;(format t "~%~A" buffer-file-name)(edebug)
-     (if (string= (file-name-extension buffer-file-name) "lisp")
-         (insert
-          ";;;-*- Mode: common-lisp ; Package: USER ; Base: 10; Syntax: lisp  -*-
+            (lambda nil (interactive)
+              (print buffer-file-name (get-buffer "scratch"))
+              ;;(format t "~%~A" buffer-file-name)(edebug)
+              (if (string= (file-name-extension buffer-file-name) "lisp")
+                  (insert
+                   ";;;-*- Mode: common-lisp ; Package: USER ; Base: 10; Syntax: lisp  -*-
 ;;;-------------------------------------------------------------------------
 ;;;               Copyright (C) 2012 by Kestrel Technology
 ;;;                          All Rights Reserved
@@ -2726,9 +2772,9 @@ file to write to."
 ;;;
 ;;;
 ")
-       (if (string= (file-name-extension buffer-file-name) "sl")
-           (insert
-            "%%%-*- Mode: slang-mode ; Package: USER ; Base: 10; Syntax: slang  -*-
+                (if (string= (file-name-extension buffer-file-name) "sl")
+                    (insert
+                     "%%%-*- Mode: slang-mode ; Package: USER ; Base: 10; Syntax: slang  -*-
 %%%-------------------------------------------------------------------------
 %%%               Copyright (C) 2012 by Kestrel Technology
 %%%                          All Rights Reserved
@@ -2742,7 +2788,7 @@ file to write to."
 %%%
 %%%
 "
-            )))))
+                     )))))
 
 
 ;; ;; (autoload 'auto-make-header "header2")
@@ -3204,8 +3250,8 @@ frames with exactly two windows."
 (use-package transpose-frame)
 
 
-                                        ;(display-init-load-time-checkpoint "Loading menubar+")
-                                        ;(require 'menu-bar+)
+;;(display-init-load-time-checkpoint "Loading menubar+")
+;;(require 'menu-bar+)
 
 
 
@@ -3574,9 +3620,10 @@ Version 2017-01-27"
 (use-package browse-kill-ring
   :config
   (browse-kill-ring-default-keybindings)
-  (global-set-key "\C-cy" '(lambda ()
-                             (interactive)
-                             (popup-menu 'yank-menu))))
+  (global-set-key (kbd "C-c y")
+                  (lambda ()
+                    (interactive)
+                    (popup-menu 'yank-menu))))
 (display-init-load-time-checkpoint "Done Loading browse-kill-ring")
 
 
@@ -3742,14 +3789,6 @@ Version 2017-01-27"
 (setq paradox-github-token '76d271dd2c6e2f893557ba978663af6cc65d3087)
 
 
-
-
-
-
-
-
-
-
 ;; Adds letters to helm buffers to assist selection.
 ;; It does not look good.
 ;; (use-package ace-jump-helm-line
@@ -3846,8 +3885,7 @@ Version 2017-01-27"
 (display-init-load-time-checkpoint "Done loading ctable")
 (use-package dash)
 (display-init-load-time-checkpoint "Done loading dash")
-(use-package dash-functional)
-(display-init-load-time-checkpoint "Done loading dash-functional")
+
 (use-package deferred)
 (display-init-load-time-checkpoint "Done loading deferred")
 (use-package define-word)
@@ -3888,11 +3926,11 @@ Version 2017-01-27"
 (display-init-load-time-checkpoint "Done loading epc")
 
 
-;; (use-package exec-path-from-shell
-;;   :config
-;;   (when (memq window-system '(mac ns x))
-;;     (setq exec-path-from-shell-check-startup-files nil)
-;;     (exec-path-from-shell-initialize)))
+(use-package exec-path-from-shell
+  :config
+  (when (memq window-system '(mac ns x))
+    ;;     (setq exec-path-from-shell-check-startup-files nil)
+    (exec-path-from-shell-initialize)))
 
 
 ;;(use-package fancy-battery)
@@ -3927,7 +3965,7 @@ Version 2017-01-27"
 
 (display-init-load-time-checkpoint "Done loading json")
 
-(use-package markdown-mode)
+(use-package markdown-mode :ensure t)
 (use-package markdown-toc)
 (display-init-load-time-checkpoint "Done loading markdown")
 (use-package move-text)
@@ -4055,19 +4093,39 @@ Version 2017-01-27"
 
 ;;(debug-on-entry 'byte-compile-file)
 
+
+
+;; (use-package modus-themes
+;;   :ensure
+;;   :init
+;;   ;; Add all your customizations prior to loading the themes
+;;   (setq modus-themes-italic-constructs t
+;;         modus-themes-bold-constructs nil
+;;         modus-themes-region '(bg-only no-extend))
+
+;;   ;; Load the theme files before enabling a theme
+;;   (modus-themes-load-themes)
+;;   :config
+;;   ;; Load the theme of your choice:
+;;   ;;(modus-themes-load-operandi) ;; OR
+;;   (modus-themes-load-vivendi)
+;;   :bind ("<f9>" . modus-themes-toggle))
+
+
+
 (my-load-hydra)
-(my-load-emms)
-                                        ;(my-load-python)
+;;(my-load-emms)
+;;(my-load-python)
 ;; CTRL-Backspace disables auto-expansion
 (my-load-helm)
 (my-load-bookmarks)
 (my-load-treemacs)
 (my-load-shackle)
-                                        ;(my-load-org)
-                                        ;(my-load-gitgutter)
+;;(my-load-org)
+;;(my-load-gitgutter)
 (my-load-pdf-tools)
 (my-load-latex)
-(my-load-modeline)
+;;(my-load-modeline)
 (my-load-quelpa-packages)
 
 
@@ -4098,14 +4156,34 @@ Version 2017-01-27"
 (display-init-load-time-checkpoint "Done loading custom file")
 
 
+;; (use-package modus-themes
+;;   :ensure
+;;   :init
+;;   ;; Add all your customizations prior to loading the themes
+;;   (setq modus-themes-italic-constructs t
+;;         modus-themes-bold-constructs nil
+;;         modus-themes-region '(bg-only no-extend))
+
+;;   ;; Load the theme files before enabling a theme
+;;   (modus-themes-load-themes)
+;;   :config
+;;   ;; Load the theme of your choice:
+;;   ;;(modus-themes-load-operandi) ;; OR
+;;   (modus-themes-load-vivendi)
+;;   :bind ("<f9>" . modus-themes-toggle))
+
+
+
+(my-load-modeline)
+
 (use-package psession
   :config
   (psession-mode 1)
   (psession-savehist-mode 1)
   (psession-autosave-mode 1)
-  ;;  (setq psession-elisp-objects-default-directory
-  ;;        (locate-user-emacs-file "elisp-objects/"))
-  )
+  :init
+  (setq psession-elisp-objects-default-directory
+        (locate-user-emacs-file (concat "elisp-objects-" machine-nickname "/"))))
 
 
 (display-init-load-time-checkpoint "Done loading init file")
@@ -4120,14 +4198,67 @@ Version 2017-01-27"
   (follow-mode t))
 
 
-(use-package moom)
+(use-package moom
+  :config
+  (setq moom-use-font-module nil)
+  (moom-mode 1))
+
 ;;(use-package symon
 ;;  :config
 ;;  (symon-mode))
 
 
-(set-default 'server-socket-dir "~/.emacs.d/server")
-(if (functionp 'window-system)
-    (when (and (window-system)
-           (>= emacs-major-version 24))
-      (server-start)))
+
+(use-package keycast
+  :config
+  ;; This works with doom-modeline, inspired by this comment:
+  ;; https://github.com/tarsius/keycast/issues/7#issuecomment-627604064
+  (define-minor-mode keycast-mode
+    "Show current command and its key binding in the mode line."
+    :global t
+    (if keycast-mode
+        (add-hook 'pre-command-hook 'keycast--update t)
+      (remove-hook 'pre-command-hook 'keycast--update)))
+  (add-to-list 'global-mode-string '("" mode-line-keycast " "))
+  (keycast-mode))
+
+
+;; (use-package paradox
+;;   :config
+;;   (paradox-enable))
+
+;; (set-default 'server-socket-dir "~/.emacs.d/server")
+;; (if (functionp 'window-system)
+;;     (when (and (window-system)
+;;            (>= emacs-major-version 24))
+;;       (server-start)))
+
+;; Keep the initial frame where it is.  If the frame is resized or
+;; moved while init is loading, after init is loaded, the frame
+;; position and size is reset and the emacs window will jump on the
+;; screen.  This code keeps the current position and size of the
+;; window (frame).
+(let* ((frame-parameters (frame-parameters))
+       (top (assoc 'top frame-parameters))
+       (left (assoc 'left frame-parameters))
+       (height (frame-height))
+       (width (frame-width))
+       (background-color (assoc 'background-color frame-parameters))
+       (foreground-color (assoc 'foreground-color frame-parameters))
+       (alist (list top left)))
+  ;;(message "\n Before %s" default-frame-alist)
+  (modify-frame-parameters nil alist)
+  (set-frame-size nil width height)
+  (setf (alist-get 'width default-frame-alist) width)
+  (setf (alist-get 'width initial-frame-alist) width)
+  (setf (alist-get 'height default-frame-alist) height)
+  (setf (alist-get 'height initial-frame-alist) height)
+  (setf (alist-get 'top default-frame-alist) (cdr top))
+  (setf (alist-get 'top initial-frame-alist) (cdr top))
+  (setf (alist-get 'left default-frame-alist) (cdr left))
+  (setf (alist-get 'left initial-frame-alist) (cdr left))
+  (setf (alist-get 'background-color default-frame-alist) (cdr background-color))
+  (setf (alist-get 'background-color initial-frame-alist) (cdr background-color))
+  (setf (alist-get 'foreground-color default-frame-alist) (cdr foreground-color))
+  (setf (alist-get 'foreground-color initial-frame-alist) (cdr foreground-color))
+  (set-face-attribute 'region nil :background "magenta1" :foreground "#ffffff"))

@@ -61,7 +61,7 @@
   (define-key helm-map (kbd "M-o")      'helm-previous-source)
   (define-key helm-map (kbd "<tab>")    'helm-execute-persistent-action) ; rebihnd tab to do persistent action
   (define-key helm-map (kbd "C-i")      'helm-execute-persistent-action) ; make TAB works in terminal
-  (define-key helm-map (kbd "C-z")      'helm-select-action) ; list actions using C-z
+  (define-key helm-map (kbd "A-z")      'helm-select-action) ; list actions using C-z
   (define-key helm-map (kbd "C-p")      'helm-previous-line)
   (define-key helm-map (kbd "C-n")      'helm-next-line)
   (define-key helm-map (kbd "C-M-n")    'helm-next-source)
@@ -78,30 +78,38 @@
 (display-init-load-time-checkpoint "Loading helm")
 (display-init-load-time-checkpoint "Done Loading helm config")
 
-(use-package    helm-ag)
+(use-package    helm-ag
+    :after helm)
 (display-init-load-time-checkpoint "Done Loading helm ag")
 
 
 ;;(display-init-load-time-checkpoint "Loading helm snippets")
 ;;(use-package    helm-c-yasnippet :after yasnippet)
 
-(use-package    helm-company)
+(use-package    helm-company
+    :after helm)
 (display-init-load-time-checkpoint "Done Loading helm company")
 
-(use-package    helm-descbinds )
+(use-package    helm-descbinds
+    :after helm)
 (display-init-load-time-checkpoint "Done Loading helm descbinds")
 
-(use-package    helm-gitignore )
+(use-package    helm-gitignore
+    :after helm)
+
 (display-init-load-time-checkpoint "Done Loading helm gitignore")
 
-(use-package    helm-mode-manager )
+(use-package    helm-mode-manager
+    :after helm)
 (display-init-load-time-checkpoint "Done Loading helm mode-manager")
 
 
-(use-package    helm-pydoc )
+(use-package    helm-pydoc
+    :after helm)
 (display-init-load-time-checkpoint "Done Loading helm pydoc")
 
 (use-package    helm-swoop
+  :after helm
   :config
   ;; When doing isearch, hand the word over to helm-swoop
   (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
@@ -117,18 +125,22 @@
   )
 (display-init-load-time-checkpoint "Done Loading helm swoop")
 
-(use-package    helm-themes)
+(use-package    helm-themes
+    :after helm)
 (display-init-load-time-checkpoint "Done Loading helm themes")
 
 ;;(use-package    helm-ls-git :ensure nil)
-(use-package    helm-git-files )
+(use-package    helm-git-files
+    :after helm)
 (display-init-load-time-checkpoint "Done Loading helm git-files")
 
-(use-package    helm-helm-commands )
+(use-package    helm-helm-commands
+    :after helm)
 (display-init-load-time-checkpoint "Done Loading helm commands")
 
 
 (use-package helm-flx
+  :after helm
   :config
   (setq helm-flx-for-helm-find-files nil)
   (helm-flx-mode 1))
@@ -136,12 +148,14 @@
 
 
 (use-package helm-etags-plus
+  :after helm
   :config
   (global-set-key (kbd "M-.") 'helm-etags-plus-select))
 (display-init-load-time-checkpoint "Done Loading helm etags")
 
 (use-package helm-bibtex
   :defer t
+  :after helm
   :config
   (setq helm-bibtex-full-frame nil))
 (display-init-load-time-checkpoint "Done Loading helm bibtex")
@@ -151,7 +165,8 @@
   :after helm
   :bind (("C-c C-s" . swiper-helm)))
 
-(use-package helm-fuzzier)
+(use-package helm-fuzzier
+    :after helm)
 
 ;;(display-init-load-time-checkpoint "Loading helm spotify")
 ;;(use-package  helm-spotify-plus :ensure nil)
@@ -189,6 +204,7 @@
       helm-swoop-split-direction 'split-window-vertically
       ;; If nil, you can slightly boost invoke speed in exchange for text color
       helm-swoop-speed-or-color t
+      helm-buffer-max-length nil
       )
 
 (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
@@ -224,7 +240,8 @@
 
 
 (display-init-load-time-checkpoint "Loading helm projectile mode")
-(use-package projectile :diminish "PRJ"
+(use-package projectile
+  :diminish "PRJ"
   :config
   (projectile-mode +1)
   (projectile-global-mode)
@@ -254,11 +271,37 @@
 
 ;; An Emacs-based interface to the package manager of your operating system.
 (use-package helm-system-packages
+  :after helm
   :config
   (when running-macos
     ;; Unlike the Helm variant, we need to specify our OS pacman.
     (setq system-packages-package-manager 'brew)))
 
+
+(use-package dogears
+  ;;:quelpa (dogears :fetcher github :repo "alphapapa/dogears.el")
+  :after helm
+  ;; These bindings are optional, of course:
+  :bind (:map global-map
+              ("M-g d" . dogears-go)
+              ("M-g M-h" . dogears-go)
+              ("M-g M-r" . dogears-remember)
+              ("M-g M-b" . dogears-back)
+              ("M-g M-f" . dogears-forward)
+              ("M-g M-l" . dogears-list)
+              ("M-g M-s" . dogears-sidebar)))
+
+
+;; (use-package helm-dogears
+;;   ;; These bindings are optional, of course:
+;;   :bind (:map global-map
+;;               ("M-g d" . dogears-go)
+;;               ("M-g M-h" . dogears-go)
+;;               ("M-g M-r" . dogears-remember)
+;;               ("M-g M-b" . dogears-back)
+;;               ("M-g M-f" . dogears-forward)
+;;               ("M-g M-l" . dogears-list)
+;;               ("M-g M-s" . dogears-sidebar)))
 
 (display-init-load-time-checkpoint "Setting helm mode on")
 (helm-mode 1)
