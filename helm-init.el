@@ -303,6 +303,12 @@
 ;;               ("M-g M-l" . dogears-list)
 ;;               ("M-g M-s" . dogears-sidebar)))
 
+
+(use-package helm-icons
+  :config
+  (setq helm-icons-provider 'treemacs)
+  (helm-icons-enable))
+
 (display-init-load-time-checkpoint "Setting helm mode on")
 (helm-mode 1)
 (display-init-load-time-checkpoint "Done setting helm mode on")

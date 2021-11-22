@@ -1,5 +1,5 @@
 ;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2021-11-18 Thu 19:15 marcelbecker on BeckeriMacKestrel.local"
+;;; Time-stamp: "2021-11-19 Fri 11:16 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -348,7 +348,41 @@
   (interactive)
   (setq show-trailing-whitespace t))
 (add-hook 'prog-mode-hook #'my-buf-show-trailing-whitespace)
-(custom-set-faces '(trailing-whitespace ((t (:background "dim gray")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-preview ((t (:foreground "dark gray" :underline t))))
+ '(company-preview-common ((t (:inherit company-preview))))
+ '(company-preview-search ((t (:inherit company-preview :background "yellow"))))
+ '(company-scrollbar-bg ((t (:inherit 'company-tooltip :background "gray20" :foreground "black" :weight bold))))
+ '(company-scrollbar-fg ((t (:background "gray40" :foreground "black" :weight bold))))
+ '(company-template-field ((t (:background "magenta" :foreground "black"))))
+ '(company-tooltip ((t (:background "light gray" :foreground "black"))))
+ '(company-tooltip-annotation ((t (:background "brightwhite" :foreground "black"))))
+ '(company-tooltip-annotation-selection ((t (:background "color-253"))))
+ '(company-tooltip-common ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection :weight bold :underline nil))))
+ '(company-tooltip-mouse ((t (:foreground "black"))))
+ '(company-tooltip-search ((t (:background "brightwhite" :foreground "black"))))
+ '(company-tooltip-selection ((t (:background "steel blue" :foreground "white" :weight bold))))
+ '(popup-menu-face ((t :foreground "red" :background "#49483E")))
+ '(popup-menu-selection-face ((t :background "#349B8D" :foreground "#BBF7EF")))
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "dark orange"))))
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "deep pink"))))
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "chartreuse"))))
+ '(rainbow-delimiters-depth-4-face ((t (:foreground "deep sky blue"))))
+ '(rainbow-delimiters-depth-5-face ((t (:foreground "yellow"))))
+ '(rainbow-delimiters-depth-6-face ((t (:foreground "orchid"))))
+ '(rainbow-delimiters-depth-7-face ((t (:foreground "spring green"))))
+ '(rainbow-delimiters-depth-8-face ((t (:foreground "NavajoWhite3"))))
+ '(rainbow-delimiters-depth-9-face ((t (:foreground "slate gray"))))
+ '(switch-window-label ((t (:inherit font-lock-keyword-face :height 3.0))))
+ '(trailing-whitespace ((t (:background "dim gray"))))
+ '(window-divider ((t (:foreground "orange"))))
+ '(window-divider-first-pixel ((t (:foreground "orange"))))
+ '(window-divider-last-pixel ((t (:foreground "orange")))))
 
 ;; Delete trailing whitespace when saving (compliance with PEP8)
 ;;(add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -548,8 +582,8 @@
 (display-init-load-time-checkpoint "Setting up ELPA")
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ;;("marmalade" . "https://marmalade-repo.org/packages/")
-                         ;;("melpa" . "https://stable.melpa.org/packages/")
+                         ;; ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ;;  ("melpa" . "https://stable.melpa.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpas" . "https://melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")
@@ -644,497 +678,12 @@
 ;;(load-file (concat spacemacs-start-directory "core/core-keybindings.el"))
 ;;(load-file (concat spacemacs-start-directory "init.el"))
 
-
-(setq my-elpa-packages
-      '(
-        ;;ace-flyspell
-        ;;ace-jump-helm-line
-        ;;ace-jump-mode
-        ;;ace-link
-        ;;ace-window
-        ;;adaptive-wrap
-        ;;afternoon-theme
-        ;;aggressive-indent
-        ;;alect-themes
-        ;;alert
-        ;;all-the-icons
-        ;;ample-regexps
-        ;;ample-theme
-        ;;ample-zen-theme
-        ;;anaconda-mode
-        ;;anti-zenburn-theme
-        ;;anything
-        ;;anzu
-        ;;apropospriate-theme
-        ;;async
-        ;;auctex
-        ;;auto-compile
-        ;;auto-complete
-        ;;auto-complete-auctex
-        ;;auto-dictionary
-        ;;auto-highlight-symbol
-        ;;auto-yasnippet
-        ;;autopair
-        ;;autothemer
-        ;;avy
-        ;;badwolf-theme
-        ;;bind-key
-        ;;bind-map
-        ;;birds-of-paradise-plus-theme
-        ;;browse-kill-ring
-        ;;bubbleberry-theme
-        ;;buffer-move
-        ;;busybee-theme
-        ;;cherry-blossom-theme
-        ;;cl-lib
-        ;;clean-aindent-mode
-        ;;clues-theme
-        ;;coffee-mode
-        ;;color-theme-modern
-        ;;color-theme-sanityinc-solarized
-        ;;color-theme-sanityinc-tomorrow
-        ;;color-theme-tango
-        ;;column-enforce-mode
-        ;;company
-        ;;company-anaconda
-        ;;company-jedi
-        ;;company-quickhelp
-        ;;company-statistics
-        ;;company-tern
-        ;;counsel
-        ;;csv-mode
-        ;; ctable
-        ;;cyberpunk-theme
-        ;;cython-mode
-        ;;dakrone-theme
-        ;;darkburn-theme
-        ;;darkmine-theme
-        ;;darkokai-theme
-        ;;darktooth-theme
-        ;;dash
-        ;;dash-functional
-        ;;deferred
-        ;;define-word
-        ;;diff-hl
-        ;;diminish
-        ;;dired+
-        ;;dired-atool
-        ;;dired-avfs
-        ;;dired-details
-        ;;dired-details+
-        ;;dired-dups
-        ;;dired-efap
-        ;;dired-explorer
-        ;;dired-fdclone
-        ;;dired-filetype-face
-        ;;dired-filter
-        ;;dired-hacks-utils
-        ;;dired-imenu
-        ;;dired-launch
-        ;;dired-narrow
-        ;;dired-nav-enhance
-        ;;dired-open
-        ;;dired-quick-sort
-        ;;dired-rainbow
-        ;;dired-single
-        ;;dired-sort
-        ;;dired-sort-menu
-        ;;dired-sort-menu+
-        ;;dired-subtree
-        ;;dired-toggle
-        ;;dired-toggle-sudo
-        ;;diredful
-        ;;direx
-        ;;direx-grep
-        ;;django-theme
-        ;;dockerfile-mode
-        ;;doremi
-        ;;doremi-frm
-        ;;doremi-cmd
-        ;;dracula-theme
-        ;;dumb-jump
-        ;;el-get
-        ;;elisp-slime-nav
-        ;;elpy
-        ;;emacs-eclim
-        ;;epc
-        ;;epl
-        ;;escreen
-        ;;espresso-theme
-        ;;eval-sexp-fu
-        ;; evil
-        ;; evil-anzu
-        ;; evil-args
-        ;; evil-ediff
-        ;; evil-escape
-        ;; evil-exchange
-        ;; evil-iedit-state
-        ;; evil-indent-plus
-        ;; evil-indent-textobject
-        ;; evil-leader
-        ;; evil-lisp-state
-        ;; evil-magit
-        ;; evil-matchit
-        ;; evil-mc
-        ;; evil-nerd-commenter
-        ;; evil-numbers
-        ;; evil-search-highlight-persist
-        ;; evil-surround
-        ;; evil-tutor
-        ;; evil-unimpaired
-        ;; evil-visual-mark-mode
-        ;; evil-visualstar
-        ;;exec-path-from-shell
-        ;;expand-region
-        ;;eyebrowse
-        ;;f
-        ;;fancy-battery
-        ;;farmhouse-theme
-        ;;fill-column-indicator
-        ;;find-file-in-project
-        ;;firebelly-theme
-        ;;flatland-theme
-        ;;flatui-theme
-        ;;flx
-        ;;flx-ido
-        ;;flycheck
-        ;;flycheck-pos-tip
-        ;;flymake
-        ;;flyspell-correct
-        ;;flyspell-correct-helm
-        ;;frame-cmds
-        ;;frame-fns
-        ;;fringe-helper
-        ;;fuzzy
-        ;;gandalf-theme
-        ;;gh-md
-        ;;git-commit
-        ;;git-gutter
-        ;;git-gutter+
-        ;;git-gutter-fringe
-        ;;git-gutter-fringe+
-        ;;git-link
-        ;;git-messenger
-        ;;git-timemachine
-        ;;gitattributes-mode
-        ;;gitconfig-mode
-        ;;gitignore-mode
-        ;;gntp
-        ;;gnuplot
-        ;;golden-ratio
-        ;;google-translate
-        ;;gotham-theme
-        ;;goto-chg
-        ;;goto-last-change
-        ;;grandshell-theme
-        ;;gruber-darker-theme
-        ;;gruvbox-theme
-        ;;hc-zenburn-theme
-        ;;header2
-        ;;helm
-        ;;helm-ag
-        ;;helm-c-yasnippet
-        ;;helm-company
-        ;;helm-core
-        ;;helm-descbinds
-        ;;helm-flx
-        ;;helm-git
-        ;;helm-git-files
-        ;;helm-gitignore
-        ;;helm-helm-commands
-        ;;helm-ls-git
-        ;;helm-make
-        ;;helm-mode-manager
-        ;;helm-package
-        ;;helm-projectile
-        ;;helm-pydoc
-        ;; helm-spotify
-        ;;helm-swoop
-        ;;helm-themes
-        ;;help-fns+
-        ;;hemisu-theme
-        ;;heroku-theme
-        ;;hexrgb
-        hide-comnt
-        highlight
-        highlight-indentation
-        highlight-numbers
-        highlight-parentheses
-        hl-todo
-        ;;hlinum
-        htmlize
-        hungry-delete
-        hy-mode
-        ;;hydra
-        ;;icicles
-        ;;ido-vertical-mode
-        ;;idomenu
-        ;;iedit
-        indent-guide
-        ;;info+
-        ;;inkpot-theme
-        ;;ir-black-theme
-        ;;jazz-theme
-        ;;jbeans-theme
-        jedi
-        jedi-core
-        js-doc
-        js2-mode
-        js2-refactor
-        json
-        json-mode
-        json-reformat
-        json-rpc
-        json-snatcher
-        latex-preview-pane
-        let-alist
-        ;;leuven-theme
-        ;;light-soap-theme
-        link-hint
-        linum-relative
-        livid-mode
-        log4e
-        lorem-ipsum
-        ;;lua-mode
-        ;;lush-theme
-        macrostep
-        ;;madhat2r-theme
-        ;;magit
-        ;;magit-gitflow
-        ;;magit-popup
-        ;;majapahit-theme
-        ;;makey
-        ;;markdown-mode
-        ;;markdown-toc
-        ;;material-theme
-        ;;menu-bar+
-        ;;minimal-theme
-        mmm-mode
-        ;;moe-theme
-        ;;molokai-theme
-        ;;monochrome-theme
-        ;;monokai-theme
-        ;;move-text
-        ;;  multiple-cursors
-        ;;mustang-theme
-        ;;mwim
-        ;;naquadah-theme
-        ;;neotree
-        ;;nginx-mode
-        ;;niflheim-theme
-        ;;noctilux-theme
-        nose
-        ;;nxml-mode
-        ;;obsidian-theme
-        ;;occidental-theme
-        ;;oldlace-theme
-        ;;omtose-phellack-theme
-        ;;open-junk-file
-        ;;org
-        ;;org-bullets
-        ;;org-download
-        ;;org-plus-contrib
-        ;;org-pomodoro
-        ;;org-present
-        ;;org-projectile
-        ;;organic-green-theme
-        ;;orgit
-        ;;package
-        ;;package-build
-        packed
-        page-break-lines
-        paradox
-        parent-mode
-        ;;pastels-on-dark-theme
-        ;;pcache
-        pcre2el
-        persp-mode
-        ;;phoenix-dark-mono-theme
-        ;;phoenix-dark-pink-theme
-        pip-requirements
-        pkg-info
-        ;;planet-theme
-        popup
-        popup-kill-ring
-        popwin
-        pos-tip
-        powerline
-        ;;professional-theme
-        projectile
-        ;;purple-haze-theme
-        py-autopep8
-        ;;pycomplete
-        pydoc
-        pydoc-info
-        pyenv-mode
-        pytest
-        python-environment
-        python-mode
-        python-pep8
-        pythonic
-        pyvenv
-        ;;quelpa
-        ;;railscasts-theme
-        ;;rainbow-delimiters
-        ;;rainbow-mode
-        ;;recentf-ext
-        ;;redo+
-        ;;request
-        ;;restart-emacs
-        ;;reverse-theme
-        ;;s
-        ;;seq
-        ;;seti-theme
-        ;;shell-command
-        ;;simple-httpd
-        ;;skewer-mode
-        ;;        smartparens
-        ;;smartrep
-        ;;smart-mode-line
-        ;;smart-mode-line-powerline-theme
-        ;;smeargle
-        ;;smooth-scroll
-        ;;smooth-scrolling
-        ;;smyx-theme
-        ;;soft-charcoal-theme
-        ;;soft-morning-theme
-        ;;soft-stone-theme
-        ;;solarized-theme
-        ;;soothe-theme
-        ;;spacegray-theme
-        ;;spaceline
-        ;;spaceline-all-the-icons
-        ;;spaceline-segments
-        ;;spaceline-config
-        ;;spacemacs-theme
-        ;;spinner
-        ;;spotify
-        ;;spray
-        ;;sr-speedbar
-        ;;subatomic-theme
-        ;;subatomic256-theme
-        ;;sublime-themes
-        ;;sunny-day-theme
-        ;;swiper
-        ;;swiper-helm
-        ;;switch-window
-        ;;tabbar
-        ;;tango-2-theme
-        ;;tango-plus-theme
-        ;;tangotango-theme
-        ;;tao-theme
-        ;;tern
-        ;;toc-org
-        ;;toxi-theme
-        ;;tronesque-theme
-        ;;twilight-anti-bright-theme
-        ;;twilight-bright-theme
-        ;;twilight-theme
-        ;;ujelly-theme
-        ;;unbound
-        ;;underwater-theme
-        ;;undo-tree
-        unfill
-        ;;use-package
-        ;;use-package-el-get
-        uuidgen
-        ;;vi-tilde-fringe
-        ;;virtualenvwrapper
-        ;;vline
-        volatile-highlights
-        web-beautify
-        websocket
-        ;;which-key
-        ;;window-number
-        ;;window-numbering
-        ;;winum
-        ;;with-editor
-        ;;ws-butler
-        ;;yaml-mode
-        ;;yasnippet
-        ;;zen-and-art-theme
-        ;;zenburn-theme
-        ;;zencoding-mode
-        ;;zonokai-theme
-        ))
-
-
 (use-package discover
   :config
   (global-discover-mode 1))
 
 (use-package diminish
   :diminish "")
-
-;;(use-package paradox
-;;  :config     (message "USE-PACKAGE CONFIG paradox"))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; EL-GET
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; To update el-get packages manually
-
-;; (let ((elget-lib (concat marcel-lisp-dir "el-get/el-get")))
-;;   (if (file-exists-p elget-lib)
-;;       (add-to-list 'load-path elget-lib)))
-
-;;(message "Loading el-get")
-;;(display-init-load-time-checkpoint "Loading el-get")
-;; (use-package el-get
-;;    :init
-;;    (with-current-buffer
-;;        (url-retrieve-synchronously
-;;      "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
-;;      (goto-char (point-max))
-;;      (eval-print-last-sexp))
-;;   )
-
-;; (unless (require 'el-get nil 'noerror)
-;;   (with-current-buffer
-;;       (url-retrieve-synchronously
-;;        "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
-;;     (goto-char (point-max))
-;;     (eval-print-last-sexp)))
-
-
-;; (add-to-list 'el-get-recipe-path
-;;              (concat marcel-lisp-dir "el-get/el-get/recipes"))
-;; (setq el-get-default-process-sync t
-;;       el-get-verbose t)
-
-
-;;(message "Loading el-get-elpa")
-;;(use-package el-get-elpa)
-;;(el-get-emacswiki-build-local-recipes)
-;;(el-get-elpa-build-local-recipes)
-
-
-;; set local recipes
-;; (setq
-;;  el-get-sources
-;;  '((:name buffer-move			; have to add your own keys
-;;    :after (progn
-;;         (global-set-key (kbd "<C-S-up>")     'buf-move-up)
-;;         (global-set-key (kbd "<C-S-down>")   'buf-move-down)
-;;         (global-set-key (kbd "<C-S-left>")   'buf-move-left)
-;;         (glqobal-set-key (kbd "<C-S-right>")  'buf-move-right)))
-
-;;    (:name smex				; a better (ido like) M-x
-;;    :after (progn
-;;         (setq smex-save-file "~/.emacs.d/.smex-items")
-;;         (global-set-key (kbd "M-x") 'smex)
-;;         (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
-
-;;    (:name magit				; git meet emacs, and a binding
-;;    :after (progn
-;;         (global-set-key (kbd "C-x C-z") 'magit-status)))
-
-;;    (:name goto-last-change		; move pointer back to last change
-;;    :after (progn
-;;         ;; when using AZERTY keyboard, consider C-x C-_
-;;         (global-set-key (kbd "C-x C-/") 'goto-last-change)))))
-
 
 
 (use-package f)
@@ -1647,7 +1196,7 @@ file to write to."
   :init
   (save-place-mode 1)
   (setq save-place-forget-unreadable-files nil)
-  (setq save-place-file (concat marcel-lisp-dir "places-" machine-nickname)))
+  (setq save-place-file (concat marcel-lisp-dir "saveplace-" machine-nickname)))
 (display-init-load-time-checkpoint "Done loading saveplace")
 
 (defun my-load-yasnippet ()
@@ -2436,7 +1985,7 @@ file to write to."
   :bind (("C-'" . imenu)))
 (display-init-load-time-checkpoint "Done Loading imenu")
 ;; Windows-scroll commands
-;;( use-package pager
+;;  (use-package pager
 ;;  :bind (("\C-v"   . pager-page-down)
 ;;         ([next]   . pager-page-down)
 ;;         ("\ev"    . pager-page-up)
@@ -2445,7 +1994,7 @@ file to write to."
 ;;         ([M-kp-8] . pager-row-up)
 ;;         ([M-down] . pager-row-down)
 ;;         ([M-kp-2] . pager-row-down))
-;;)
+;; )
 
 ;; Discover key bindings and their meaning for the current Emacs major mode
 (use-package discover-my-major
@@ -2862,13 +2411,10 @@ file to write to."
 
 (setq grep-command "grep -i -nH -e -r ")
 
-;;(autoload 'flyspell-mode "flyspell" "On-the-fly spelling checker." t)
-;;(autoload 'flyspell-delay-command "flyspell" "Delay on command." t)
-
 
 (use-package flyspell
   :defer t
-  :diminish "Spll"
+  :diminish "FlSpl"
   :config
   (setq ispell-list-command "--list")
   (setq-default ispell-program-name
@@ -2944,7 +2490,7 @@ file to write to."
       (cond (running-ms-windows ; Windows
              "bash.exe")
             (running-macos
-             "/usr/local/bin/bash")
+             "/usr/local/bin/zsh")
             (t
              "bash")))
 
@@ -3164,8 +2710,8 @@ file to write to."
     (eshell-command
      (format "find %s -type f -name \"*.java\" | etags -" dir-name)))
 
-  (setq tags-add-tables nil)
-  )
+  (setq tags-add-tables nil))
+
 (display-init-load-time-checkpoint "Done Loading ctags update")
 
 ;;horizontal-to-vertical
@@ -3638,12 +3184,9 @@ Version 2017-01-27"
 
 (use-package find-file-in-project
   :bind
-  (("C-c M-f" . find-file-in-project)))
+  (("C-c M-f" . find-file-in-project)
+   ("M-S-o" . find-file-in-project)))
 (display-init-load-time-checkpoint "Done Loading find-file-in-project")
-
-;;(use-package spacemacs-dark-theme)
-;; (use-package powerline)
-
 
 
 ;; No startup message
@@ -3731,11 +3274,7 @@ Version 2017-01-27"
               (define-key outline-minor-mode-map [(f10)] 'outline-cycle))))
 (display-init-load-time-checkpoint "Done Loading outline-magic")
 
-
-
-
 (diminish 'eldoc-mode "")
-
 
 ;; Use this to print all fonts
 (defun my-print-all-fonts ()
