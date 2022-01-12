@@ -1,5 +1,5 @@
 ;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2021-11-19 Fri 11:16 marcelbecker on BeckeriMacKestrel.local"
+;;; Time-stamp: "2022-01-05 Wed 10:00 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -302,7 +302,7 @@
 
 (setq stack-trace-on-error t)
 (setq debug-on-error t)
-;;(setq debug-on-signal t)
+;; (setq debug-on-signal t)
 ;;(setq debug-on-message "quote")
 (setq max-lisp-eval-depth 1000)
 (setq inhibit-startup-message t)
@@ -348,41 +348,6 @@
   (interactive)
   (setq show-trailing-whitespace t))
 (add-hook 'prog-mode-hook #'my-buf-show-trailing-whitespace)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(company-preview ((t (:foreground "dark gray" :underline t))))
- '(company-preview-common ((t (:inherit company-preview))))
- '(company-preview-search ((t (:inherit company-preview :background "yellow"))))
- '(company-scrollbar-bg ((t (:inherit 'company-tooltip :background "gray20" :foreground "black" :weight bold))))
- '(company-scrollbar-fg ((t (:background "gray40" :foreground "black" :weight bold))))
- '(company-template-field ((t (:background "magenta" :foreground "black"))))
- '(company-tooltip ((t (:background "light gray" :foreground "black"))))
- '(company-tooltip-annotation ((t (:background "brightwhite" :foreground "black"))))
- '(company-tooltip-annotation-selection ((t (:background "color-253"))))
- '(company-tooltip-common ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection :weight bold :underline nil))))
- '(company-tooltip-mouse ((t (:foreground "black"))))
- '(company-tooltip-search ((t (:background "brightwhite" :foreground "black"))))
- '(company-tooltip-selection ((t (:background "steel blue" :foreground "white" :weight bold))))
- '(popup-menu-face ((t :foreground "red" :background "#49483E")))
- '(popup-menu-selection-face ((t :background "#349B8D" :foreground "#BBF7EF")))
- '(rainbow-delimiters-depth-1-face ((t (:foreground "dark orange"))))
- '(rainbow-delimiters-depth-2-face ((t (:foreground "deep pink"))))
- '(rainbow-delimiters-depth-3-face ((t (:foreground "chartreuse"))))
- '(rainbow-delimiters-depth-4-face ((t (:foreground "deep sky blue"))))
- '(rainbow-delimiters-depth-5-face ((t (:foreground "yellow"))))
- '(rainbow-delimiters-depth-6-face ((t (:foreground "orchid"))))
- '(rainbow-delimiters-depth-7-face ((t (:foreground "spring green"))))
- '(rainbow-delimiters-depth-8-face ((t (:foreground "NavajoWhite3"))))
- '(rainbow-delimiters-depth-9-face ((t (:foreground "slate gray"))))
- '(switch-window-label ((t (:inherit font-lock-keyword-face :height 3.0))))
- '(trailing-whitespace ((t (:background "dim gray"))))
- '(window-divider ((t (:foreground "orange"))))
- '(window-divider-first-pixel ((t (:foreground "orange"))))
- '(window-divider-last-pixel ((t (:foreground "orange")))))
 
 ;; Delete trailing whitespace when saving (compliance with PEP8)
 ;;(add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -583,10 +548,10 @@
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ;; ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ;;  ("melpa" . "https://stable.melpa.org/packages/")
+                         ;; ("melpa" . "https://stable.melpa.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpas" . "https://melpa.org/packages/")
-                         ("org" . "http://orgmode.org/elpa/")
+                         ;; ( "org" . "http://orgmode.org/elpa/")
                          ))
 
 
@@ -619,6 +584,16 @@
 ;;  (package-activate-all)
 ;;(display-init-load-time-checkpoint "Done with package-activate")
 
+;; Use this to recompile all packages
+;; (byte-recompile-directory (expand-file-name "~/Dropbox/.emacs.d/elpa") 0)
+
+
+(when (boundp 'native-comp-eln-load-path)
+  (setq package-native-compile t)
+  (setq comp-deferred-compilation t)
+  ;; native-compile all Elisp files under a directory
+  ;;(native-compile-async (expand-file-name "~/Dropbox/.emacs.d/elpa") 'recursively t)
+  )
 
 (unless (package-installed-p 'use-package)
   (display-init-load-time-checkpoint "Installing use-package")
@@ -787,6 +762,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 
 (defun my-load-doom-themes ()
+  (interactive)
   (display-init-load-time-checkpoint "Loading doom themes")
   (use-package doom-themes
     :config
@@ -813,14 +789,16 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 
 ;;(message "Loading auto-dim-other-buffers")
+;; This does not work with native compiled emacs
+(unless (boundp 'native-comp-eln-load-path)
+  (use-package auto-dim-other-buffers
+    :diminish " " ;;"DIM"
+    :init
+    (add-hook 'after-init-hook
+              (lambda ()
+                (when (fboundp 'auto-dim-other-buffers-mode)
+                  (auto-dim-other-buffers-mode t))))))
 
-(use-package auto-dim-other-buffers
-  :diminish " " ;;"DIM"
-  :init
-  (add-hook 'after-init-hook
-            (lambda ()
-              (when (fboundp 'auto-dim-other-buffers-mode)
-                (auto-dim-other-buffers-mode t)))))
 (display-init-load-time-checkpoint "Done Loading auto-dim-other-buffers")
 
 
@@ -1179,6 +1157,10 @@ file to write to."
   ;; (setq switch-window-shortcut-style 'qwerty)
   (setq switch-window-minibuffer-shortcut ?0)
   (setq switch-window-multiple-frames t)
+
+  ;; (setq switch-window-auto-resize-window t)
+  ;; (setq switch-window-default-window-size '(0.8 . 0.8)) ;80% of frame size
+
   ;;  (with-eval-after-load 'ivy
   ;;    (setq switch-window-preferred 'ivy))
   (unless (display-graphic-p)
@@ -1268,8 +1250,23 @@ file to write to."
     (set-face-attribute 'hl-line nil
                         :foreground nil
                         :background (color-lighten-name (face-background 'default) 10)))
-  (my-set-hl-line-color-based-on-theme)
-  )
+
+  (defun my-set-hl-line-color-lighten ()
+    "Sets the hl-line face to have no foregorund and a background
+    that is 10% darker than the default face's background."
+    (interactive)
+    (set-face-attribute 'hl-line nil
+                        :foreground nil
+                        :background (color-lighten-name (face-background 'hl-line) 10)))
+
+  (defun my-set-hl-line-color-lighten ()
+    "Sets the hl-line face to have no foregorund and a background
+    that is 10% darker than the default face's background."
+    (interactive)
+    (set-face-attribute 'hl-line nil
+                        :foreground nil
+                        :background (color-darken-name (face-background 'hl-line) 10)))
+  (my-set-hl-line-color-based-on-theme))
 (display-init-load-time-checkpoint "Done Loading hlinum")
 
 
@@ -1339,7 +1336,7 @@ file to write to."
      '(company-preview  ((t (:foreground "dark gray" :underline t))))
      '(company-preview-common ((t (:inherit company-preview))))
      '(company-preview-search ((t (:inherit company-preview :background "yellow"))))
-     '(company-scrollbar-bg ((t (:inherit 'company-tooltip :background "gray20" :foreground "black" :weight bold))))
+     '(company-scrollbar-bg ((t (:inherit company-tooltip :background "gray20" :foreground "black" :weight bold))))
      '(company-scrollbar-fg ((t ( :background "gray40" :foreground "black" :weight bold))))
      '(company-template-field ((t (:background "magenta" :foreground "black"))))
      '(company-tooltip   ((t (:background "light gray" :foreground "black"))))
@@ -3493,7 +3490,10 @@ Version 2017-01-27"
 (display-init-load-time-checkpoint "Done loading gh-md")
 (use-package gnuplot)
 (display-init-load-time-checkpoint "Done loading gnuplot")
-(use-package golden-ratio)
+(use-package golden-ratio
+  :config
+  (setq golden-ratio-auto-scale t)
+  (golden-ratio-mode 1))
 (display-init-load-time-checkpoint "Done loading golden-ration")
 (use-package google-translate :defer t)
 (use-package json)
@@ -3610,7 +3610,7 @@ Version 2017-01-27"
   ;; (set-face-attribute 'minibuffer-prompt nil :background "black" :foreground "red")
   ;; (set (make-local-variable 'face-remapping-alist)
   ;;      '((default :background "black" :foreground "yellow")))
-
+  (message "Enter minibuffer setup called")
   (set (make-local-variable 'minibuffer-mode-line-face-remap-cookie)
        (face-remap-add-relative
         'mode-line '((:foreground "ivory" :background "red") mode-line)))
@@ -3623,12 +3623,13 @@ Version 2017-01-27"
   ;;   (set-face-attribute 'mode-line nil :height 160 :foreground "black" :background "#eab700"))
   ;;  (t (set-face-attribute 'mode-line nil :height 160 :foreground "black" :background "gray70" :box nil)))
   ;; (set-face-attribute 'minibuffer-prompt nil :background "white" :foreground "cyan")
-
+  (message "Exit minibuffer setup called")
   (face-remap-remove-relative minibuffer-mode-line-face-remap-cookie)
   )
 
-(add-hook 'minibuffer-setup-hook 'enter-minibuffer-setup)
-(add-hook 'minibuffer-exit-hook 'exit-minibuffer-setup)
+;; (add-hook 'minibuffer-setup-hook 'enter-minibuffer-setup)
+;; (add-hook 'minibuffer-exit-hook 'exit-minibuffer-setup)
+
 
 ;;(debug-on-entry 'byte-compile-file)
 
@@ -3801,3 +3802,8 @@ Version 2017-01-27"
   (setf (alist-get 'foreground-color default-frame-alist) (cdr foreground-color))
   (setf (alist-get 'foreground-color initial-frame-alist) (cdr foreground-color))
   (set-face-attribute 'region nil :background "magenta1" :foreground "#ffffff"))
+
+
+;; REMOVE THIS
+;; ONLY TO TEST NATIVE COMPILED
+;; (setq debug-on-signal t)

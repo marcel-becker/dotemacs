@@ -78,37 +78,37 @@
 (display-init-load-time-checkpoint "Loading helm")
 (display-init-load-time-checkpoint "Done Loading helm config")
 
-(use-package    helm-ag
-    :after helm)
+(use-package helm-ag
+  :after helm)
 (display-init-load-time-checkpoint "Done Loading helm ag")
 
 
 ;;(display-init-load-time-checkpoint "Loading helm snippets")
 ;;(use-package    helm-c-yasnippet :after yasnippet)
 
-(use-package    helm-company
-    :after helm)
+(use-package helm-company
+  :after helm)
 (display-init-load-time-checkpoint "Done Loading helm company")
 
-(use-package    helm-descbinds
-    :after helm)
+(use-package helm-descbinds
+  :after helm)
 (display-init-load-time-checkpoint "Done Loading helm descbinds")
 
-(use-package    helm-gitignore
-    :after helm)
+(use-package helm-gitignore
+  :after helm)
 
 (display-init-load-time-checkpoint "Done Loading helm gitignore")
 
-(use-package    helm-mode-manager
-    :after helm)
+(use-package helm-mode-manager
+  :after helm)
 (display-init-load-time-checkpoint "Done Loading helm mode-manager")
 
 
-(use-package    helm-pydoc
-    :after helm)
+(use-package helm-pydoc
+  :after helm)
 (display-init-load-time-checkpoint "Done Loading helm pydoc")
 
-(use-package    helm-swoop
+(use-package helm-swoop
   :after helm
   :config
   ;; When doing isearch, hand the word over to helm-swoop
@@ -125,17 +125,17 @@
   )
 (display-init-load-time-checkpoint "Done Loading helm swoop")
 
-(use-package    helm-themes
-    :after helm)
+(use-package helm-themes
+  :after helm)
 (display-init-load-time-checkpoint "Done Loading helm themes")
 
 ;;(use-package    helm-ls-git :ensure nil)
-(use-package    helm-git-files
-    :after helm)
+(use-package helm-git-files
+  :after helm)
 (display-init-load-time-checkpoint "Done Loading helm git-files")
 
-(use-package    helm-helm-commands
-    :after helm)
+(use-package helm-helm-commands
+  :after helm)
 (display-init-load-time-checkpoint "Done Loading helm commands")
 
 
@@ -166,7 +166,7 @@
   :bind (("C-c C-s" . swiper-helm)))
 
 (use-package helm-fuzzier
-    :after helm)
+  :after helm)
 
 ;;(display-init-load-time-checkpoint "Loading helm spotify")
 ;;(use-package  helm-spotify-plus :ensure nil)
@@ -250,7 +250,7 @@
   (setq projectile-remember-window-configs t )
   (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (use-package    helm-projectile )
+  (use-package helm-projectile )
   (setq projectile-completion-system 'helm)
   (helm-projectile-on)
   (setq projectile-switch-project-action 'helm-projectile)
@@ -259,9 +259,9 @@
                                                    helm-projectile-sources-list)))
 
   (define-key projectile-mode-map (kbd "C-c p /")
-    #'(lambda ()
-        (interactive)
-        (helm-ag (projectile-project-root))))
+              #'(lambda ()
+                  (interactive)
+                  (helm-ag (projectile-project-root))))
   )
 (display-init-load-time-checkpoint "Done loading helm projectile mode")
 

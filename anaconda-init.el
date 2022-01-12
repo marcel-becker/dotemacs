@@ -1,4 +1,4 @@
--package anaconda-mode
+(use-package anaconda-mode
   :diminish " "
   :defer t
   :init
