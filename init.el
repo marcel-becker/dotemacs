@@ -1,4 +1,4 @@
-;;; Time-stamp: "2020-06-04 Thu 09:59 marcelbecker on BeckeriMacKestrel.local"
+;;; Time-stamp: "2022-01-21 Fri 16:55 becker on ubuntu"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -107,8 +107,7 @@
          (delta-start  (float-time (time-subtract current emacs-start-time)))
          (delta-load (float-time (time-subtract current last-checkpoint-time))))
     (setq last-checkpoint-time current)
-    (list delta-start delta-load)
-    ))
+    (list delta-start delta-load)))
 
 ;; Use to track load time through file
 (defun display-init-load-time-checkpoint (checkpoint)
@@ -126,6 +125,8 @@
   (eq system-type 'darwin))
 (defvar running-linux
   (eq system-type 'gnu/linux))
+(defvar running-exwm
+  (frame-parameter (selected-frame) 'exwm-active))
 
 
 ;; key bindings
@@ -161,7 +162,6 @@
             (t
              (expand-file-name "~/.emacs.d/"))))
     "Address of Marcel's lisp libraries."))
-
 
 
 
@@ -448,6 +448,7 @@
 
 (display-init-load-time-checkpoint "Configuring emacs frame")
 
+
 (let* ((frame-font (cons 'font default-frame-font))
        (default-height (my-get-default-frame-height))
        (frame-height (cons 'height default-height))
@@ -462,29 +463,31 @@
   (add-to-list 'default-frame-alist frame-font)
   (add-to-list 'initial-frame-alist frame-font)
 
-  (add-to-list 'default-frame-alist frame-height)
-  (add-to-list 'initial-frame-alist frame-height)
-
   (add-to-list 'default-frame-alist frame-background-color)
-
   (add-to-list 'initial-frame-alist frame-background-color)
-
-  (add-to-list 'default-frame-alist frame-width)
-  (add-to-list 'initial-frame-alist frame-width)
-
-  (add-to-list 'default-frame-alist frame-top)
-  (add-to-list 'initial-frame-alist frame-top)
-
-  (add-to-list 'default-frame-alist frame-left)
-  (add-to-list 'initial-frame-alist frame-left)
 
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
   (set-face-attribute 'default nil :background bg-color :foreground "white")
   ;;(message  "Frame alist %s" initial-frame-alist)
-  (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
-  )
+
+  (unless running-exwm
+    (add-to-list 'default-frame-alist frame-height)
+    (add-to-list 'initial-frame-alist frame-height)
+
+    (add-to-list 'default-frame-alist frame-width)
+    (add-to-list 'initial-frame-alist frame-width)
+
+    (add-to-list 'default-frame-alist frame-top)
+    (add-to-list 'initial-frame-alist frame-top)
+
+    (add-to-list 'default-frame-alist frame-left)
+    (add-to-list 'initial-frame-alist frame-left)
+
+    (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
+    ))
+
 
 
 (display-init-load-time-checkpoint "Finished configuring emacs frame")
@@ -499,10 +502,7 @@
 (display-init-load-time-checkpoint "Setting up ELPA")
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ;;("melpa" . "https://stable.melpa.org/packages/")
                          ("melpas" . "https://melpa.org/packages/")
-                         ("org" . "http://orgmode.org/elpa/")
                          ))
 
 
@@ -1156,7 +1156,7 @@
   (setq neo-window-fixed-size nil)
   (setq neo-window-width 50)
 
-  (add-hook 'neotree-mode-hook (lambda () (setq-local mode-line-format nil)))
+  (add-hook 'neotree-mode-hook #'(lambda () (setq-local mode-line-format nil)))
 
   (defun neotree-resize-window (&rest _args)
     "Resize neotree window.
@@ -1272,9 +1272,9 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   :diminish " " ;;"DIM"
   :init
   (add-hook 'after-init-hook
-            (lambda ()
-              (when (fboundp 'auto-dim-other-buffers-mode)
-                (auto-dim-other-buffers-mode t)))))
+            #'(lambda ()
+                (when (fboundp 'auto-dim-other-buffers-mode)
+                  (auto-dim-other-buffers-mode t)))))
 (display-init-load-time-checkpoint "Done Loading auto-dim-other-buffers")
 
 
@@ -1628,6 +1628,7 @@ file to write to."
   (setq switch-window-multiple-frames t)
   ;;  (with-eval-after-load 'ivy
   ;;    (setq switch-window-preferred 'ivy))
+  (setq switch-window-input-style 'minibuffer)
   (unless (display-graphic-p)
     (setq switch-window-shortcut-appearance 'asciiart)))
 (display-init-load-time-checkpoint "Done Loading switch window")
@@ -2086,7 +2087,11 @@ file to write to."
 (use-package ace-window
   :config ;;  :init
   (global-set-key (kbd "<f1>") 'ace-window)
-  (setq aw-scope 'frame))
+  (global-set-key (kbd "C-x o") 'ace-window)
+  (global-set-key (kbd "M-O") 'ace-swap-window)
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+        aw-minibuffer-flag t)
+  (setq aw-scope 'global))
 (display-init-load-time-checkpoint "Done Loading ace-window")
 
 ;; ;; ;; ----------------------------------------------------------[Window Number]
@@ -2289,8 +2294,8 @@ file to write to."
 (setq minibuffer-max-depth nil)
 
 (add-hook 'json-mode-hook
-          (lambda ()
-            (setq js-indent-level 2)))
+          #'(lambda ()
+              (setq js-indent-level 2)))
 
 
 (defun newline-indents ()
@@ -2417,7 +2422,7 @@ file to write to."
 (global-set-key (kbd "<M-down>") 'scroll-one-line-down)
 (global-set-key (kbd "C-c ;") 'comment-region)
 (global-set-key (kbd "M-/") 'comment-region)
-(global-set-key (kbd "C-x o") 'switch-window)
+(global-set-key (kbd "M-o") 'switch-window)
 (global-set-key (kbd "<s-home>") 'end-of-buffer)
 (global-set-key [f7] 'text-scale-increase)
 (global-set-key (kbd "M-+") 'text-scale-increase)
@@ -2688,14 +2693,14 @@ file to write to."
 
 ;;  html-mode
 (add-hook 'html-mode-hook
-          '(lambda ()
-             (auto-fill-mode 1)
-             (define-key html-mode-map [(<)] 'self-insert-command)
-             (define-key html-mode-map [(>)] 'self-insert-command)
-             (define-key html-mode-map [(&)] 'self-insert-command)
-             (define-key html-mode-map [(control c) (<)] 'html-less-than)
-             (define-key html-mode-map [(control c) (>)] 'html-greater-than)
-             (define-key html-mode-map [(control c) (&)] 'html-ampersand)))
+          #'(lambda ()
+              (auto-fill-mode 1)
+              (define-key html-mode-map [(<)] 'self-insert-command)
+              (define-key html-mode-map [(>)] 'self-insert-command)
+              (define-key html-mode-map [(&)] 'self-insert-command)
+              (define-key html-mode-map [(control c) (<)] 'html-less-than)
+              (define-key html-mode-map [(control c) (>)] 'html-greater-than)
+              (define-key html-mode-map [(control c) (&)] 'html-ampersand)))
 
 
 (display-init-load-time-checkpoint "Done loading programming mode stuff")
@@ -2703,12 +2708,12 @@ file to write to."
 (setq next-number 0)
 
 (define-key global-map [S-f1]
-  '(lambda nil (interactive)
-     (print buffer-file-name (get-buffer "scratch"))
-     ;;(format t "~%~A" buffer-file-name)(edebug)
-     (if (string= (file-name-extension buffer-file-name) "lisp")
-         (insert
-          ";;;-*- Mode: common-lisp ; Package: USER ; Base: 10; Syntax: lisp  -*-
+            #'(lambda nil (interactive)
+                (print buffer-file-name (get-buffer "scratch"))
+                ;;(format t "~%~A" buffer-file-name)(edebug)
+                (if (string= (file-name-extension buffer-file-name) "lisp")
+                    (insert
+                     ";;;-*- Mode: common-lisp ; Package: USER ; Base: 10; Syntax: lisp  -*-
 ;;;-------------------------------------------------------------------------
 ;;;               Copyright (C) 2012 by Kestrel Technology
 ;;;                          All Rights Reserved
@@ -2723,9 +2728,9 @@ file to write to."
 ;;;
 ;;;
 ")
-       (if (string= (file-name-extension buffer-file-name) "sl")
-           (insert
-            "%%%-*- Mode: slang-mode ; Package: USER ; Base: 10; Syntax: slang  -*-
+                  (if (string= (file-name-extension buffer-file-name) "sl")
+                      (insert
+                       "%%%-*- Mode: slang-mode ; Package: USER ; Base: 10; Syntax: slang  -*-
 %%%-------------------------------------------------------------------------
 %%%               Copyright (C) 2012 by Kestrel Technology
 %%%                          All Rights Reserved
@@ -2739,7 +2744,7 @@ file to write to."
 %%%
 %%%
 "
-            )))))
+                       )))))
 
 
 ;; ;; (autoload 'auto-make-header "header2")
@@ -3571,9 +3576,9 @@ Version 2017-01-27"
 (use-package browse-kill-ring
   :config
   (browse-kill-ring-default-keybindings)
-  (global-set-key "\C-cy" '(lambda ()
-                             (interactive)
-                             (popup-menu 'yank-menu))))
+  (global-set-key "\C-cy" #'(lambda ()
+                              (interactive)
+                              (popup-menu 'yank-menu))))
 (display-init-load-time-checkpoint "Done Loading browse-kill-ring")
 
 
@@ -4060,13 +4065,12 @@ Version 2017-01-27"
 (my-load-bookmarks)
 (my-load-treemacs)
 (my-load-shackle)
-                                        ;(my-load-org)
-                                        ;(my-load-gitgutter)
+;;(my-load-org)
+;;(my-load-gitgutter)
 (my-load-pdf-tools)
 (my-load-latex)
-(my-load-modeline)
+;;(my-load-modeline)
 (my-load-quelpa-packages)
-
 
 (my-load-dired)
 (my-load-interaction-log)
@@ -4117,7 +4121,39 @@ Version 2017-01-27"
   (follow-mode t))
 
 
-(use-package moom)
-(use-package symon
+(use-package moom
   :config
-  (symon-mode))
+  (moom-mode 1))
+
+;;(use-package symon
+;;  :config
+;;  (symon-mode))
+
+(use-package helpful
+  :ensure t
+  :config
+  ;; Note that the built-in `describe-function' includes both functions
+  ;; and macros. `helpful-function' is functions only, so we provide
+  ;; `helpful-callable' as a drop-in replacement.
+  (global-set-key (kbd "C-h f") #'helpful-callable)
+
+  (global-set-key (kbd "C-h v") #'helpful-variable)
+  (global-set-key (kbd "C-h k") #'helpful-key)
+
+  ;; Lookup the current symbol at point. C-c C-d is a common keybinding
+  ;; for this in lisp modes.
+  (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+
+  ;; Look up *F*unctions (excludes macros).
+  ;;
+  ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+  ;; already links to the manual, if a function is referenced there.
+  (global-set-key (kbd "C-h F") #'helpful-function)
+
+  ;; Look up *C*ommands.
+  ;;
+  ;; By default, C-h C is bound to describe `describe-coding-system'. I
+  ;; don't find this very useful, but it's frequently useful to only
+  ;; look at interactive functions.
+  (global-set-key (kbd "C-h C") #'helpful-command)
+  )
