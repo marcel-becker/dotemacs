@@ -3,7 +3,17 @@
 
 (use-package lsp-mode
   :ensure t
+  :bind
+  (:map lsp-mode-map
+        (("C-M-b" . lsp-find-implementation)
+         ("M-RET" . lsp-execute-code-action)))
+
+  :custom
+  (lsp-diagnostics-provider :capf)
+  (lsp-headerline-breadcrumb-enable t)
+  (lsp-headerline-breadcrumb-segments '(project file symbols))
   :init
+  (setq lsp-keymap-prefix "C-c l")
   (setq lsp-inhibit-message nil ; you may set this to t to hide messages from message area
         lsp-eldoc-render-all nil
         lsp-highlight-symbol-at-point nil)
@@ -21,7 +31,7 @@
   ;;  (add-hook 'python-mode-hook
   ;;          (lambda ()
   ;;          (lsp-python-enable)))
-
+  (lsp-enable-which-key-integration t)
   (setq
    python-indent-offset 4
    python-shell-interpreter "jupyter"
@@ -52,7 +62,7 @@
   (require 'lsp-ui-flycheck)
   (require 'lsp-ui-peek)
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-  (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1)))
+  ;;  (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1)))
   (setq lsp-ui-sideline-enable t
         lsp-ui-sideline-show-diagnostics t
         lsp-ui-sideline-show-symbol t
@@ -68,39 +78,60 @@
         )
   (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
-(use-package helm-lsp :commands helm-lsp-workspace-symbol)
 (use-package helm-xref)
 ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package helm-lsp :commands helm-lsp-workspace-symbol
+  :config
+  (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+  )
+
 (use-package lsp-treemacs
   :ensure t
   :config
-  (lsp-metals-treeview-enable t)
+  ;;(lsp-metals-treeview-enable t)
   (lsp-treemacs-sync-mode 1)
-  (setq lsp-metals-treeview-show-when-views-received t))
+  ;;(setq lsp-metals-treeview-show-when-views-received t)
+  )
 
 
 (use-package dap-mode
   :ensure t
   :after lsp-mode
+  :custom
+  ;;(dap-python-debugger 'debugpy)
+  (dap-python-executable "/usr/local/bin/python3")
   :config
-  (dap-mode t)
-  (dap-ui-mode t)
-  ;; enables mouse hover support
-  (dap-tooltip-mode 1)
+  (dap-mode 1)
+  (dap-ui-mode 1)
   ;; use tooltips for mouse hover
   ;; if it is not enabled `dap-mode' will use the minibuffer.
   (tooltip-mode 1);; enables mouse hover support
   (dap-tooltip-mode 1)
   ;; use tooltips for mouse hover
   ;; if it is not enabled `dap-mode' will use the minibuffer.
-  (tooltip-mode 1)
+  (dap-ui-controls-mode 1)
   (require 'dap-java)
   (require 'dap-python)
-  (global-set-key (kbd "<f5>") 'dap-step-in)
-  (global-set-key (kbd "<f6>") 'dap-next)
-  (global-set-key (kbd "<f7>") 'dap-step-out)
-  (global-set-key (kbd "<f8>") 'dap-continue)
+  (setq lsp-enable-dap-auto-configure nil)
+  ;; ECLIPSE Debug Shortcuts
+  ;; (global-set-key (kbd "<f5>") 'dap-step-in)
+  ;; (global-set-key (kbd "<f6>") 'dap-next)
+  ;; (global-set-key (kbd "<f7>") 'dap-step-out)
+  ;; (global-set-key (kbd "<f8>") 'dap-continue)
+
+  ;; Intellij Debug Shortcuts
+  (global-set-key (kbd "<f7>") 'dap-step-in)
+  (global-set-key (kbd "<f8>") 'dap-next)
+  (global-set-key (kbd "S-<f8>") 'dap-step-out)
+  (global-set-key (kbd "M-<f8>") 'dap-breakpoint-toggle)
+  (global-set-key (kbd "<f9>") 'dap-continue)
   (global-set-key (kbd "<M-f2>") 'dap-delete-all-sessions)
+  (dap-register-debug-template
+   "localhost:5005"
+   (list :type "java"
+         :request "attach"
+         :hostName "localhost"
+         :port 5005))
   )
 
 
@@ -128,8 +159,13 @@
     (setq lsp-java-vmargs
           (list "-noverify"
                 "-Xmx6G"
-                "-XX:+UseG1GC"
-                "-XX:+UseStringDeduplication"))
+                ;;"-XX:+UseG1GC"
+                "-XX:+UseStringDeduplication"
+                "-XX:+UseParallelGC"
+                "-XX:GCTimeRatio=4"
+                "-XX:AdaptiveSizePolicyWeight=90"
+                "-Dsun.zip.disableMemoryMapping=true"
+                "-Xms100m"))
     (setq lsp-file-watch-ignored
           '(".idea" ".ensime_cache" ".eunit" "node_modules"
             ".git" ".hg" ".fslckout" "_FOSSIL_"
@@ -140,18 +176,25 @@
     (setq lsp-java-save-action-organize-imports nil)
     )
   ;; (add-hook 'java-mode-hook  'lsp-java-enable)
-  (add-hook 'java-mode-hook  #'lsp)
+  (add-hook 'java-mode-hook  'lsp)
   (add-hook 'java-mode-hook  'flycheck-mode)
   (add-hook 'java-mode-hook  'company-mode)
-  (add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
+  ;;(add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
   (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
   ;;  (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
   (add-hook 'java-mode-hook 'my-java-lsp-setup)
   )
 
 
-                                        ;(setq lsp-java-format-settings-url "file://Users/marcelbecker/Dropbox/.emacs.d/EclipseFormat.xml")
-                                        ;(setq lsp-java-format-settings-profile "Marcel-100-Width")
+(require 'lsp-java-boot)
+
+;; to enable the lenses
+(add-hook 'lsp-mode-hook #'lsp-lens-mode)
+(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+(add-hook 'java-mode-hook #'lsp-ui-mode)
+
+;;(setq lsp-java-format-settings-url "file://Users/marcelbecker/Dropbox/.emacs.d/EclipseFormat.xml")
+;;(setq lsp-java-format-settings-profile "Marcel-100-Width")
 
 ;; use (regexp-quote "\[\w*\] \[\w*\] (ERROR) \w* \((\w*\.java):([0-9]+)\).*$")
 ;; to print the escaped string.
@@ -242,6 +285,30 @@
 ;;   (lsp-python-ms-dir (expand-file-name "~/.emacs.d/elisp/python-language-server/output/bin/Release/"))
 ;;   (lsp-python-ms-executable "~/.emacs.d/elisp/python-language-server/output/bin/Release/linux-x64/publish/Microsoft.Python.LanguageServer"))
 
+(defun my-use-pyright-as-python-server ()
+  (interactive)
+(use-package lsp-pyright
+  :ensure t
+  :config
+  (setq lsp-pyright-python-executable-cmd "/usr/local/bin/python3")
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp)))))  ; or lsp-deferred
+
+
+(defun my-use-jedi-as-python-server ()
+  (interactive)
+  (use-package lsp-jedi
+    :ensure t
+    :config
+    (with-eval-after-load "lsp-mode"
+      (add-to-list 'lsp-disabled-clients 'pyls)
+      (add-to-list 'lsp-enabled-clients 'jedi))))
+
+
+(my-use-jedi-as-python-server)
+
+
 (defun my-eglot-init ()
   (interactive)
   (use-package eglot)
@@ -264,40 +331,40 @@
     (call-interactively #'helm-lsp-global-workspace-symbol)))
 
 (setq netrom--general-lsp-hydra-heads
-        '(;; Xref
-          ("d" xref-find-definitions "Definitions" :column "Xref")
-          ("D" xref-find-definitions-other-window "-> other win")
-          ("r" xref-find-references "References")
-          ("s" netrom/helm-lsp-workspace-symbol-at-point "Helm search")
-          ("S" netrom/helm-lsp-global-workspace-symbol-at-point "Helm global search")
+      '(;; Xref
+        ("d" xref-find-definitions "Definitions" :column "Xref")
+        ("D" xref-find-definitions-other-window "-> other win")
+        ("r" xref-find-references "References")
+        ("s" netrom/helm-lsp-workspace-symbol-at-point "Helm search")
+        ("S" netrom/helm-lsp-global-workspace-symbol-at-point "Helm global search")
 
-          ;; Peek
-          ("C-d" lsp-ui-peek-find-definitions "Definitions" :column "Peek")
-          ("C-r" lsp-ui-peek-find-references "References")
-          ("C-i" lsp-ui-peek-find-implementation "Implementation")
+        ;; Peek
+        ("C-d" lsp-ui-peek-find-definitions "Definitions" :column "Peek")
+        ("C-r" lsp-ui-peek-find-references "References")
+        ("C-i" lsp-ui-peek-find-implementation "Implementation")
 
-          ;; LSP
-          ("p" lsp-describe-thing-at-point "Describe at point" :column "LSP")
-          ("C-a" lsp-execute-code-action "Execute code action")
-          ("R" lsp-rename "Rename")
-          ("t" lsp-goto-type-definition "Type definition")
-          ("i" lsp-goto-implementation "Implementation")
-          ("f" helm-imenu "Filter funcs/classes (Helm)")
-          ("C-c" lsp-describe-session "Describe session")
+        ;; LSP
+        ("p" lsp-describe-thing-at-point "Describe at point" :column "LSP")
+        ("C-a" lsp-execute-code-action "Execute code action")
+        ("R" lsp-rename "Rename")
+        ("t" lsp-goto-type-definition "Type definition")
+        ("i" lsp-goto-implementation "Implementation")
+        ("f" helm-imenu "Filter funcs/classes (Helm)")
+        ("C-c" lsp-describe-session "Describe session")
 
-          ;; Flycheck
-          ("l" lsp-ui-flycheck-list "List errs/warns/notes" :column "Flycheck"))
+        ;; Flycheck
+        ("l" lsp-ui-flycheck-list "List errs/warns/notes" :column "Flycheck"))
 
-        netrom--misc-lsp-hydra-heads
-        '(;; Misc
-          ("q" nil "Cancel" :column "Misc")
-          ("b" pop-tag-mark "Back")))
+      netrom--misc-lsp-hydra-heads
+      '(;; Misc
+        ("q" nil "Cancel" :column "Misc")
+        ("b" pop-tag-mark "Back")))
 
-  ;; Create general hydra.
-  (eval `(defhydra netrom/lsp-hydra (:color blue :hint nil)
-           ,@(append
-              netrom--general-lsp-hydra-heads
-              netrom--misc-lsp-hydra-heads)))
+;; Create general hydra.
+(eval `(defhydra netrom/lsp-hydra (:color blue :hint nil)
+         ,@(append
+            netrom--general-lsp-hydra-heads
+            netrom--misc-lsp-hydra-heads)))
 
-  (add-hook 'lsp-mode-hook
-            (lambda () (local-set-key (kbd "C-z C-j") 'netrom/lsp-hydra/body)))
+(add-hook 'lsp-mode-hook
+          (lambda () (local-set-key (kbd "C-z C-j") 'netrom/lsp-hydra/body)))

@@ -62,11 +62,11 @@
         ))
 
 (use-package treemacs-evil
-  :after treemacs evil
+  :after (treemacs evil)
   :ensure t)
 
 (use-package treemacs-projectile
-  :after treemacs projectile
+  :after (treemacs projectile)
   :ensure nil
   :config
   (setq treemacs-header-function #'treemacs-projectile-create-header)
@@ -75,15 +75,15 @@
          ("h" . treemacs-projectile)))
 
 (use-package treemacs-icons-dired
-  :after treemacs dired
+  :after (treemacs dired)
   :ensure t
   :config (treemacs-icons-dired-mode))
 
 (use-package treemacs-magit
-  :after treemacs magit
+  :after (treemacs magit)
   :ensure t)
 
 (use-package treemacs-persp
-  :after treemacs persp-mode
+  :after (treemacs persp-mode)
   :ensure t
   :config (treemacs-set-scope-type 'Perspectives))

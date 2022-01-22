@@ -40,49 +40,117 @@
 ;;  use_mmap "yes"
 ;; }
 
+(defun my-emms-covers (dir type)
+  "Choose album cover in DIR deppending on TYPE.
+Small cover should be less than 80000 bytes.
+Medium - less than 120000 bytes."
+  (let* ((pics (directory-files-and-attributes
+                dir t "\\.\\(jpe?g\\|png\\|gif\\|bmp\\)$" t))
+         (pic (car pics))
+         (pic-size (nth 8 pic)))
+    (princ pics)
+    (let (temp)
+      (cond
+       ((eq type 'small)
+        (while (setq temp (cadr pics))
+          (let ((temp-size (nth 8 temp)))
+            (if (< temp-size pic-size)
+                (setq pic temp
+                      pic-size temp-size)))
+          (setq pics (cdr pics)))
+        (if (<= (or pic-size 80001) 80000)
+            (car pic)))
+       ((eq type 'medium)
+        (if (and pic (setq temp (cadr pics)))
+            (progn
+              (setq pics (cdr pics))
+              (let ((temp-size (nth 8 temp)))
+                (let ((small temp)
+                      (small-size temp-size))
+                  (if (< pic-size small-size)
+                      (setq small pic
+                            small-size pic-size
+                            pic temp
+                            pic-size temp-size))
+                  (while (setq temp (cadr pics))
+                    (setq temp-size (nth 8 temp))
+                    (cond
+                     ((< temp-size small-size)
+                      (setq pic small
+                            pic-size small-size
+                            small temp
+                            small-size temp-size))
+                     ((< temp-size pic-size)
+                      (setq pic temp
+                            pic-size temp-size)))
+                    (setq pics (cdr pics)))
+                  (car (if (<= pic-size 120000) pic
+                         small)))))
+          (car pic)))
+       ((eq type 'large)
+        (while (setq temp (cadr pics))
+          (let ((temp-size (nth 8 temp)))
+            (if (> temp-size pic-size)
+                (setq pic temp
+                      pic-size temp-size)))
+          (setq pics (cdr pics)))
+        (car pic))))))
+
 
 (use-package emms
+  :init
+  (setq emms-directory (expand-file-name "~/.emacs.d/emms/"))
   :config
   (require 'emms-setup)
   (emms-all)
-  (require 'emms-player-simple)
-  (require 'emms-source-file)
-  (require 'emms-source-playlist)
-  ;;    (require 'emms-player-mplayer)
-  (require 'emms-player-vlc)
-  (require 'emms-playlist-sort)
   ;; Use only libtag for tagging.
   (require 'emms-info-libtag)
-  (require 'emms-streams)
-  (require 'emms-stream-info)
-  (require 'emms-playing-time)
-  (emms-default-players)
+  ;;  (emms-default-players)
   (setq emms-playlist-buffer-name "*Music*")
   (setq emms-info-libtag-program-name (expand-file-name  "bin/emms-print-metadata" marcel-lisp-dir))
-  (if (executable-find emms-info-libtag-program-name)
-      (setq emms-info-functions '(emms-info-libtag)))
-  ;;(setq emms-info-functions '(emms-info-mp3info))
-
-  (setq emms-source-file-default-directory "/Volumes/MusicFiles/Music/")
+  (if (executable-find emms-info-libtag-program-name)(setq emms-info-functions '(emms-info-libtag)))
+  (setq emms-source-file-default-directory "/Volumes/MusicFiles/MusicCopy/Music")
   (setq emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
-  (setq emms-browser-covers 'emms-browser-cache-thumbnail)
+  (setq emms-browser-covers #'emms-browser-cache-thumbnail-async)
+  ;;  (setq emms-browser-thumbnail-small-size 64)
+  ;;  (setq emms-browser-thumbnail-medium-size 128)
+  ;;  (setq emms-browser-covers 'my-emms-covers)
   (setq emms-stream-default-action "play")
   ;; «enable-emms-scoring» (to ".enable-emms-scoring")
   (setq emms-score-enabled-p t)
   ;; «Start-browser-with-album» (to ".Start-browser-with-album")
-  (setq emms-browser-default-browse-type 'info-album)
+  (setq emms-browser-default-browse-type 'info-artist)
   (setq emms-browser-default-covers (list (expand-file-name "emms/cover_small.jpg" marcel-lisp-dir)))
   (emms-history-load)
   (emms-mode-line 1)
   (emms-playing-time 1)
-;;  (define-key emms-stream-mode-map (kbd "s") 'emms-stop)
-
+  ;;  (define-key emms-stream-mode-map (kbd "s") 'emms-stop)
+  (define-prefix-command 'my-emms-map)
+  (bind-keys :map global-map
+             :prefix-map my-emms-map
+             :prefix "<f9>"
+             ("r" . emms-streams)
+             ("+" . emms-volume-raise)
+             ("=" . emms-volume-raise)
+             ("-" . emms-volume-lower)
+             ("b" . emms-smart-browse)
+             ("t" . emms-player-mpd-show)
+             ("s" . emms-stop)
+             ("RET" . emms-start)
+             ("c" . emms-browser-clear-playist)
+             ("p" . emms-pause)
+             (">" . emms-next)
+             ("<" . emms-previous)
+             ("<right>" . emms-next)
+             ("<left>" . emms-previous)
+             ("<up>" . emms-pause)
+             ("m" . emms-mode-line-toggle))
   :bind
   (("C-c +" . emms-volume-mode-plus)
    ("C-c -" . emms-volume-mode-minus)
    ("C-c e e" . emms)
    ("C-c e SPC" . emms-pause)
-   ("C-c e p" . emms-pause)
+   ("C-c e p" . emms-browser-add-tracks-and-play)
    ("C-c e +" . emms-seek-forward)
    ("C-c e -" . emms-seek-backward)
    ("C-c e s" . emms-seek)
@@ -103,21 +171,8 @@
    ;;("<XF86AudioPrev>" . emms-previous)
    ;;("<XF86AudioNext>" . emms-next)
    ("C-c e [" . my/emms-player-mplayer-slow-down)
-   ("C-c e ]" . my/emms-player-mplayer-speed-up)))
-
-
-(defun my-emms-add-all-players ()
-  (interactive)
-  (setq emms-player-list '(emms-player-vlc-playlist
-                           emms-player-vlc
-                           emms-player-mpg321
-                           emms-player-ogg123
-                           emms-player-mplayer
-                           emms-player-mpv
-                           emms-player-mpd
-                           ))
+   ("C-c e ]" . my/emms-player-mplayer-speed-up))
   )
-
 
 (define-prefix-command 'my-emms-map)
 (bind-keys :map global-map
@@ -125,6 +180,7 @@
            :prefix "<f9>"
            ("r" . emms-streams)
            ("+" . emms-volume-raise)
+           ("=" . emms-volume-raise)
            ("-" . emms-volume-lower)
            ("b" . emms-smart-browse)
            ("t" . emms-player-mpd-show)
@@ -138,6 +194,21 @@
            ("<left>" . emms-previous)
            ("<up>" . emms-pause)
            ("m" . emms-mode-line-toggle))
+
+
+
+(defun my-emms-add-all-players ()
+  (interactive)
+  (setq emms-player-list '(emms-player-vlc-playlist
+                           emms-player-vlc
+                           emms-player-mpg321
+                           emms-player-ogg123
+                           emms-player-mplayer
+                           emms-player-mpv
+                           emms-player-mpd
+                           )))
+
+
 
 
 
@@ -170,8 +241,7 @@
                   ".mov" ".avi" ".divx" ".ogm" ".asf" ".mkv" "http://" "mms://"
                   ".rm" ".rmvb" ".mp4" ".flac" ".vob" ".m4a" ".flv" ".ogv" ".pls"))
     "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")
-  (setq emms-player-list '(emms-player-mplayer))
-  )
+  (setq emms-player-list '(emms-player-mplayer)))
 
 
 (defun my-emms-mpv-set-player ()
@@ -199,11 +269,11 @@ is currently playing."
               emms-player-paused-p
               emms-player-stopped-p)
       (with-current-emms-playlist
-        (goto-char old-pos)
-        ;; if we're sitting on a group name, move forward
-        (unless (emms-playlist-track-at (point))
-          (emms-playlist-next))
-        (emms-playlist-select (point)))
+       (goto-char old-pos)
+       ;; if we're sitting on a group name, move forward
+       (unless (emms-playlist-track-at (point))
+         (emms-playlist-next))
+       (emms-playlist-select (point)))
       (emms-stop)
       (emms-start)))
   (add-hook 'emms-browser-tracks-added-hook 'ambrevar/emms-play-on-add)
@@ -256,9 +326,8 @@ is currently playing."
                                            (emms-player-mpv-ipc-req-error-printer pts-end err))
                                        (when pts-end
                                          (message "Volume %s" pts-end))))))
-
   )
-
+(my-emms-mpv-set-player)
 
 
 (defun my-emms-mpd-set-player ()
@@ -399,10 +468,14 @@ is currently playing."
   (interactive)
   (message (format "%s" (shell-command-to-string "osascript -e '(get volume settings)'" ))))
 
-(use-package helm-emms
-  :defer t
-  :after (helm emms))
-
+;; (use-package helm-emms
+;;   :defer t
+;;   :after (helm emms)
+;; :config
+;;  (setq helm-emms-default-sources
+;;        '(helm-source-emms-dired
+;;          helm-source-emms-files ; Disable for a huge speed-up.
+;;          helm-source-emms-streams)))
 
 
 (defun chunyang-emms-indicate-seek (_sec)
@@ -431,7 +504,8 @@ is currently playing."
          (delete-file emms-history-file))
     (with-current-buffer (find-file-noselect emms-cache-file)
       (save-buffer))
-    (emms-add-directory-tree "~/Music/")))
+    ;;(emms-add-directory-tree "~/Music/")
+    ))
 
 
 (defun my-emms-track-simple-description (track)
@@ -476,3 +550,45 @@ character."
 ;;   (process-send-string
 ;;    emms-player-simple-process-name
 ;;    (format "seek %d\n" sec)))
+
+(use-package minibuffer-line)
+(setq minibuffer-line-format
+      '("" (:eval system-name)
+        " | " (:eval (format-time-string "%F %R"))
+        " [ " (:eval (string-trim-right (emms-track-description (emms-playlist-current-selected-track)))) " ]"))
+(minibuffer-line-mode)
+
+;; (use-package emms-mode-line-cycle
+;;   :config
+;;   (emms-mode-line 1)
+;;   (emms-playing-time 1)
+;;   (emms-mode-line-cycle 1)
+;;   ;; `emms-mode-line-cycle' can be used with emms-mode-line-icon.
+;;   ;;  (require 'emms-mode-line-icon)
+;;   (custom-set-variables
+;;    ;; '(emms-mode-line-cycle-use-icon-p nil)
+;;                                         ;   '(emms-mode-line-cycle-max-width 15)
+;;                                         ;   '(emms-mode-line-cycle-additional-space-numb 4)
+;;                                         ;   '(emms-mode-line-cycle-use-icon-p t)
+;;    '(emms-mode-line-format " [%s]")
+;;                                         ;   '(emms-mode-line-cycle-any-width-p t)
+;;    '(emms-mode-line-cycle-velocity 2)
+;;    ;; '(emms-mode-line-cycle-current-title-function
+;;    ;;   (lambda ()
+;;    ;;     (let ((track (emms-playlist-current-selected-track)))
+;;    ;;       (cl-case (emms-track-type track)
+;;    ;;         ((streamlist)
+;;    ;;          (let ((stream-name (emms-stream-name
+;;    ;;                              (emms-track-get track 'metadata))))
+;;    ;;            (if stream-name stream-name (emms-track-description track))))
+;;    ;;         ((url) (emms-track-description track))
+;;    ;;         (t (file-name-nondirectory
+;;    ;;             (emms-track-description track)))))))
+;;    ;; '(emms-mode-line-titlebar-function
+;;    ;;   (lambda ()
+;;    ;;     '(:eval
+;;    ;;       (when emms-player-playing-p
+;;    ;;         (format " %s %s"
+;;    ;;                 (format emms-mode-line-format (emms-mode-line-cycle-get-title))
+;;    ;;                 emms-playing-time-string))))))
+;;    ))

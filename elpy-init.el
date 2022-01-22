@@ -37,6 +37,22 @@
 ;;(require 'python-environment)
 ;;(require 'pyvenv)
 
+(defun python-template ()
+  (interactive)
+  (insert "#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n\n"))
+
+(add-hook 'python-mode-hook
+          '(lambda () (when (eq (buffer-size) 0) (python-template))))
+(add-hook 'python-mode-hook (lambda () (auto-complete-mode -1)))
+
+(defun my-python-install-deps ()
+  "Instala dependencias básicas dentro de un entorno virtual"
+  (interactive)
+  (shell-command "pip install 'python-language-server[rope,pydocstyle,pyflakes,jedi]' pyls-mypy black 'ptvsd>=4.2'"))
+
+
+
+
 ;; https://github.com/porterjamesj/virtualenvwrapper.el
 ;; venv-workon
 ;; venv-deactivate
@@ -47,28 +63,31 @@
   (venv-initialize-eshell) ;; if you want eshell support
   ;; (setq venv-location '("/path/to/project1-env/" "/path/to/ptoject2-env/"))
   (setq venv-location "~/PythonEnvs")
-  )
+  (add-hook 'venv-postmkvirtualenv-hook #'my-python-install-deps))
 
-(use-package jedi)
-(use-package jedi-core)
+;;(use-package jedi)
+;;(use-package jedi-core)
 
 
 (use-package elpy
   :diminish "elpy"
   :config
   (elpy-enable)
-  (setq elpy-rpc-backend "jedi")
+  ;;(setq elpy-rpc-backend "jedi")
   (define-key python-mode-map (kbd "RET") 'newline-and-indent)
-  (setq python-shell-interpreter "jupyter"
-        python-shell-interpreter-args "console --simple-prompt"
-        python-shell-prompt-detect-failure-warning nil)
+
   (add-to-list 'python-shell-completion-native-disabled-interpreters
                "jupyter")
 
   (setq
-   ;;   python-shell-interpreter "ipython"
-   ;;   python-shell-interpreter-args "--colors Linux --pylab  --matplotlib"
-
+      python-shell-interpreter "ipython"
+      python-shell-interpreter-args "--colors Linux --pylab  --matplotlib"
+   ;;python-shell-interpreter "jupyter"
+   ;;python-shell-interpreter-args "console --simple-prompt"
+   python-shell-prompt-detect-failure-warning nil
+   python-indent-guess-indent-offset t
+   python-indent-guess-indent-offset-verbose nil
+   elpy-rpc-python-command "/usr/local/bin/python3"
    python-shell-prompt-regexp "In \\[[0-9]+\\]: " ;; "In \: "
    python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: " ;; "Out\: "
    python-shell-completion-setup-code
@@ -194,13 +213,13 @@
 ;;(global-set-key "\C-ch" 'pylookup-lookup)
 
 
-(require 'pydoc-info)
-(info-lookup-add-help
- :mode 'python-mode
- :parse-rule 'pydoc-info-python-symbol-at-point
- :doc-spec
- '(("(python)Index" pydoc-info-lookup-transform-entry)
-   ("(TARGETNAME)Index" pydoc-info-lookup-transform-entry)))
+;; (use-package pydoc-info)
+;; (info-lookup-add-help
+;;  :mode 'python-mode
+;;  :parse-rule 'pydoc-info-python-symbol-at-point
+;;  :doc-spec
+;;  '(("(python)Index" pydoc-info-lookup-transform-entry)
+;;    ("(TARGETNAME)Index" pydoc-info-lookup-transform-entry)))
 
 
 (when (load "flymake" t)
