@@ -1,8 +1,11 @@
 ;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2022-01-14 Fri 15:58 marcelbecker on BeckeriMacKestrel.local"
+;;; Time-stamp: "2022-01-22 Sat 16:19 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
-;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
+;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l \
+;; ~/Dropbox/.emacs.d/profile-dotemacs.el
+;; --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")"
+;;-f profile-dotemacs
 
 ;; Use this to create a new prefix
 ;; (fset     'my-cmds-prefix (make-sparse-keymap))
@@ -1873,6 +1876,7 @@ file to write to."
 
 
 (setq linum-format " %d ")
+;;(setq linum-format "\u2502 %6d \u2502\u2502")
 ;; ;; ;; To make emacs use spaces instead of tabs (Added by Art Lee on 2/19/2008)
 (setq-default indent-tabs-mode nil)
 ;; ;; (setq mail-default-reply-to "becker@kestrel.edu")
