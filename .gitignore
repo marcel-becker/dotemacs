@@ -40,7 +40,9 @@ places*
 smex-items*
 ac-comphist*
 .python-environments/
-
+session*
+.DS_Store
+saveplace*
 
 
 # Installer logs
