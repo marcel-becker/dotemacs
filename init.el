@@ -1,5 +1,767 @@
 ;; -*- lexical-binding: t -*-
 ;;; Time-stamp: "2022-01-23 Sun 12:52 marcelbecker on BeckeriMacKestrel.local"") 'my-open-dot-emacs)
+;;;
+;; use this to profile Emacs initialization.
+;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l \
+;; ~/Dropbox/.emacs.d/profile-dotemacs.el
+;; --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")"
+;;-f profile-dotemacs
+
+;; Use this to create a new prefix
+;; (fset     'my-cmds-prefix (make-sparse-keymap))
+;; (defconst  my-cmds-map    (symbol-function 'my-cmds-prefix))
+;; (let ((former-ctrl-r (key-binding "\C-r")))
+;;   (and (not (equal 'my-cmds-prefix former-ctrl-r))
+;;    (define-key my-cmds-map "\C-r"  former-ctrl-r)))
+;; (define-key global-map   "\C-r"     'my-cmds-prefix)
+;; (define-key my-cmds-map "."        'set-mark-command)
+;; or from https://www.masteringemacs.org/article/mastering-key-bindings-emacs
+;; (defun mp-insert-date ()
+;;   (interactive)
+;;   (insert (format-time-string "%x")))
+;; (defun mp-insert-time ()
+;;   (interactive)
+;;   (insert (format-time-string "%X")))
+;; (global-set-key (kbd "C-c i d") 'mp-insert-date)
+;; (global-set-key (kbd "C-c i t") 'mp-insert-time)
+
+
+;;(load-file "profile-dotemacs.el")
+;;(profile-dotemacs)
+;; To profile elisp functions:
+;;(use-package benchmark)
+;; in scratch buffer CTRL-J
+;;(benchmark-elapse (pcache-kill-emacs-hook))
+(defmacro measure-time (&rest body)
+  "Measure and return the running time of the code block."
+  (declare (indent defun))
+  (let ((start (make-symbol "start")))
+    `(let ((,start (float-time)))
+       ,@body
+       (- (float-time) ,start))))
+
+
+;; Read the contents of a buffer into a string
+(defun my-buffer-contents (&optional buffer-or-name)
+  (with-current-buffer (if buffer-or-name buffer-or-name (current-buffer))
+    (buffer-substring-no-properties (point-min) (point-max))))
+
+;; Open buffer in emacs.
+;; In scratch buffer, CTRL-J
+;;(buffer-content "init.el")
+
+;; Read all the s-expressions in a buffer and add to a list
+(defun my-read-buffer-sexps (buffer-or-name)
+  (let ((sexps '())
+        (sexp nil)
+        (buf (if buffer-or-name buffer-or-name (current-buffer))))
+    (with-current-buffer buf
+      (goto-char (point-min))
+      (ignore-errors
+        (while (setq sexp (read (current-buffer)))
+          ;;(message "%s" sexp)
+          (print sexp)
+          (push sexp sexps))))
+    sexps))
+;; Open buffer in emacs,
+;; In scratch buffer, CTRL-J
+;;(my-read-buffer-sexps "init.el")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; set the load path
+;;;
+;;; Add the code below to your ~/.emacs.d/init.el to load
+;;; the shared version of the init file.
+;;;
+;; (defvar marcel-lisp-dir
+;; (if (eq system-type 'windows-nt)      ; Windows
+;;     (cond ((file-exists-p "C:/Dropbox/.emacs.d")
+;;            (setenv "HOME" "C:/Dropbox")
+;;           "C:/Dropbox/.emacs.d/")
+;;           ((file-exists-p "D:/Dropbox/.emacs.d")
+;;            (setenv "HOME" "D:/Dropbox")
+;;            "D:/Dropbox/.emacs.d/")
+;;           (t
+;;            (expand-file-name "~/.emacs.d/")))
+;;   (cond ((file-exists-p  "~/Dropbox/.emacs.d")
+;;          "~/Dropbox/.emacs.d/")
+;;         (t
+;;          (expand-file-name "~/.emacs.d/"))))
+;; "Address of Marcel's lisp libraries.")
+
+;;  (setq user-init-file (expand-file-name "init.el" marcel-lisp-dir))
+;;  (if (not (eq user-init-file (expand-file-name "~/.emacs.d")))
+;;      (let ((file-name-handler-alist nil))
+;;        (load-file user-init-file))))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; By default Emacs triggers garbage collection at ~0.8MB which makes
+;; startup really slow. Since most systems have at least 64MB of memory,
+;; we increase it during initialization.
+(setq gc-cons-threshold 100000000)
+(add-hook 'after-init-hook #'(lambda ()
+                               ;; restore after startup
+                               (setq gc-cons-threshold 800000)))
+(setq inhibit-compacting-font-caches t)
+(setq frame-inhibit-implied-resize t)
+;;(message  (concat "Loading " load-file-name))
+
+;; UTF-8 support
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(when (display-graphic-p)
+  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+
+
+
+;;; PROFILE INIT
+;;; FROM: https://www.reddit.com/r/emacs/comments/8eozfl/advanced_techniques_for_reducing_emacs_startup/
+;; use to measure load time
+(defconst emacs-start-time (current-time))
+(setq last-checkpoint-time emacs-start-time)
+
+;; The time since the load began
+(defun time-since-load-start()
+  (let* ((current (current-time))
+         (delta-start  (float-time (time-subtract current emacs-start-time)))
+         (delta-load (float-time (time-subtract current last-checkpoint-time))))
+    (setq last-checkpoint-time current)
+    (list delta-start delta-load)
+    ))
+
+;; Use to track load time through file
+(defun display-init-load-time-checkpoint (checkpoint)
+  (let ((deltas (time-since-load-start)))
+    ;;    (message "%s %s %s" deltas (first deltas) (last deltas))
+    (message "Loading init %s checkpoint %s Total Time (%.3fs) Load Time (%.3fs)"
+             load-file-name checkpoint (car deltas) (cadr deltas))))
+(display-init-load-time-checkpoint "Loading init file")
+
+
+;; Setting the running environment
+(defvar running-ms-windows
+  (eq system-type 'windows-nt))
+(defvar running-macos
+  (eq system-type 'darwin))
+(defvar running-linux
+  (eq system-type 'gnu/linux))
+
+
+;; key bindings
+(when (eq system-type 'darwin) ;; mac specific settings
+  (setq mac-option-modifier 'alt)
+  (setq mac-right-control-modifier 'super)
+  ;;  (setq mac-right-option-modifier 'super)
+  ;;(setq mac-right-command-modifier 'super)
+  (setq mac-right-command-modifier 'meta)
+  (setq mac-command-modifier 'meta)
+  (global-set-key [kp-delete] 'delete-char)
+
+  (setq ns-use-srgb-colorspace nil)
+  (setq powerline-image-apple-rgb t)
+  (setq mac-allow-anti-aliasing t)
+  ) ;; sets fn-delete to be right-delete
+
+
+(global-set-key (kbd "M-z") 'undo-tree-visualize)
+
+;; add everything under ~/.emacs.d to it
+(unless (boundp 'marcel-lisp-dir)
+  (defvar marcel-lisp-dir
+    (if running-ms-windows ; Windows
+        (cond ((file-exists-p "C:/Dropbox/.emacs.d")
+               (setenv "HOME" "C:/Dropbox")
+               "C:/Dropbox/.emacs.d/")
+              ((file-exists-p "D:/Dropbox/.emacs.d")
+               (setenv "HOME" "D:/Dropbox")
+               "D:/Dropbox/.emacs.d/")
+              (t
+               (expand-file-name "~/.emacs.d")))
+      (cond ((file-exists-p  "~/Dropbox/.emacs.d")
+             "~/Dropbox/.emacs.d/")
+            (t
+             (expand-file-name "~/.emacs.d/"))))
+    "Address of Marcel's lisp libraries."))
+
+
+
+
+(setq user-emacs-directory marcel-lisp-dir)
+
+
+(display-init-load-time-checkpoint "Setting up user cache")
+(defconst user-cache-directory
+  (expand-file-name (concat user-emacs-directory ".cache/"))
+  "My emacs storage area for persistent files.")
+;; create the `user-cache-directory' if it doesn't exist
+(make-directory user-cache-directory t)
+(display-init-load-time-checkpoint "Done setting up user cache")
+
+;;; ADD Marcel'S LISP LIBRARY TO `load-path'.
+;;(add-to-list 'load-path marcel-lisp-dir )
+
+
+(defun reduce-hostname (name suffixes)
+  (if suffixes
+      (reduce-hostname
+       (substring name 0 (string-match (car suffixes) name))
+       (cdr suffixes))
+    name))
+
+(defconst machine-nickname
+  (reduce-hostname (system-name) (list "\\.kestrel\\.edu" "\\.CMU\\.EDU" "\\.CS" "\\.MACH" "\\.SOAR" "\\.CIMDS" "\\.RI" "\\.local")))
+
+;;(trace-function 'byte-compile)
+;;(trace-function 'byte-compile-file)
+;;(debug-on-entry 'warn)
+;;(debug-on-entry 'warning)
+;;(debug-on-entry 'display-warning)
+;; (defun dont-delay-compile-warnings (fun type &rest args)
+;;   (if (eq type 'bytecomp)
+;;       (let ((after-init-time t))
+;;         (apply fun type args))
+;;     (apply fun type args)))
+;; (advice-add 'display-warning :around #'dont-delay-compile-warnings)
+
+
+;;   LOGNAME and USER are expected in many Emacs packages
+;;   Check these environment variables.
+(if (and (null (getenv "USER"))
+         ;; Windows includes variable USERNAME, which is copied to
+         ;; LOGNAME and USER respectively.
+         (getenv "USERNAME"))
+    (setenv "USER" (getenv "USERNAME")))
+
+(if (and (getenv "LOGNAME")
+         ;;  Bash shell defines only LOGNAME
+         (null (getenv "USER")))
+    (setenv "USER" (getenv "LOGNAME")))
+
+(if (and (getenv "USER")
+         (null (getenv "LOGNAME")))
+    (setenv "LOGNAME" (getenv "USER")))
+
+
+
+
+(display-init-load-time-checkpoint "Starting to setup Emacs GUI Preferences")
+
+(tool-bar-mode -1)
+(blink-cursor-mode 0)
+(transient-mark-mode t)
+(show-paren-mode t)
+(line-number-mode 1)
+(global-linum-mode 1)
+(linum-mode 1)
+
+
+
+;; Non-nil means draw block cursor as wide as the glyph under it.
+;; For example, if a block cursor is over a tab, it will be drawn as
+;; wide as that tab on the display.
+(setq x-stretch-cursor t)
+
+
+(setq-default indicate-empty-lines t)
+(when (not indicate-empty-lines)
+  (toggle-indicate-empty-lines))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enable which function mode and set the header line to display both the
+;; path and the function we're in
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(which-function-mode t)
+
+
+;; Use native line numbers
+;; (when (version<= "26.0.50" emacs-version )
+;; ;; native line numbers
+;;   (setq display-line-numbers t
+;;         display-line-numbers-current-absolute t
+;;         display-line-numbers-width 5
+;;         display-line-numbers-widen t)
+;;   (set-face-attribute 'line-number nil
+;;                       :inherit 'default)
+;;   (set-face-attribute 'line-number-current-line nil
+;;                       :weight 'ultra-bold :inherit 'hl-line)
+;;   ;;(global-display-line-numbers-mode)
+;;   )
+
+;; highlight current line
+(global-hl-line-mode 1)
+;; whenever an external process changes a file underneath emacs, and there
+;; was no unsaved changes in the corresponding buffer, just revert its
+;; content to reflect what's on-disk.
+;; Turn on font-lock in all modes that support it
+(global-auto-revert-mode 1)
+(global-font-lock-mode t)
+
+
+
+(setq stack-trace-on-error t)
+(setq debug-on-error t)
+;; (setq debug-on-signal t)
+;;(setq debug-on-message "quote")
+(setq max-lisp-eval-depth 1000)
+(setq inhibit-startup-message t)
+;;; Make sure there is a newline at the end of each file!
+(setq require-final-newline t)
+;;; features you probably don't want to use
+(put 'narrow-to-page 'disabled t)
+(put 'narrow-to-region 'disabled t)
+(put 'eval-expression 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+;;; flash instead of beeping
+(setq visual-bell t)
+;;No bells and no visible “bell” either!
+(setq visible-bell nil) ;; The default
+(setq ring-bell-function 'ignore)
+(setq truncate-lines t)
+;; Maximum colors
+(setq font-lock-maximum-decoration t)
+;; Silence warnings generated by a function's being redefine by =defadvice=.
+(setq ad-redefinition-action 'accept)
+
+;; dim the ignored part of the file name
+(file-name-shadow-mode 1)
+;;Line wrap
+(global-visual-line-mode)
+(setq line-move-visual t) ;; move via visual lines
+
+
+;; ignore case when reading a file name completion
+(setq read-file-name-completion-ignore-case t)
+;; ignore case when reading a buffer name
+(setq read-buffer-completion-ignore-case t)
+;; do not consider case significant in completion (GNU Emacs default)
+(setq completion-ignore-case t)
+
+;; visually indicate buffer boundaries and scrolling
+(setq indicate-buffer-boundaries t)
+
+;; highlight trailing whitespaces in all modes
+(setq-default show-trailing-whitespace nil)
+(defun my-buf-show-trailing-whitespace ()
+  (interactive)
+  (setq show-trailing-whitespace t))
+(add-hook 'prog-mode-hook #'my-buf-show-trailing-whitespace)
+
+;; Delete trailing whitespace when saving (compliance with PEP8)
+;;(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;;no extra whitespace after lines
+;; http://emacsredux.com/blog/2013/05/16/whitespace-cleanup/
+;;'whitespace-cleanup is better than delete-trailing-whitespace
+;;(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook 'whitespace-cleanup)
+(add-hook 'after-save-hook
+          'executable-make-buffer-file-executable-if-script-p)
+
+
+(setq suggest-key-bindings 10)
+(setq tab-always-indent 'complete)  ;; use 't when company is disabled
+
+
+;; ;; Clipboard
+;; Use the clipboard, pretty please, so that copy/paste "works"
+;; Merge system's and Emacs' clipboard
+(setq select-enable-clipboard t)
+
+
+;; Save whatever’s in the current (system) clipboard before
+;; replacing it with the Emacs’ text.
+;; https://github.com/dakrone/eos/blob/master/eos.org
+(setq save-interprogram-paste-before-kill t)
+
+;; Answer y or n instead of yes or no at minibar prompts.
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(display-init-load-time-checkpoint "Done with setup Emacs GUI Preferences")
+
+(display-init-load-time-checkpoint "Starting to setup frame parameters")
+
+;; use C-u C-x = to describe face at point.
+(setq default-frame-font
+      (cond (running-ms-windows
+             "DejaVu Sans Mono 11")
+            (running-macos
+             "Source Code Pro-16:medium"
+             ;;"DejaVu Sans Mono 18")
+             ;;        "Geneva 13")
+             )
+            ((not running-macos)
+             "DejaVu Sans Mono 14")))
+
+(set-frame-font default-frame-font)
+
+(set-face-attribute 'region nil :background "magenta1" :foreground "#ffffff")
+
+
+(display-init-load-time-checkpoint "Done setting default font")
+
+;;; Nice size for the default window
+(defun get-default-height ()
+  (min 60 (/ (- (display-pixel-height) 200) (frame-char-height))))
+
+
+
+(defun get-default-x-frame-position ()
+  (- (/ (display-pixel-width) 2) 400))
+
+(defun get-default-y-frame-position ()
+  (- (/ (display-pixel-height) 2) (/ (get-default-height) 2)))
+
+
+;; workarea -- Position and size of the work area in pixels in the
+;;             form of (X Y WIDTH HEIGHT)
+;;
+;; Use (display-monitor-attributes-list) to get monitor info
+;;
+;; (- (elt (window-pixel-edges) 3)
+;;   (elt (window-inside-pixel-edges) 3))
+;;
+;; 2/3 of the workarea height
+(defun my-get-default-frame-height ()
+  (let* ((workarea (frame-monitor-workarea))
+         (height (nth 3 workarea)))
+    (floor  (- height 200) (frame-char-height))))
+
+
+(defun my-get-default-x-frame-position ()
+  (let* ((workarea (frame-monitor-workarea))
+         (width (nth 2 workarea))
+         (display-x (nth 0 workarea)))
+    (+ (floor width 6) display-x)))
+
+(defun my-get-default-y-frame-position ()
+  (let* ((workarea (frame-monitor-workarea))
+         (width (nth 3 workarea))
+         (display-y (nth 1 workarea)))
+    (+ 100 display-y)))
+
+
+(setq default-frame-alist
+      '((cursor-color . "white")
+        (mouse-color . "white")
+        (foreground-color . "white")
+        (cursor-type . box)
+        (tool-bar-lines . 0)
+        ;;(top . 50)
+        ;;(left . 50)
+        ;;(width . 180)
+        ))
+
+(setq initial-frame-alist
+      '((cursor-color . "white")
+        (mouse-color . "white")
+        (foreground-color . "white")
+        (cursor-type . box)
+        (tool-bar-lines . 0)
+        ;;(top . 50)
+        ;;(left . 50)
+        ;;(width . 180)
+        ))
+
+
+;; Set Frame width/height
+(defun arrange-frame (w h x y)
+  "Set the width, height, and x/y position of the current frame"
+  (let ((frame (selected-frame)))
+    (delete-other-windows)
+    (set-frame-position frame x y)
+    (set-frame-size frame w h)))
+
+
+
+(display-init-load-time-checkpoint "Configuring emacs frame")
+
+(let* ((frame-font (cons 'font default-frame-font))
+       (default-height (my-get-default-frame-height))
+       (frame-height (cons 'height default-height))
+       (frame-width (cons 'width 180))
+       (frame-top (cons 'top (my-get-default-y-frame-position)))
+       (frame-left (cons 'left (my-get-default-x-frame-position)))
+       (bg-color  (if (eq (user-uid) 0) "gray38" "#09223F"))
+       (frame-background-color (if (eq (user-uid) 0)
+                                   '(background-color . "gray38")
+                                 '(background-color . "#09223F")
+                                 )))
+  (add-to-list 'default-frame-alist frame-font)
+  (add-to-list 'initial-frame-alist frame-font)
+
+  (add-to-list 'default-frame-alist frame-height)
+  (add-to-list 'initial-frame-alist frame-height)
+
+  (add-to-list 'default-frame-alist frame-background-color)
+  (add-to-list 'initial-frame-alist frame-background-color)
+  (set-face-attribute 'default nil :background bg-color :foreground "white")
+
+
+  (add-to-list 'default-frame-alist frame-width)
+  (add-to-list 'initial-frame-alist frame-width)
+
+  (add-to-list 'default-frame-alist frame-top)
+  (add-to-list 'initial-frame-alist frame-top)
+
+  (add-to-list 'default-frame-alist frame-left)
+  (add-to-list 'initial-frame-alist frame-left)
+
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  (add-to-list 'default-frame-alist '(ns-appearance . dark))
+
+
+  ;;(message  "Frame alist %s" initial-frame-alist)
+  (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
+  )
+
+(defun my-example-make-frame ()
+  "Doc-string."
+  (interactive)
+  (make-frame '((name . "HELLO-WORLD")
+                (font . "-*-Courier-normal-normal-normal-*-18-*-*-*-m-0-iso10646-1")
+                (top . 100)
+                (left . 100)
+                (left-fringe . 8)
+                (right-fringe . 8)
+                (vertical-scroll-bars . right)
+                (cursor-color . "yellow")
+                (cursor-type . (bar . 1))
+                (background-color . "black")
+                (foreground-color . "white")
+                (tool-bar-lines . 0)
+                (menu-bar-lines . 0)
+                (width . (text-pixels . 400))
+                (height . (text-pixels . 400)))))
+
+(display-init-load-time-checkpoint "Finished configuring emacs frame")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; ELPA Packages
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(display-init-load-time-checkpoint "Setting up ELPA")
+(require 'package)
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ;; ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ;; ("melpa" . "https://stable.melpa.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+                         ("melpas" . "https://melpa.org/packages/")
+                         ;; ( "org" . "http://orgmode.org/elpa/")
+                         ))
+
+
+
+;; use
+;; brew install libressl
+(require 'gnutls)
+(add-to-list 'gnutls-trustfiles "/usr/local/etc/openssl/cert.pem")
+
+;; (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+;;     (not (gnutls-available-p))))
+;;        (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
+;;   (add-to-list 'package-archives (cons "melpa" url) t))
+
+(display-init-load-time-checkpoint "Loading package")
+
+(setq package-enable-at-startup nil)
+(setq package-check-signature nil)
+(setq package--init-file-ensured nil)
+(setq package-user-dir (concat marcel-lisp-dir "elpa"))
+(add-to-list 'load-path (concat marcel-lisp-dir "elpa"))
+
+;;(when (not package-archive-contents)
+;;(package-refresh-contents))
+(when (version< emacs-version "28.0"))
+(display-init-load-time-checkpoint "Calling package-initialize")
+                                        ;(setq package-quickstart t)
+(package-initialize)
+(display-init-load-time-checkpoint "Done with package-initialize")
+;;  (package-activate-all)
+;;(display-init-load-time-checkpoint "Done with package-activate")
+
+;; Use this to recompile all packages
+;; (byte-recompile-directory (expand-file-name "~/Dropbox/.emacs.d/elpa") 0)
+
+
+(when (boundp 'native-comp-eln-load-path)
+  (setq package-native-compile t)
+  (setq comp-deferred-compilation t)
+  ;; native-compile all Elisp files under a directory
+  ;;(native-compile-async (expand-file-name "~/Dropbox/.emacs.d/elpa") 'recursively t)
+  )
+
+(unless (package-installed-p 'use-package)
+  (display-init-load-time-checkpoint "Installing use-package")
+  (package-refresh-contents)
+  (package-install 'use-package)
+  (display-init-load-time-checkpoint "Done installing use-package")
+  )
+
+
+(require 'use-package)
+(setq use-package-always-ensure t
+      use-package-verbose nil
+      use-package-compute-statistics nil)
+(display-init-load-time-checkpoint "Done loading use-package")
+
+(use-package package-utils)
+
+(use-package quelpa
+  :ensure t
+  :init
+  (setq quelpa-self-upgrade-p nil)
+  (setq quelpa-upgrade-p nil)
+  (setq quelpa-checkout-melpa-p nil)
+  (setq quelpa-update-melpa-p nil))
+(use-package quelpa-use-package
+  :ensure t
+  :config
+  (quelpa-use-package-activate-advice))
+
+(display-init-load-time-checkpoint "Done loading quelpa")
+
+(defun my-init-benchmark ()
+  (display-init-load-time-checkpoint "Loading benchmark-init")
+  (use-package benchmark-init
+    :config
+    ;; To disable collection of benchmark data after init is done.
+    (add-hook 'after-init-hook 'benchmark-init/deactivate))
+  )
+;; Use this to profile the initialization
+;;(my-init-benchmark)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; SPACEMACS LOAD
+
+;;(setenv "HOME" "/Users/marcelbecker/src/emacs-spacemacs/")
+;;(setq spacemacs-start-directory "~/.spacemacs.d/")
+;;(setq user-emacs-directory "~/.spacemacs.d/")
+;;(debug-on-variable-change 'package-user-dir)
+;;(trace-function 'load-file)
+;;(trace-function 'load)
+;;(trace-function 'configuration-layer//install-from-elpa)
+;;(trace-function 'configuration-layer/get-elpa-package-install-directory)
+;;(load-file (concat spacemacs-start-directory "core/core-versions.el"))
+;;(load-file (concat spacemacs-start-directory "core/core-load-paths.el"))
+;;(load-file (concat spacemacs-start-directory "core/core-dumper.el"))
+;;(load-file (concat spacemacs-start-directory "core/core-keybindings.el"))
+;;(load-file (concat spacemacs-start-directory "init.el"))
+
+(use-package discover
+  :config
+  (global-discover-mode 1))
+
+(use-package diminish
+  :diminish "")
+
+
+(use-package f)
+(display-init-load-time-checkpoint "Done Loading f")
+(use-package cl-lib)
+(display-init-load-time-checkpoint "Done Loading cl-lib")
+(use-package s)
+(display-init-load-time-checkpoint "Done Loading s")
+(use-package seq)
+(display-init-load-time-checkpoint "Done Loading seq")
+(use-package shell-command)
+(display-init-load-time-checkpoint "Done Loading shell-command")
+
+
+;; https://github.com/domtronn/all-the-icons.el#installation
+;;(all-the-icons-insert-icons-for 'alltheicon 1)   ;; Prints all the icons for `alltheicon' font set
+;;(all-the-icons-insert-icons-for 'octicon 1)   ;; Prints all the icons for the `octicon' family
+;;(all-the-icons-insert-icons-for 'fileicon 1)
+;; (all-the-icons-insert-icons-for 'wiicon 1)
+;; and makes the icons height 10
+;;(all-the-icons-insert-icons-for 'faicon 1 0.5) ;; Prints all the icons for the `faicon' family
+;; and also waits 0.5s between printing each one
+
+
+(use-package all-the-icons)
+(use-package all-the-icons-ibuffer
+  :ensure t
+  :init (all-the-icons-ibuffer-mode 1)
+  :hook (dired-mode . all-the-icons-dired-mode)
+  :config
+  ;; The default icon size in ibuffer.
+  (setq all-the-icons-ibuffer-icon-size 1.0)
+
+  ;; The default vertical adjustment of the icon in ibuffer.
+  (setq all-the-icons-ibuffer-icon-v-adjust 0.0)
+
+  ;; Use human readable file size in ibuffer.
+  (setq  all-the-icons-ibuffer-human-readable-size t)
+
+  ;; A list of ways to display buffer lines with `all-the-icons'.
+  ;; See `ibuffer-formats' for details.
+  ;;all-the-icons-ibuffer-formats
+  )
+(display-init-load-time-checkpoint "Done Loading all-the-icons")
+
+
+(use-package neotree
+  :defer t
+  :config
+  (global-set-key [f8] 'neotree-toggle)
+
+  (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (ffip-project-root))
+          (file-name (buffer-file-name)))
+      (if project-dir
+          (progn
+            (neotree-dir project-dir)
+            (neotree-find file-name))
+        (message "Could not find git project root."))))
+
+  (global-set-key (kbd "C-c C-p") 'neotree-project-dir)
+  ;; every time when the neotree window is  opened, it will try to find current
+  ;; file and jump to node.
+  (setq-default neo-smart-open t)
+  ;; change root automatically when running `projectile-switch-project`
+  (setq projectile-switch-project-action 'neotree-projectile-action)
+  (setq neo-theme (if window-system 'icons 'nerd)) ; 'classic, 'nerd, 'ascii, 'arrow
+  (setq neo-vc-integration '(face char))
+  (setq neo-show-hidden-files t)
+  (setq neo-toggle-window-keep-p t)
+  (setq neo-force-change-root t)
+  (setq neo-window-fixed-size nil)
+  (setq neo-window-width 50)
+
+  (add-hook 'neotree-mode-hook (lambda () (setq-local mode-line-format nil)))
+
+  (defun neotree-resize-window (&rest _args)
+    "Resize neotree window.
+https://github.com/jaypei/emacs-neotree/pull/110"
+    (interactive)
+    (neo-buffer--with-resizable-window
+     (let ((fit-window-to-buffer-horizontally t))
+       (fit-window-to-buffer))))
+
+  (add-hook 'neo-change-root-hook #'neotree-resize-window)
+  (add-hook 'neo-enter-hook #'neotree-resize-window)
+  )
+
+(display-init-load-time-checkpoint "Done Loading neotree")
+
+
+
+;; open my Emacs init file
+(defun my-open-dot-emacs ()
+  "Opening `~/.emacs.d/init.el'"
+  (interactive)
+  (find-file (concat marcel-lisp-dir "init.el")))
+(global-set-key (kbd "<S-f3>") 'my-open-dot-emacs)
 
 
 (defun my-load-doom-themes ()
