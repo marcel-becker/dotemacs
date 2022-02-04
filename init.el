@@ -1,5 +1,5 @@
 ;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2022-01-21 Fri 17:49 becker on ubuntu"
+;;; Time-stamp: "2022-01-21 Fri 18:41 becker on ubuntu"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
@@ -1294,8 +1294,8 @@ file to write to."
 
 (when (boundp 'window-divider-mode)
   (setq window-divider-default-places t
-        window-divider-default-bottom-width 2
-        window-divider-default-right-width 5)
+        window-divider-default-bottom-width 5
+        window-divider-default-right-width 8)
   (custom-set-faces
    '(window-divider ((t (:foreground "orange"))))
    '(window-divider-first-pixel ((t (:foreground "orange"))))

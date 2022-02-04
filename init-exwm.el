@@ -70,6 +70,20 @@
     ("mpv" (exwm-floating-toggle-floating)
      (exwm-layout-toggle-mode-line))))
 
+
+(use-package windower)
+
+(use-package desktop-environment
+  :after exwm
+  :config (desktop-environment-mode)
+  :custom
+  (desktop-environment-brightness-small-increment "2%+")
+  (desktop-environment-brightness-small-decrement "2%-")
+  (desktop-environment-brightness-normal-increment "5%+")
+  (desktop-environment-brightness-normal-decrement "5%-"))
+
+
+
 (use-package exwm
   :init
   ;; Set the default number of workspaces
@@ -215,8 +229,8 @@
   (add-hook 'exwm-input--input-mode-change-hook
             'force-mode-line-update)
   ;; Allow resizing of non-floating windows, with mouse.
-  (setq window-divider-default-bottom-width 2
-        window-divider-default-right-width 2)
+  (setq window-divider-default-bottom-width 8
+        window-divider-default-right-width 8)
   (window-divider-mode)
   ;; Allow switching to EXWM buffers not belonging to current workspace.
   ;; This behaviour takes some getting used to, I guess thats why its not default
@@ -224,16 +238,6 @@
   ;;:config
 
 
-(use-package windower)
-
-(use-package desktop-environment
-  :after exwm
-  :config (desktop-environment-mode)
-  :custom
-  (desktop-environment-brightness-small-increment "2%+")
-  (desktop-environment-brightness-small-decrement "2%-")
-  (desktop-environment-brightness-normal-increment "5%+")
-  (desktop-environment-brightness-normal-decrement "5%-"))
 
 ;; Make sure the server is started (better to do this in your main Emacs config!)
 (server-start)
@@ -283,7 +287,7 @@
                                     helm-source-recentf)))
 
 (load-file "~/.emacs.d/init.el")
-(load-file "exwm-telephone-line-mode-line.el")
+(load-file "~/Dropbox/.emacs.d/exwm-telephone-line-mode-line.el")
 
 ;; (use-package telephone-line
 ;;  :ensure t)
