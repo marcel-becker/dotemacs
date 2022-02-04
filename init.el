@@ -1,8 +1,11 @@
 ;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2022-01-21 Fri 18:41 becker on ubuntu"
+;;; Time-stamp: "2022-02-03 Thu 16:42 becker on ubuntu"
 ;;;
 ;; use this to profile Emacs initialization.
-;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l ~/Dropbox/.emacs.d/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")" -f profile-dotemacs
+;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l \
+;; ~/Dropbox/.emacs.d/profile-dotemacs.el
+;; --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")"
+;;-f profile-dotemacs
 
 ;; Use this to create a new prefix
 ;; (fset     'my-cmds-prefix (make-sparse-keymap))
@@ -128,7 +131,8 @@
          (delta-start  (float-time (time-subtract current emacs-start-time)))
          (delta-load (float-time (time-subtract current last-checkpoint-time))))
     (setq last-checkpoint-time current)
-    (list delta-start delta-load)))
+    (list delta-start delta-load)
+    ))
 
 ;; Use to track load time through file
 (defun display-init-load-time-checkpoint (checkpoint)
@@ -146,8 +150,6 @@
   (eq system-type 'darwin))
 (defvar running-linux
   (eq system-type 'gnu/linux))
-(defvar running-exwm
-  (frame-parameter (selected-frame) 'exwm-active))
 
 
 ;; key bindings
@@ -185,6 +187,7 @@
             (t
              (expand-file-name "~/.emacs.d/"))))
     "Address of Marcel's lisp libraries."))
+
 
 
 
@@ -477,7 +480,6 @@
 
 (display-init-load-time-checkpoint "Configuring emacs frame")
 
-
 (let* ((frame-font (cons 'font default-frame-font))
        (default-height (my-get-default-frame-height))
        (frame-height (cons 'height default-height))
@@ -492,33 +494,30 @@
   (add-to-list 'default-frame-alist frame-font)
   (add-to-list 'initial-frame-alist frame-font)
 
+  (add-to-list 'default-frame-alist frame-height)
+  (add-to-list 'initial-frame-alist frame-height)
+
   (add-to-list 'default-frame-alist frame-background-color)
   (add-to-list 'initial-frame-alist frame-background-color)
   (set-face-attribute 'default nil :background bg-color :foreground "white")
 
+
+  (add-to-list 'default-frame-alist frame-width)
+  (add-to-list 'initial-frame-alist frame-width)
+
+  (add-to-list 'default-frame-alist frame-top)
+  (add-to-list 'initial-frame-alist frame-top)
+
+  (add-to-list 'default-frame-alist frame-left)
+  (add-to-list 'initial-frame-alist frame-left)
 
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
 
   ;;(message  "Frame alist %s" initial-frame-alist)
-
-  (unless running-exwm
-    (add-to-list 'default-frame-alist frame-height)
-    (add-to-list 'initial-frame-alist frame-height)
-
-    (add-to-list 'default-frame-alist frame-width)
-    (add-to-list 'initial-frame-alist frame-width)
-
-    (add-to-list 'default-frame-alist frame-top)
-    (add-to-list 'initial-frame-alist frame-top)
-
-    (add-to-list 'default-frame-alist frame-left)
-    (add-to-list 'initial-frame-alist frame-left)
-
-    (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
-    ))
-
+  (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
+  )
 
 (defun my-example-make-frame ()
   "Doc-string."
@@ -551,9 +550,14 @@
 (display-init-load-time-checkpoint "Setting up ELPA")
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ;; ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ;; ("melpa" . "https://stable.melpa.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpas" . "https://melpa.org/packages/")
+                         ;; ( "org" . "http://orgmode.org/elpa/")
                          ))
+
+
 
 ;; use
 ;; brew install libressl
@@ -734,7 +738,7 @@
   (setq neo-window-fixed-size nil)
   (setq neo-window-width 50)
 
-  (add-hook 'neotree-mode-hook #'(lambda () (setq-local mode-line-format nil)))
+  (add-hook 'neotree-mode-hook (lambda () (setq-local mode-line-format nil)))
 
   (defun neotree-resize-window (&rest _args)
     "Resize neotree window.
@@ -1886,6 +1890,7 @@ file to write to."
 
 
 (setq linum-format " %d ")
+;;(setq linum-format "\u2502 %6d \u2502\u2502")
 ;; ;; ;; To make emacs use spaces instead of tabs (Added by Art Lee on 2/19/2008)
 (setq-default indent-tabs-mode nil)
 ;; ;; (setq mail-default-reply-to "becker@kestrel.edu")
