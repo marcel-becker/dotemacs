@@ -20,6 +20,15 @@
 (use-package dired-open)
 (use-package dired-quick-sort)
 (use-package dired-rainbow)
+
+(use-package ranger
+  :config
+  (setq ranger-show-hidden t)
+  (setq ranger-preview-file t)
+  (setq ranger-dont-show-binary t)
+  (setq ranger-cleanup-on-disable t)
+  )
+
 (use-package dired-ranger)
 (use-package dired-toggle)
 (use-package dired-toggle-sudo)

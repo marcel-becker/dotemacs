@@ -22,7 +22,9 @@
   (setq lsp-log-io t)
   (setq lsp-print-performance t)
   :hook ((python-mode . lsp)
-         (java-mode . lsp))
+         (java-mode . lsp)
+         (lsp-mode . lsp-enable-which-key-integration)
+         )
   :config
 
   ;;  (lsp-define-stdio-client lsp-python "python"
@@ -41,7 +43,7 @@
                "jupyter")
   )
 
-(use-package company-lsp
+(use-package company
   :ensure t
   :after  company
   :config
@@ -142,7 +144,18 @@
   :ensure t
   :requires (lsp-ui-flycheck lsp-ui-sideline)
   :config
+  (setq lsp-java-configuration-runtimes '[(:name "Java-11"
+                                                 :path "/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/"
+                                                 :default t)
+
+                                          ;;(:name "JavaSE-11"
+                                          ;;	:path "/home/kyoncho/jdk-11.0.1.jdk/"
+                                          ;;	:default t)
+                                          ])
+  (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz")
+  (setq lsp-java-workspace-dir  "~/src/scharp-kubernets/scharp-planner/")
   (defun my-java-lsp-setup ()
+    (interactive)
     (message "Setting up java lsp")
     (setq tab-width 2
           c-basic-offset 2
@@ -155,7 +168,7 @@
     ;;(debug-on-variable-change lsp-java-format-settings-url)
     (setq lsp-java-format-settings-url "file://Users/marcelbecker/Dropbox/.emacs.d/EclipseFormat.xml")
     (setq lsp-java-format-settings-profile "Marcel-100-Width")
-    (setq lsp-java--workspace-folders (list "~/src/rspace-eclipse/scharp"))
+
     (setq lsp-java-vmargs
           (list "-noverify"
                 "-Xmx6G"
@@ -166,16 +179,16 @@
                 "-XX:AdaptiveSizePolicyWeight=90"
                 "-Dsun.zip.disableMemoryMapping=true"
                 "-Xms100m"))
-    (setq lsp-file-watch-ignored
-          '(".idea" ".ensime_cache" ".eunit" "node_modules"
-            ".git" ".hg" ".fslckout" "_FOSSIL_"
-            ".bzr" "_darcs" ".tox" ".svn" ".stack-work"
-            "build"))
-    (setq lsp-java-import-order '["" "java" "javax" "#"])
+    ;; (setq lsp-file-watch-ignored
+    ;;       '(".idea" ".ensime_cache" ".eunit" "node_modules"
+    ;;         ".git" ".hg" ".fslckout" "_FOSSIL_"
+    ;;         ".bzr" "_darcs" ".tox" ".svn" ".stack-work"
+    ;;         "build"))
+    ;;(setq lsp-java-import-order '["" "java" "javax" "#"])
     ;; Don't organize imports on save
-    (setq lsp-java-save-action-organize-imports nil)
+    (setq lsp-java-save-actions-organize-imports nil)
     )
-  ;; (add-hook 'java-mode-hook  'lsp-java-enable)
+  ;; (remove-hook 'java-mode-hook  'lsp-java-enable)
   (add-hook 'java-mode-hook  'lsp)
   (add-hook 'java-mode-hook  'flycheck-mode)
   (add-hook 'java-mode-hook  'company-mode)
@@ -287,13 +300,13 @@
 
 (defun my-use-pyright-as-python-server ()
   (interactive)
-(use-package lsp-pyright
-  :ensure t
-  :config
-  (setq lsp-pyright-python-executable-cmd "/usr/local/bin/python3")
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp)))))  ; or lsp-deferred
+  (use-package lsp-pyright
+    :ensure t
+    :config
+    (setq lsp-pyright-python-executable-cmd "/usr/local/bin/python3")
+    :hook (python-mode . (lambda ()
+                           (require 'lsp-pyright)
+                           (lsp)))))  ; or lsp-deferred
 
 
 (defun my-use-jedi-as-python-server ()
@@ -303,7 +316,8 @@
     :config
     (with-eval-after-load "lsp-mode"
       (add-to-list 'lsp-disabled-clients 'pyls)
-      (add-to-list 'lsp-enabled-clients 'jedi))))
+      ;;(add-to-list 'lsp-enabled-clients 'jedi)
+      )))
 
 
 (my-use-jedi-as-python-server)

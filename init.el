@@ -1,5 +1,5 @@
 ;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2022-01-23 Sun 12:52 marcelbecker on BeckeriMacKestrel.local"") 'my-open-dot-emacs)
+;;; Time-stamp: "2022-02-02 Wed 18:27 marcelbecker on BeckeriMacKestrel.local"") 'my-open-dot-emacs)
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l \
@@ -1021,6 +1021,11 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (display-init-load-time-checkpoint "Done loading gitgutter"))
 
 
+(defun my-load-lilypond ()
+  (interactive)
+  (my-load-init-file "lilypond-init.el"))
+
+
 ;; (defun my-load-recentf()
 ;;   (interactive)
 ;;   (display-init-load-time-checkpoint "Loading recentf")
@@ -1741,6 +1746,8 @@ file to write to."
         (setq-local mode-line-format nil)
         (setq-local header-line-format nil)
         (setq-local word-wrap nil)
+        (setq-local which-key-max-description-length 55)
+        (setq-local which-key-add-column-padding 5)
         (setq-local show-trailing-whitespace nil)
         (run-hooks 'which-key-init-buffer-hook))))
 
@@ -3511,6 +3518,12 @@ Version 2017-01-27"
 (use-package golden-ratio
   :config
   (setq golden-ratio-auto-scale t)
+  (setq golden-ratio-exclude-modes
+        '("ediff-mode"
+          "eshell-mode"
+          "dired-mode"
+          "pdf-mode"
+          ))
   (golden-ratio-mode 1))
 (display-init-load-time-checkpoint "Done loading golden-ration")
 (use-package google-translate :defer t)
@@ -3767,34 +3780,34 @@ Version 2017-01-27"
 ;;  (symon-mode))
 
 
-(use-package helpful
-  :ensure t
-  :config
-  ;; Note that the built-in `describe-function' includes both functions
-  ;; and macros. `helpful-function' is functions only, so we provide
-  ;; `helpful-callable' as a drop-in replacement.
-  (global-set-key (kbd "C-h f") #'helpful-callable)
+;; (use-package helpful
+;;   :ensure t
+;;   :config
+;;   ;; Note that the built-in `describe-function' includes both functions
+;;   ;; and macros. `helpful-function' is functions only, so we provide
+;;   ;; `helpful-callable' as a drop-in replacement.
+;;   (global-set-key (kbd "C-h f") #'helpful-callable)
 
-  (global-set-key (kbd "C-h v") #'helpful-variable)
-  (global-set-key (kbd "C-h k") #'helpful-key)
+;;   (global-set-key (kbd "C-h v") #'helpful-variable)
+;;   (global-set-key (kbd "C-h k") #'helpful-key)
 
-  ;; Lookup the current symbol at point. C-c C-d is a common keybinding
-  ;; for this in lisp modes.
-  (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+;;   ;; Lookup the current symbol at point. C-c C-d is a common keybinding
+;;   ;; for this in lisp modes.
+;;   (global-set-key (kbd "C-c C-d") #'helpful-at-point)
 
-  ;; Look up *F*unctions (excludes macros).
-  ;;
-  ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
-  ;; already links to the manual, if a function is referenced there.
-  (global-set-key (kbd "C-h F") #'helpful-function)
+;;   ;; Look up *F*unctions (excludes macros).
+;;   ;;
+;;   ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+;;   ;; already links to the manual, if a function is referenced there.
+;;   (global-set-key (kbd "C-h F") #'helpful-function)
 
-  ;; Look up *C*ommands.
-  ;;
-  ;; By default, C-h C is bound to describe `describe-coding-system'. I
-  ;; don't find this very useful, but it's frequently useful to only
-  ;; look at interactive functions.
-  (global-set-key (kbd "C-h C") #'helpful-command)
-  )
+;;   ;; Look up *C*ommands.
+;;   ;;
+;;   ;; By default, C-h C is bound to describe `describe-coding-system'. I
+;;   ;; don't find this very useful, but it's frequently useful to only
+;;   ;; look at interactive functions.
+;;   (global-set-key (kbd "C-h C") #'helpful-command)
+;;   )
 
 
 
