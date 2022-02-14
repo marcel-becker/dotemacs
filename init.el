@@ -1,5 +1,5 @@
 ;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2022-02-02 Wed 18:27 marcelbecker on BeckeriMacKestrel.local"") 'my-open-dot-emacs)
+;;; Time-stamp: "2022-02-14 Mon 09:40 marcelbecker on BeckeriMacKestrel.local"") 'my-open-dot-emacs)
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l \
@@ -1303,8 +1303,8 @@ file to write to."
 
 (when (boundp 'window-divider-mode)
   (setq window-divider-default-places t
-        window-divider-default-bottom-width 2
-        window-divider-default-right-width 5)
+        window-divider-default-bottom-width 5
+        window-divider-default-right-width 8)
   (custom-set-faces
    '(window-divider ((t (:foreground "orange"))))
    '(window-divider-first-pixel ((t (:foreground "orange"))))
