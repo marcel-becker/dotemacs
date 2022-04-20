@@ -330,8 +330,10 @@ Open the string URI using Org.
             (search-forward "warning" nil t))))
     (run-with-timer 1 nil
                     (lambda (buf)
-                      (bury-buffer buf)
-                      (switch-to-prev-buffer (get-buffer-window buf) 'kill))
+                      (delete-window (get-buffer-window (get-buffer "*compilation*")))
+                      ;;(bury-buffer buf)
+                      ;;(switch-to-prev-buffer (get-buffer-window buf) 'kill)
+                      )
                     buffer)
     ;;(delete-window (get-buffer-window (get-buffer "*compilation*")))
     ))

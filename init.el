@@ -1,5 +1,5 @@
 ;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2022-02-14 Mon 09:40 marcelbecker on BeckeriMacKestrel.local"") 'my-open-dot-emacs)
+;;; Time-stamp: "2022-04-19 Tue 17:14 marcelbecker on BeckeriMacKestrel.local"") 'my-open-dot-emacs)
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l \
@@ -305,7 +305,7 @@
 
 (setq stack-trace-on-error t)
 (setq debug-on-error t)
-;; (setq debug-on-signal t)
+;;(setq debug-on-signal t)
 ;;(setq debug-on-message "quote")
 (setq max-lisp-eval-depth 1000)
 (setq inhibit-startup-message t)
@@ -707,6 +707,13 @@
   )
 (display-init-load-time-checkpoint "Done Loading all-the-icons")
 
+;; (use-package major-mode-icons
+;;   :config
+;;   (setq major-mode-icons-icons-style 'all-the-icons))
+
+(use-package mode-icons
+  :config
+  (mode-icons-mode 1))
 
 (use-package neotree
   :defer t
@@ -824,7 +831,10 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (display-init-load-time-checkpoint "Done Loading restart-emacs")
 
 (use-package wgrep
-  :defer t)
+  :defer t
+  :init (require 'wgrep)
+  )
+
 (display-init-load-time-checkpoint "Done Loading wgrep")
 
 (use-package wgrep-ag
@@ -1075,7 +1085,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (setq undo-tree-visualizer-timestamps t)
   (setq undo-tree-visualizer-diff t)
   (let ((undo-dir (concat user-cache-directory "undo")))
-    (setq undo-tree-history-directory-alist '((".*" . ,undo-dir))))
+    (setq undo-tree-history-directory-alist `((".*" . ,undo-dir))))
   (global-undo-tree-mode))
 (display-init-load-time-checkpoint "Done loading undo tree")
 
@@ -1351,33 +1361,33 @@ file to write to."
           company-dabbrev-downcase nil)
 
     (custom-set-faces
-     '(company-preview  ((t (:foreground "dark gray" :underline t))))
-     '(company-preview-common ((t (:inherit company-preview))))
-     '(company-preview-search ((t (:inherit company-preview :background "yellow"))))
-     '(company-scrollbar-bg ((t (:inherit company-tooltip :background "gray20" :foreground "black" :weight bold))))
-     '(company-scrollbar-fg ((t ( :background "gray40" :foreground "black" :weight bold))))
-     '(company-template-field ((t (:background "magenta" :foreground "black"))))
-     '(company-tooltip   ((t (:background "light gray" :foreground "black"))))
+     '(company-preview         ((t (:foreground "dark gray" :underline t))))
+     '(company-preview-common  ((t (:inherit company-preview))))
+     '(company-preview-search  ((t (:inherit company-preview :background "yellow"))))
+     '(company-scrollbar-bg    ((t (:inherit company-tooltip :background "gray20" :foreground "black" :weight bold))))
+     '(company-scrollbar-fg    ((t ( :background "gray40" :foreground "black" :weight bold))))
+     '(company-template-field  ((t (:background "magenta" :foreground "black"))))
+     '(company-tooltip         ((t (:background "light gray" :foreground "black"))))
      '(company-tooltip-annotation ((t (:background "brightwhite" :foreground "black"))))
      '(company-tooltip-annotation-selection ((t (:background "color-253"))))
      '(company-tooltip-common  ((((type x)) (:inherit company-tooltip :weight bold))
                                 (t (:inherit company-tooltip :weight bold :underline nil))))
      '(company-tooltip-common-selection  ((((type x)) (:inherit company-tooltip-selection :weight bold))
                                           (t (:inherit company-tooltip-selection :weight bold :underline nil))))
-     '(company-tooltip-mouse ((t (:foreground "black"))))
-     '(company-tooltip-search ((t (:background "brightwhite" :foreground "black"))))
+     '(company-tooltip-mouse   ((t (:foreground "black"))))
+     '(company-tooltip-search  ((t (:background "brightwhite" :foreground "black"))))
      '(company-tooltip-selection   ((t (:background "steel blue" :foreground "white" :weight bold))))
-     '(popup-menu-face     ((t :foreground "red"   :background "#49483E")))
+     '(popup-menu-face         ((t :foreground "red"   :background "#49483E")))
      '(popup-menu-selection-face     ((t :background "#349B8D"   :foreground "#BBF7EF"))))
 
 
     (let ((bg (face-attribute 'default :background)))
       (custom-set-faces
-       `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 2)))))
-       `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
-       `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
+       `(company-tooltip           ((t (:inherit default :background ,(color-lighten-name bg 2)))))
+       `(company-scrollbar-bg      ((t (:background ,(color-lighten-name bg 10)))))
+       `(company-scrollbar-fg      ((t (:background ,(color-lighten-name bg 5)))))
        `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
-       `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+       `(company-tooltip-common    ((t (:inherit font-lock-constant-face))))))
 
     (add-hook 'after-init-hook 'global-company-mode)
     (add-to-list 'company-backends 'company-dabbrev t)
@@ -1577,8 +1587,10 @@ file to write to."
   (advice-add #'company-box-icons--elisp :override #'my-company-box-icons--elisp)
 
   (with-eval-after-load 'all-the-icons
+    (declare-function all-the-icons-fileicon 'all-the-icons)
     (declare-function all-the-icons-faicon 'all-the-icons)
     (declare-function all-the-icons-material 'all-the-icons)
+    (declare-function all-the-icons-octicon 'all-the-icons)
     (setq company-box-icons-all-the-icons
           `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.9 :v-adjust -0.2))
             (Text . ,(all-the-icons-faicon "text-width" :height 0.85 :v-adjust -0.05))
@@ -1606,7 +1618,8 @@ file to write to."
             (Event . ,(all-the-icons-faicon "bolt" :height 0.85 :v-adjust -0.05 :face 'all-the-icons-orange))
             (Operator . ,(all-the-icons-material "control_point" :height 0.9 :v-adjust -0.2))
             (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.85 :v-adjust -0.05))
-            (Template . ,(all-the-icons-material "format_align_center" :height 0.9 :v-adjust -0.2)))))
+            (Template . ,(all-the-icons-material "format_align_center" :height 0.9 :v-adjust -0.2))))
+      (setq company-box-icons-alist 'company-box-icons-all-the-icons))
   )
 
 
@@ -2027,7 +2040,7 @@ file to write to."
 (global-set-key [f6] 'line-to-top-of-window)
 (global-set-key [M-f11] 'fullscreen)
 (global-set-key [S-f11] 'fullscreen)
-(global-set-key [s-f12] 'revert-buffer)
+(global-set-key [M-f12] 'revert-buffer)
 (global-set-key [S-f12] 'revert-buffer)
 (global-set-key (kbd "<M-f6>") 'recenter)
 (global-set-key (kbd "<M-up>") 'scroll-one-line-up)
@@ -2278,7 +2291,7 @@ file to write to."
 (setq auto-mode-alist
       (append '(("\\.mss$" . scribe-mode))
               '(("\\.bib$" . bibtex-mode))
-              '(("\\.tex$" . latex-mode))
+              ;;              '(("\\.tex$" . latex-mode))
               '(("\\.obj$" . lisp-mode))
               '(("\\.st$"  . smalltalk-mode))
               '(("\\.Z$"   . uncompress-while-visiting))
@@ -2803,6 +2816,17 @@ frames with exactly two windows."
     (indent-region (point-min) (point-max) nil)))
 (global-set-key (kbd "<f5>") 'my-indent-buffer)
 
+
+(defun my-kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer
+        (delq (current-buffer)
+              (cl-remove-if-not
+               '(lambda (x)
+                  (or (buffer-file-name x)
+                      (eq 'dired-mode (buffer-local-value 'major-mode x))))
+               (buffer-list)))))
 
 (global-set-key (kbd "C-c |") 'my-rotate-toggle-window-split)
 (global-set-key (kbd "C-c \\") 'my-rotate-window-horizontal-to-vertical)
@@ -3524,8 +3548,9 @@ Version 2017-01-27"
           "dired-mode"
           "pdf-mode"
           ))
-  (golden-ratio-mode 1))
-(display-init-load-time-checkpoint "Done loading golden-ration")
+  ;;(golden-ratio-mode 1)
+  )
+(display-init-load-time-checkpoint "Done loading golden-ratio")
 (use-package google-translate :defer t)
 (use-package json)
 (use-package json-mode)
@@ -3696,6 +3721,7 @@ Version 2017-01-27"
 ;;(my-load-gitgutter)
 (my-load-pdf-tools)
 (my-load-latex)
+
 ;;(my-load-modeline)
 (my-load-quelpa-packages)
 
@@ -3869,3 +3895,26 @@ Version 2017-01-27"
 ;; REMOVE THIS
 ;; ONLY TO TEST NATIVE COMPILED
 ;; (setq debug-on-signal t)
+
+(use-package frog-jump-buffer
+  :ensure t
+  :config
+  (setq frog-jump-buffer-use-all-the-icons-ivy t)
+  (set-face-attribute
+   'frog-menu-posframe-background-face
+   nil :background "dark cyan")
+  (set-face-attribute
+   'frog-menu-border
+   nil :background "black")
+  )
+
+
+(use-package graphviz-dot-mode
+  :ensure t
+  :config
+  (setq graphviz-dot-indent-width 4))
+
+
+;; REMOVE THIS
+;; ONLY TO TEST NATIVE COMPILED
+;;(setq debug-on-signal t)

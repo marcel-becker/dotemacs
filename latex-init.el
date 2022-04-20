@@ -1,3 +1,7 @@
+(use-package tex
+  :ensure auctex)
+
+
 (use-package tex-site
   :ensure auctex
   :defer t
@@ -7,7 +11,7 @@
   ;; Spelling
   (setq ispell-tex-skip-alists
         '((
-           ;;("%\\[" . "%\\]") ; AMStex block comment...
+           ;; ("%\\[" . "%\\]") ; AMStex block comment...
            ;; All the standard LaTeX keywords from L. Lamport's guide:
            ;; \cite, \hspace, \hspace*, \hyphenation, \include, \includeonly
            ;; \input, \label, \nocite, \rule (in ispell - rest included here)
@@ -35,12 +39,9 @@
            ("lstlisting\\*?"."\\\\end[ \t\n]*{[ \t\n]*lstlisting\\*?[ \t\n]*}"))))
   )
 
-;;(use-package tex)
-;;(use-package latex)
-;;(use-package auctex)
-;;(use-package auto-complete-auctex :defer t)
 (use-package latex-preview-pane)
 (use-package auctex-latexmk
+  :after auctex
   :config
   (auctex-latexmk-setup)
   (setq auctex-latexmk-inherit-TeX-PDF-mode t)
@@ -67,6 +68,7 @@
 (setq TeX-source-correlate-start-server t)
 (setq TeX-source-correlate-method 'synctex)
 (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+(add-hook 'latex-mode-hook 'TeX-source-correlate-mode)
 
 
 (setq TeX-PDF-mode t)
@@ -83,12 +85,24 @@
             (rainbow-delimiters-mode)
             (turn-on-reftex)
             (setq reftex-plug-into-AUCTeX t)
-            (set-fill-column 120)
+            (set-fill-column 70)
             (reftex-isearch-minor-mode)
             (push
              '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
                :help "Run latexmk on file")
              TeX-command-list)))
+;; (add-hook 'latex-mode-hook
+;;           (lambda ()
+;;             (rainbow-delimiters-mode)
+;;             (turn-on-reftex)
+;;             (setq reftex-plug-into-AUCTeX t)
+;;             (set-fill-column 70)
+;;             (reftex-isearch-minor-mode)
+;;             (push
+;;              '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+;;                :help "Run latexmk on file")
+;;              TeX-command-list)))
+
 (add-hook 'TeX-mode-hook
           (lambda ()
              (setq TeX-command-default "latexmk")
@@ -158,7 +172,7 @@
 ;; Customary Customization, p. 1 and 16 in the manual, and http://www.emacswiki.org/emacs/AUCTeX#toc2
 (setq TeX-parse-self t); Enable parse on load.
 (setq TeX-auto-save t); Enable parse on save.
-(setq-default TeX-master t)
+(setq-default TeX-master nil)
 
 (setq TeX-PDF-mode t); PDF mode (rather than DVI-mode)
 

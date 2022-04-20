@@ -9,6 +9,7 @@
 
 (use-package dired-avfs)
 (use-package dired-dups)
+;; This causes message Invalid face reference: quote
 (use-package dired-efap)
 ;;(use-package dired-explorer)
 (use-package dired-fdclone)
@@ -163,27 +164,6 @@
   :init
   (add-hook 'dired-mode-hook 'dired-collapse-mode))
 
-
-;; (use-package dired-filter
-;;   :ensure nil
-;;   :init
-;;   (add-hook 'dired-mode-hook 'dired-filter-group-mode)
-;;   :config
-;;   (setq dired-filter-group-saved-groups
-;;         '(("default"
-;;            ("Directories" (directory))
-;;            ("PDF"
-;;             (extension . "pdf"))
-;;            ("LaTeX"
-;;             (extension "tex" "bib"))
-;;            ("Org"
-;;             (extension . "org"))
-;;            ("Archives"
-;;             (extension "zip" "rar" "gz" "bz2" "tar"))
-;;            ("Multimedia"
-;;             (extension "ogg" "flv" "mpg" "avi" "mp4" "mp3"))
-;;            )))
-;;   )
 
 
 (use-package dired-filter
