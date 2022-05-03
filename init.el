@@ -1,5 +1,5 @@
 ;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2022-04-19 Tue 17:14 marcelbecker on BeckeriMacKestrel.local"") 'my-open-dot-emacs)
+;;; Time-stamp: "2022-05-03 Tue 13:36 marcelbecker on BeckeriMacKestrel.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l \
@@ -1034,6 +1034,11 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 (defun my-load-lilypond ()
   (interactive)
   (my-load-init-file "lilypond-init.el"))
+
+(defun my-load-search-engine ()
+  (interactive)
+  (my-load-init-file "engine-init.el"))
+(my-load-search-engine)
 
 
 ;; (defun my-load-recentf()
