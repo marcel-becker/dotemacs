@@ -1,8 +1,21 @@
+(defface org-block-begin-line
+  '((t (:underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
+  "Face used for the line delimiting the begin of source blocks.")
+
+(defface org-block-background
+  '((t (:background "#FFFFEA")))
+  "Face used for the source block background.")
+
+(defface org-block-end-line
+  '((t (:overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
+  "Face used for the line delimiting the end of source blocks.")
+
+
 (use-package org
-  :defer t
+;;  :defer t
+  :straight (:type built-in)
   :config
-  (require 'org-install)
-  (require 'ob-tangle)
+  ;;  (require 'org-install)
   ;; make org mode allow eval of some langs
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -15,25 +28,33 @@
      (ditaa . t)
      (latex . t)
      (dot . t)
-     (ledger . t)
+     ;;     (ledger . t)
      (gnuplot . t)
      (screen . nil)
      (shell . t)
      (sql . nil)
      (sqlite . t)
+     (restclient .t )
+     (http . t)
      (ruby . t)))
   ;; stop emacs asking for confirmation
-  (setq org-confirm-babel-evaluate nil)
   (setq org-src-fontify-natively t)
+  (setq org-confirm-babel-evaluate nil)
   (setq org-support-shift-select t)
   (setq org-startup-indented t)
   (setq org-src-tab-acts-natively t)
   (define-key org-mode-map (kbd "C-x c o h") #'helm-org-headlines)
   )
 
+
+(require 'ob-tangle)
+(use-package ob-http)
+(use-package ob-restclient :after org :ensure t)
+
 (use-package toc-org
   :after org
-  :config   (add-hook 'org-mode-hook 'toc-org-mode))
+  :config
+  (add-hook 'org-mode-hook 'toc-org-mode))
 
 (display-init-load-time-checkpoint "Loading org bullets")
 (use-package org-bullets
@@ -72,6 +93,11 @@
 
 ;; run doi-utils-get-bibtex-entry-pdf to get the PDF.
 
+
+
+(use-package ob-restclient)
+
+
 (use-package org-ref
   :after org
   :config
@@ -87,7 +113,6 @@
   (require 'ox-odt)
   (require 'ox-html)
   (require 'ox-publish)
-
   (setq
    org-ref-notes-directory "~/Dropbox/EmacsOrg/ref"
    org-ref-bibliography-notes "~/Dropbox/EmacsOrg/ref/notes.org"
@@ -124,8 +149,6 @@
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
                )
-
-
   )
 
 ;; optional but very useful libraries in org-ref
@@ -213,10 +236,10 @@
         ("r" "respond" entry (file "~/Dropbox/EmacsOrg/refile.org")
          "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n"
          :empty-lines 1)
-         ("n" "note" entry (file "~/Dropbox/EmacsOrg/refile.org")
-          "* %? :NOTE:\n%U\n%a\n" :clock-in nil :clock-resume nil)
-         ("j" "Journal" entry (file+datetree "~/Dropbox/EmacsOrg/refile.org")
-          "* %?\n%U\n" :clock-in nil :clock-resume nil :empty-lines 1)
+        ("n" "note" entry (file "~/Dropbox/EmacsOrg/refile.org")
+         "* %? :NOTE:\n%U\n%a\n" :clock-in nil :clock-resume nil)
+        ("j" "Journal" entry (file+datetree "~/Dropbox/EmacsOrg/refile.org")
+         "* %?\n%U\n" :clock-in nil :clock-resume nil :empty-lines 1)
         ;; ("w" "org-protocol" entry (file "~/Dropbox/EmacsOrg/refile.org")
         ;;  "* TODO Review %c\n%U\n" :immediate-finish nil)
         ;; ("m" "Meeting" entry (file "~/Dropbox/EmacsOrg/refile.org")
@@ -377,7 +400,7 @@
                  nil nil row 1))
       (while (and (> columns 1) (string-match "&" row start))
         (setq row (replace-match "" nil nil row))
-        (decf columns))))
+        (cl-decf columns))))
   row)
 
 (defun org-export-multicolumn-filter-html (row backend info)

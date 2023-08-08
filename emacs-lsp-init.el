@@ -97,7 +97,6 @@
 
 
 (use-package dap-mode
-  :ensure t
   :after lsp-mode
   :custom
   ;;(dap-python-debugger 'debugpy)

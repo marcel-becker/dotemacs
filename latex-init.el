@@ -1,43 +1,63 @@
-(use-package tex
-  :ensure auctex)
+;;(use-package tex
+;;  :after auctex)
+
+;; (require 'tex)
+;; ;; ;; (require 'tex-site)
+;; ;; ;; (require 'latex)
 
 
-(use-package tex-site
-  :ensure auctex
-  :defer t
-  :after (tex latex)
-  :config
+(use-package auctex
+  :straight t
+  :mode ("\\.tex\\'" . latex-mode)
+  :commands (latex-mode LaTeX-mode plain-tex-mode)
+  :init
+  (progn
+    (add-hook 'LaTeX-mode-hook #'LaTeX-preview-setup)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+    (add-hook 'LaTeX-mode-hook #'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
+    (setq TeX-auto-save t
+          TeX-parse-self t
+          TeX-save-query nil
+          TeX-PDF-mode t)))
 
-  ;; Spelling
-  (setq ispell-tex-skip-alists
-        '((
-           ;; ("%\\[" . "%\\]") ; AMStex block comment...
-           ;; All the standard LaTeX keywords from L. Lamport's guide:
-           ;; \cite, \hspace, \hspace*, \hyphenation, \include, \includeonly
-           ;; \input, \label, \nocite, \rule (in ispell - rest included here)
-           ("\\\\addcontentsline"              ispell-tex-arg-end 2)
-           ("\\\\add\\(tocontents\\|vspace\\)" ispell-tex-arg-end)
-           ("\\\\\\([aA]lph\\|arabic\\)"   ispell-tex-arg-end)
-           ("\\\\author"                         ispell-tex-arg-end)
-           ;; New regexps here --- kjh
-           ("\\\\\\(text\\|paren\\)cite" ispell-tex-arg-end)
-           ("\\\\cite\\(t\\|p\\|year\\|yearpar\\)" ispell-tex-arg-end)
-           ("\\\\bibliographystyle"                ispell-tex-arg-end)
-           ("\\\\makebox"                  ispell-tex-arg-end 0)
-           ("\\\\e?psfig"                  ispell-tex-arg-end)
-           ("\\\\document\\(class\\|style\\)" .
-            "\\\\begin[ \t\n]*{[ \t\n]*document[ \t\n]*}"))
-          (
-           ;; delimited with \begin.  In ispell: displaymath, eqnarray,
-           ;; eqnarray*, equation, minipage, picture, tabular,
-           ;; tabular* (ispell)
-           ("\\(figure\\|table\\)\\*?"     ispell-tex-arg-end 0)
-           ("\\(equation\\|eqnarray\\)\\*?"     ispell-tex-arg-end 0)
-           ("list"                                 ispell-tex-arg-end 2)
-           ("program" . "\\\\end[ \t\n]*{[ \t\n]*program[ \t\n]*}")
-           ("verbatim\\*?"."\\\\end[ \t\n]*{[ \t\n]*verbatim\\*?[ \t\n]*}")
-           ("lstlisting\\*?"."\\\\end[ \t\n]*{[ \t\n]*lstlisting\\*?[ \t\n]*}"))))
-  )
+
+;; (use-package tex-site
+;;   :ensure auctex
+;;   :defer t
+;;   :after (tex latex)
+;;   :config
+
+;; Spelling
+(setq ispell-tex-skip-alists
+      '((
+         ;; ("%\\[" . "%\\]") ; AMStex block comment...
+         ;; All the standard LaTeX keywords from L. Lamport's guide:
+         ;; \cite, \hspace, \hspace*, \hyphenation, \include, \includeonly
+         ;; \input, \label, \nocite, \rule (in ispell - rest included here)
+         ("\\\\addcontentsline"              ispell-tex-arg-end 2)
+         ("\\\\add\\(tocontents\\|vspace\\)" ispell-tex-arg-end)
+         ("\\\\\\([aA]lph\\|arabic\\)"   ispell-tex-arg-end)
+         ("\\\\author"                         ispell-tex-arg-end)
+         ;; New regexps here --- kjh
+         ("\\\\\\(text\\|paren\\)cite" ispell-tex-arg-end)
+         ("\\\\cite\\(t\\|p\\|year\\|yearpar\\)" ispell-tex-arg-end)
+         ("\\\\bibliographystyle"                ispell-tex-arg-end)
+         ("\\\\makebox"                  ispell-tex-arg-end 0)
+         ("\\\\e?psfig"                  ispell-tex-arg-end)
+         ("\\\\document\\(class\\|style\\)" .
+          "\\\\begin[ \t\n]*{[ \t\n]*document[ \t\n]*}"))
+        (
+         ;; delimited with \begin.  In ispell: displaymath, eqnarray,
+         ;; eqnarray*, equation, minipage, picture, tabular,
+         ;; tabular* (ispell)
+         ("\\(figure\\|table\\)\\*?"     ispell-tex-arg-end 0)
+         ("\\(equation\\|eqnarray\\)\\*?"     ispell-tex-arg-end 0)
+         ("list"                                 ispell-tex-arg-end 2)
+         ("program" . "\\\\end[ \t\n]*{[ \t\n]*program[ \t\n]*}")
+         ("verbatim\\*?"."\\\\end[ \t\n]*{[ \t\n]*verbatim\\*?[ \t\n]*}")
+         ("lstlisting\\*?"."\\\\end[ \t\n]*{[ \t\n]*lstlisting\\*?[ \t\n]*}"))))
+;;  )
 
 (use-package latex-preview-pane)
 (use-package auctex-latexmk
@@ -105,41 +125,43 @@
 
 (add-hook 'TeX-mode-hook
           (lambda ()
-             (setq TeX-command-default "latexmk")
-             (setq TeX-view-program-selection
-                   (cond (running-ms-windows
-                          '((output-pdf "SumatraPDF")
-                            (output-dvi "Yap")))
-                         (running-linux
-                          '((output-pdf "Okular")
-                            (output-dvi "Okular")))
-                         (running-macos
-                          ;;'((output-pdf "Skim"))
-                          '((output-pdf "PDF Tools"))
-                          )))))
+            (setq TeX-command-default "latexmk")
+            (setq TeX-view-program-selection
+                  (cond (running-ms-windows
+                         '((output-pdf "SumatraPDF")
+                           (output-dvi "Yap")))
+                        (running-linux
+                         '((output-pdf "Okular")
+                           (output-dvi "Okular")))
+                        (running-macos
+                         ;;'((output-pdf "Skim"))
+                         '((output-pdf "PDF Tools"))
+                         )))))
 
 (use-package company-bibtex
+  :after company
   :hook
   (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex))))
   (LaTeX-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex))))
   (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-bibtex)))))
 
 (use-package company-reftex
+  :after company
   :hook
   (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations))))
   (LaTeX-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations))))
   (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-reftex-labels company-reftex-citations)))))
 
 (use-package company-math
+  :after company
   :hook
   (latex-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode))))
   (LaTeX-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode))))
-  (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode)))))
-
-
-(setq-local company-backends
-            (append '(company-math-symbols-latex company-latex-commands)
-                    company-backends))
+  (org-mode . (lambda () (add-to-list (make-local-variable 'company-backends) '(company-math-symbols-unicode))))
+  :config
+  (setq-local company-backends
+              (append '(company-math-symbols-latex company-latex-commands)
+                      company-backends)))
 
 ;; Update PDF buffers after successful LaTeX runs
 (add-hook 'TeX-after-compilation-finished-functions
@@ -147,10 +169,10 @@
 
 
 (setq TeX-view-program-list
-      '(;;("SumatraPDF" "\"C:/Program Files (x86)/SumatraPDF/SumatraPDF.exe\" -reuse-instance %o")
-        ;;("Okular" "okular --unique %o#src:%n%b")
+      '(; ("SumatraPDF" "\"C:/Program Files (x86)/SumatraPDF/SumatraPDF.exe\" -reuse-instance %o")
+                                        ; ("Okular" "okular --unique %o#src:%n%b")
         ("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
-;;("Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline %q")))
+;;  "Skim" "/Applications/TeX/Skim.app/Contents/SharedSupport/displayline %q")))
 
 
 ;; Use pdf-tools to open PDF files

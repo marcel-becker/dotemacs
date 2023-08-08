@@ -1,10 +1,15 @@
+;;; init-helm.el --- My startup file for helm. -*- lexical-binding: t -*-
+
 (setq tramp-verbose 6)
 
 ;;(use-package helm :ensure nil :diminish "H")
-(use-package helm :diminish " "
-  :ensure t
+(use-package helm
+  :diminish " "
+  ;;  :ensure t
+  :straight t
+  ;;  :defer nil
   :config
-  (require 'helm-config)
+  ;;(require 'helm-config)
   ;;   )
 
 
@@ -14,6 +19,7 @@
   ;;   :demand t
   ;;   :diminish "H"
   ;;   :config
+  ;;(require 'helm-autoloads)
   (set-face-attribute 'helm-selection nil :background "purple" :foreground "white" :weight 'bold)
   (set-face-attribute 'helm-header nil :background "SkyBlue4" :foreground "wheat1" :weight 'ultra-bold :height 1.2)
   (set-face-attribute 'helm-source-header nil :height 1.2)
@@ -33,10 +39,10 @@
   ;; use mdfind for mac
   (setq helm-locate-command
         (case system-type
-          ('gnu/linux "locate -i -r %s")
-          ('berkeley-unix "locate -i %s")
-          ('windows-nt "es %s")
-          ('darwin "mdfind -name %s %s")
+          (gnu/linux "locate -i -r %s")
+          (berkeley-unix "locate -i %s")
+          (windows-nt "es %s")
+          (darwin "mdfind -name %s %s")
           (t "locate %s")))
 
   (global-set-key (kbd "C-x b")   'helm-mini)
@@ -74,7 +80,13 @@
   (define-key 'help-command (kbd "C-f") 'helm-apropos)
   (define-key 'help-command (kbd "r") 'helm-info-emacs)
   (define-key 'help-command (kbd "C-l") 'helm-locate-library)
+  (add-to-list 'helm-sources-using-default-as-input 'helm-source-info-bash)
+  (helm-define-key-with-subkeys global-map (kbd "C-c n") ?n 'helm-cycle-resume)
+  (helm-mode 1)
   )
+
+
+
 (display-init-load-time-checkpoint "Loading helm")
 (display-init-load-time-checkpoint "Done Loading helm config")
 
@@ -94,8 +106,9 @@
   :after helm)
 (display-init-load-time-checkpoint "Done Loading helm descbinds")
 
-(use-package helm-gitignore
-  :after helm)
+(use-package git-modes)
+;;(use-package helm-gitignore
+;;  :after helm)
 
 (display-init-load-time-checkpoint "Done Loading helm gitignore")
 
@@ -129,9 +142,11 @@
   :after helm)
 (display-init-load-time-checkpoint "Done Loading helm themes")
 
-;;(use-package    helm-ls-git :ensure nil)
-(use-package helm-git-files
-  :after helm)
+(use-package    helm-ls-git
+  ;;:ensure nil
+  )
+;; (use-package helm-git-files
+;;   :after helm)
 (display-init-load-time-checkpoint "Done Loading helm git-files")
 
 (use-package helm-helm-commands
@@ -207,16 +222,18 @@
       helm-buffer-max-length nil
       )
 
-(add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+                                        ;(add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
 
 
 
 
 
-
-(define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
-(define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
-(define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+(use-package helm-grepint
+  :after helm
+  :config
+  (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
+  (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
+  (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward))
 (add-hook 'eshell-mode-hook
           #'(lambda ()
               (define-key eshell-mode-map (kbd "TAB")     #'helm-esh-pcomplete)
@@ -242,6 +259,7 @@
 (display-init-load-time-checkpoint "Loading helm projectile mode")
 (use-package projectile
   :diminish "PRJ"
+  :after (helm projectile)
   :config
   (projectile-mode +1)
   (projectile-global-mode)
@@ -266,8 +284,11 @@
 (display-init-load-time-checkpoint "Done loading helm projectile mode")
 
 
-(define-key company-mode-map (kbd "C-:") 'helm-company)
-(define-key company-active-map (kbd "C-:") 'helm-company)
+(use-package helm-company
+  :after (helm company)
+  :config
+  (define-key company-mode-map (kbd "C-:") 'helm-company)
+  (define-key company-active-map (kbd "C-:") 'helm-company))
 
 ;; An Emacs-based interface to the package manager of your operating system.
 (use-package helm-system-packages
@@ -305,10 +326,9 @@
 
 
 (use-package helm-icons
+  :after (helm treemacs)
   :config
   (setq helm-icons-provider 'treemacs)
   (helm-icons-enable))
 
-(display-init-load-time-checkpoint "Setting helm mode on")
-(helm-mode 1)
 (display-init-load-time-checkpoint "Done setting helm mode on")

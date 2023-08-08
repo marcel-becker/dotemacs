@@ -1,5 +1,5 @@
-;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2022-05-03 Tue 13:36 marcelbecker on BeckeriMacKestrel.local"
+;;; -*- lexical-binding: t -*-
+;;; Time-stamp: "2023-08-08 Tue 16:31 marcelbecker on Mac-Studio.local"
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l \
@@ -25,6 +25,12 @@
 ;; (global-set-key (kbd "C-c i d") 'mp-insert-date)
 ;; (global-set-key (kbd "C-c i t") 'mp-insert-time)
 
+
+
+(setq stack-trace-on-error t)
+(setq debug-on-error t)
+;;(setq debug-on-signal t)
+;;(setq debug-on-message "quote")
 
 ;;(load-file "profile-dotemacs.el")
 ;;(profile-dotemacs)
@@ -255,9 +261,21 @@
 (blink-cursor-mode 0)
 (transient-mark-mode t)
 (show-paren-mode t)
-(line-number-mode 1)
-(global-linum-mode 1)
-(linum-mode 1)
+;;(line-number-mode 1)
+;;(global-linum-mode 1)
+;;(linum-mode 1)
+
+
+(global-hl-line-mode 1)
+(display-line-numbers-mode 1)
+(global-display-line-numbers-mode 1)
+;; Face for the highlighted current line.
+(set-face-attribute 'hl-line nil :inherit nil :background "#666666"  :foreground nil :weight 'ultra-bold)
+;; Face for the line number
+(set-face-attribute 'line-number-current-line nil :background "#666666"  :foreground nil :weight 'ultra-bold)
+;; highlight current line
+
+
 
 
 
@@ -292,21 +310,12 @@
 ;;   ;;(global-display-line-numbers-mode)
 ;;   )
 
-;; highlight current line
-(global-hl-line-mode 1)
 ;; whenever an external process changes a file underneath emacs, and there
 ;; was no unsaved changes in the corresponding buffer, just revert its
 ;; content to reflect what's on-disk.
 ;; Turn on font-lock in all modes that support it
 (global-auto-revert-mode 1)
 (global-font-lock-mode t)
-
-
-
-(setq stack-trace-on-error t)
-(setq debug-on-error t)
-;;(setq debug-on-signal t)
-;;(setq debug-on-message "quote")
 (setq max-lisp-eval-depth 1000)
 (setq inhibit-startup-message t)
 ;;; Make sure there is a newline at the end of each file!
@@ -370,13 +379,15 @@
 ;; ;; Clipboard
 ;; Use the clipboard, pretty please, so that copy/paste "works"
 ;; Merge system's and Emacs' clipboard
-(setq select-enable-clipboard t)
-
-
-;; Save whatever’s in the current (system) clipboard before
+(setq
+ select-enable-primary t
+ select-enable-clipboard t);; Save whatever’s in the current (system) clipboard before
 ;; replacing it with the Emacs’ text.
 ;; https://github.com/dakrone/eos/blob/master/eos.org
 (setq save-interprogram-paste-before-kill t)
+
+;; Prompts should go in the minibuffer, not in a GUI.
+(setq use-dialog-box nil)
 
 ;; Answer y or n instead of yes or no at minibar prompts.
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -385,12 +396,18 @@
 
 (display-init-load-time-checkpoint "Starting to setup frame parameters")
 
+
+
+
+
+
 ;; use C-u C-x = to describe face at point.
 (setq default-frame-font
       (cond (running-ms-windows
              "DejaVu Sans Mono 11")
             (running-macos
-             "Source Code Pro-16:medium"
+             "Source Code Pro for Powerline-16:medium"
+             ;;"Menlo for Powerline-18:regular"
              ;;"DejaVu Sans Mono 18")
              ;;        "Geneva 13")
              )
@@ -444,29 +461,21 @@
          (display-y (nth 1 workarea)))
     (+ 100 display-y)))
 
-
-(setq default-frame-alist
-      '((cursor-color . "white")
-        (mouse-color . "white")
-        (foreground-color . "white")
-        (cursor-type . box)
-        (tool-bar-lines . 0)
-        ;;(top . 50)
-        ;;(left . 50)
-        ;;(width . 180)
-        ))
-
 (setq initial-frame-alist
       '((cursor-color . "white")
         (mouse-color . "white")
         (foreground-color . "white")
         (cursor-type . box)
         (tool-bar-lines . 0)
+        ;;(left-fringe . 20)
+        ;;(right-fringe . 20)
         ;;(top . 50)
         ;;(left . 50)
         ;;(width . 180)
         ))
 
+
+;;(set-face-attribute 'fringe nil :background "yellow")
 
 ;; Set Frame width/height
 (defun arrange-frame (w h x y)
@@ -581,8 +590,35 @@
 ;;(package-refresh-contents))
 (when (version< emacs-version "28.0"))
 (display-init-load-time-checkpoint "Calling package-initialize")
-                                        ;(setq package-quickstart t)
-(package-initialize)
+(setq package-quickstart-file (concat marcel-lisp-dir "package-quickstart.el"))
+
+;;(setq package-quickstart t)
+;;(package-initialize)
+
+;; (defvar cache-file "~/.emacs.d/cache/autoloads")
+;; (defun my-package-initialize ()
+;;   (interactive)
+;;   (unless (load cache-file t t)
+;;     (setq package-activated-list nil)
+;;     (package-initialize)
+;;     (with-temp-buffer
+;;       (cl-pushnew package-user-dir load-path :test #'string=)
+;;       (dolist (desc (delq nil (mapcar #'cdr package-alist)))
+;;         (let ((load-file-name (concat (package--autoloads-file-name desc) ".el")))
+;;           (when (file-readable-p load-file-name)
+;;             (condition-case _
+;;                 (while t (insert (read (current-buffer))))
+;;               (end-of-file)))))
+;;       (prin1 `(setq load-path ',load-path
+;;                     auto-mode-alist ',auto-mode-alist
+;;                     Info-directory-list ',Info-directory-list)
+;;              (current-buffer))
+;;       (write-file (concat cache-file ".el"))
+;;       (byte-compile-file cache-file))))
+
+;; (my-package-initialize)
+
+
 (display-init-load-time-checkpoint "Done with package-initialize")
 ;;  (package-activate-all)
 ;;(display-init-load-time-checkpoint "Done with package-activate")
@@ -590,13 +626,29 @@
 ;; Use this to recompile all packages
 ;; (byte-recompile-directory (expand-file-name "~/Dropbox/.emacs.d/elpa") 0)
 
-
 (when (boundp 'native-comp-eln-load-path)
   (setq package-native-compile t)
   (setq comp-deferred-compilation t)
   ;; native-compile all Elisp files under a directory
   ;;(native-compile-async (expand-file-name "~/Dropbox/.emacs.d/elpa") 'recursively t)
   )
+
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
 
 (unless (package-installed-p 'use-package)
   (display-init-load-time-checkpoint "Installing use-package")
@@ -612,6 +664,7 @@
       use-package-compute-statistics nil)
 (display-init-load-time-checkpoint "Done loading use-package")
 
+(straight-use-package 'org)
 (use-package package-utils)
 
 (use-package quelpa
@@ -621,10 +674,14 @@
   (setq quelpa-upgrade-p nil)
   (setq quelpa-checkout-melpa-p nil)
   (setq quelpa-update-melpa-p nil))
+
 (use-package quelpa-use-package
   :ensure t
   :config
   (quelpa-use-package-activate-advice))
+
+
+
 
 (display-init-load-time-checkpoint "Done loading quelpa")
 
@@ -656,11 +713,14 @@
 ;;(load-file (concat spacemacs-start-directory "core/core-keybindings.el"))
 ;;(load-file (concat spacemacs-start-directory "init.el"))
 
+
+
 (use-package discover
   :config
   (global-discover-mode 1))
 
 (use-package diminish
+  ;;  :ensure t
   :diminish "")
 
 
@@ -688,7 +748,8 @@
 
 (use-package all-the-icons)
 (use-package all-the-icons-ibuffer
-  :ensure t
+  :after all-the-icons
+  ;;:ensure t
   :init (all-the-icons-ibuffer-mode 1)
   :hook (dired-mode . all-the-icons-dired-mode)
   :config
@@ -832,13 +893,13 @@ https://github.com/jaypei/emacs-neotree/pull/110"
 
 (use-package wgrep
   :defer t
-  :init (require 'wgrep)
+  ;;  :init (require 'wgrep)
   )
 
 (display-init-load-time-checkpoint "Done Loading wgrep")
 
 (use-package wgrep-ag
-  :defer t)
+  :after wgrep)
 (display-init-load-time-checkpoint "Done Loading wgrep-ag")
 
 
@@ -1086,7 +1147,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   :defer t
   :commands (undo-tree-undo undo-tree-visualize)
   :diminish " "
-  :init
+  :config
   (setq undo-tree-visualizer-timestamps t)
   (setq undo-tree-visualizer-diff t)
   (let ((undo-dir (concat user-cache-directory "undo")))
@@ -1094,11 +1155,12 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (global-undo-tree-mode))
 (display-init-load-time-checkpoint "Done loading undo tree")
 
-;;(defun undo-tree-save-history-from-hook () nil)
-;;(setq undo-tree-auto-save-history nil)
+(defun undo-tree-save-history-from-hook () nil)
+(setq undo-tree-auto-save-history nil)
 
 
 (use-package recentf
+  ;;:ensure t
   :init
   (progn
     (setq recentf-save-file (concat marcel-lisp-dir "recentf-" machine-nickname))
@@ -1129,7 +1191,7 @@ Load the list from the file specified by `recentf-save-file',
 merge the changes of your current session, and save it back to
 the file."
     (interactive)
-    (let ((instance-list (copy-list recentf-list)))
+    (let ((instance-list (copy-sequence recentf-list)))
       (recentf-load-list)
       (recentf-merge-with-default-list instance-list)
       (recentf-write-list-to-file)))
@@ -1236,12 +1298,11 @@ file to write to."
 
 
 (use-package anzu
-  :init
+  :config
   (progn
     (global-anzu-mode +1)
     (set-face-attribute 'anzu-mode-line nil
                         :foreground "yellow" :weight 'bold))
-  :config
   (define-key isearch-mode-map [remap isearch-query-replace]  #'anzu-isearch-query-replace)
   (define-key isearch-mode-map [remap isearch-query-replace-regexp] #'anzu-isearch-query-replace-regexp))
 (display-init-load-time-checkpoint "Done Loading anzu")
@@ -1256,14 +1317,21 @@ file to write to."
 
 
 ;;(add-hook 'global-hl-line-mode-hook 'my-set-hl-line-color-based-on-theme)
-(diminish 'visual-line-mode "VizLine")
+(use-package diminish
+  :config
+  (diminish 'visual-line-mode "VizLine"))
 
 
 (use-package hlinum
-  :init
-  (hlinum-activate)
+  ;;:ensure t
+  ;;  :init
+
   :config
-  (set-face-attribute 'hl-line nil :inherit nil :background "#666666"  :foreground nil :weight 'bold)
+  ;;(hlinum-activate)
+  (set-face-attribute 'hl-line nil :inherit nil
+                      :background "#666666"
+                      :foreground 'unspecified
+                      :weight 'bold)
   ;;(set-face-attribute 'linum-highlight-face nil :background "#666666")
   (set-face-attribute 'linum-highlight-face nil :inherit 'hl-line :weight 'ultra-bold)
 
@@ -1272,7 +1340,7 @@ file to write to."
     that is 10% darker than the default face's background."
     (interactive)
     (set-face-attribute 'hl-line nil
-                        :foreground nil
+                        :foreground 'unspecified
                         :background (color-darken-name (face-background 'default) 10)))
 
 
@@ -1281,7 +1349,7 @@ file to write to."
     that is 10% darker than the default face's background."
     (interactive)
     (set-face-attribute 'hl-line nil
-                        :foreground nil
+                        :foreground 'unspecified
                         :background (color-lighten-name (face-background 'default) 10)))
 
   (defun my-set-hl-line-color-lighten ()
@@ -1289,17 +1357,18 @@ file to write to."
     that is 10% darker than the default face's background."
     (interactive)
     (set-face-attribute 'hl-line nil
-                        :foreground nil
+                        :foreground 'unspecified
                         :background (color-lighten-name (face-background 'hl-line) 10)))
 
-  (defun my-set-hl-line-color-lighten ()
+  (defun my-set-hl-line-color-darken ()
     "Sets the hl-line face to have no foregorund and a background
     that is 10% darker than the default face's background."
     (interactive)
     (set-face-attribute 'hl-line nil
-                        :foreground nil
+                        :foreground 'unspecified
                         :background (color-darken-name (face-background 'hl-line) 10)))
-  (my-set-hl-line-color-based-on-theme))
+  ;;(my-set-hl-line-color-based-on-theme)
+  )
 (display-init-load-time-checkpoint "Done Loading hlinum")
 
 
@@ -1333,27 +1402,47 @@ file to write to."
 
 (defun my-load-company ()
   (interactive)
+
+  ;; Does not do anything.
+  (use-package company-posframe
+    ;;    :ensure t
+    :bind (:map company-posframe-active-map
+                ("M-<f1>". company-posframe-quickhelp-toggle)
+                ("M-<f2>" . company-posframe-quickhelp-scroll-up)
+                ("M-<f3>" . company-posframe-quickhelp-scroll-down))
+    :config
+    (setq company-posframe-show-indicator t)
+    (setq company-posframe-show-metadata t)
+    (setq company-posframe-quickhelp-delay 0)
+    (company-posframe-mode 1))
+
   (use-package company
+    ;;    :ensure t
     :diminish " Ⓒ" ;;"CIA"
-    :bind (("A-." . company-complete)
-           ("C-c C-y" . company-yasnippet)
-           :map company-active-map
-           ("<escape>" . company-abort)
-           ("C-p" . company-select-previous)
-           ("C-n" . company-select-next)
-           ("TAB" . company-complete-common-or-cycle)
-           ("<tab>" . company-complete-common-or-cycle)
-           ("S-TAB" . company-select-previous)
-           ("<backtab>" . company-select-previous)
-           ("C-g" . company-abort)
-           ("<left>" . company-abort)
-           ("C-/" . company-search-candidates)
-           ("C-M-/" . company-filter-candidates)
-           ("C-d" .  company-show-doc-buffer)
-           :map company-search-map
-           ("C-p" . company-select-previous)
-           ("C-n" . company-select-next))
+    :bind
+    (("A-."       . company-complete)
+     ("C-c C-y"   . company-yasnippet)
+     :map company-active-map
+     ("<escape>"  . company-abort)
+     ("<right>"   . company-abort)
+     ("<left>"    . company-abort)
+     ("C-g"       . company-abort)
+     ("C-p"       . company-select-previous)
+     ("C-n"       . company-select-next)
+     ("TAB"       . company-complete-common-or-cycle)
+     ("<tab>"     . company-complete-common-or-cycle)
+     ("S-TAB"     . company-select-previous)
+     ("<backtab>" . company-select-previous)
+     ("C-/"       . company-search-candidates)
+     ("C-M-/"     . company-filter-candidates)
+     ("C-d"       . company-show-doc-buffer)
+     ("C-c s"     . company-yasnippet)
+     :map company-search-map
+     ("C-p"       . company-select-previous)
+     ("C-n"       . company-select-next))
     :hook (after-init . global-company-mode)
+    :init
+    (setq company-format-margin-function #'company-vscode-dark-icons-margin)
     :config
     (setq company-tooltip-align-annotations t ; aligns annotation to the right
           company-tooltip-limit 12            ; bigger popup window
@@ -1364,42 +1453,70 @@ file to write to."
           company-dabbrev-ignore-case nil
           company-show-quick-access t
           company-dabbrev-downcase nil)
-
-    (custom-set-faces
-     '(company-preview         ((t (:foreground "dark gray" :underline t))))
-     '(company-preview-common  ((t (:inherit company-preview))))
-     '(company-preview-search  ((t (:inherit company-preview :background "yellow"))))
-     '(company-scrollbar-bg    ((t (:inherit company-tooltip :background "gray20" :foreground "black" :weight bold))))
-     '(company-scrollbar-fg    ((t ( :background "gray40" :foreground "black" :weight bold))))
-     '(company-template-field  ((t (:background "magenta" :foreground "black"))))
-     '(company-tooltip         ((t (:background "light gray" :foreground "black"))))
-     '(company-tooltip-annotation ((t (:background "brightwhite" :foreground "black"))))
-     '(company-tooltip-annotation-selection ((t (:background "color-253"))))
-     '(company-tooltip-common  ((((type x)) (:inherit company-tooltip :weight bold))
-                                (t (:inherit company-tooltip :weight bold :underline nil))))
-     '(company-tooltip-common-selection  ((((type x)) (:inherit company-tooltip-selection :weight bold))
-                                          (t (:inherit company-tooltip-selection :weight bold :underline nil))))
-     '(company-tooltip-mouse   ((t (:foreground "black"))))
-     '(company-tooltip-search  ((t (:background "brightwhite" :foreground "black"))))
-     '(company-tooltip-selection   ((t (:background "steel blue" :foreground "white" :weight bold))))
-     '(popup-menu-face         ((t :foreground "red"   :background "#49483E")))
-     '(popup-menu-selection-face     ((t :background "#349B8D"   :foreground "#BBF7EF"))))
-
-
-    (let ((bg (face-attribute 'default :background)))
-      (custom-set-faces
-       `(company-tooltip           ((t (:inherit default :background ,(color-lighten-name bg 2)))))
-       `(company-scrollbar-bg      ((t (:background ,(color-lighten-name bg 10)))))
-       `(company-scrollbar-fg      ((t (:background ,(color-lighten-name bg 5)))))
-       `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
-       `(company-tooltip-common    ((t (:inherit font-lock-constant-face))))))
-
-    (add-hook 'after-init-hook 'global-company-mode)
-    (add-to-list 'company-backends 'company-dabbrev t)
-    (add-to-list 'company-backends 'company-ispell t)
-    (add-to-list 'company-backends 'company-files t)
+    (setq company-selection-wrap-around t)
+    (use-package company-emoji)
     (use-package company-shell)
-    (add-to-list 'company-backends 'company-shell t)
+    (use-package company-org-block)
+    (setq company-backends '(company-capf
+                             company-yasnippet
+                             company-keywords
+                             company-files
+                             company-elisp
+                             company-ispell
+                             company-semantic
+                             company-org-block))
+    (custom-set-faces
+     '(company-preview                        ((t (:foreground "dark gray" :underline t))))
+     '(company-preview-common                 ((t (:inherit company-preview))))
+     '(company-preview-search                 ((t (:inherit company-preview :background "yellow"))))
+     '(company-tooltip                        ((t (:background "light gray" :foreground "black"))))
+     '(company-tooltip-selection              ((t (:background "steel blue" :foreground "white" :weight bold))))
+     '(company-tooltip-scrollbar-track        ((t (:inherit company-tooltip :background "gray20" :foreground "black" :weight bold))))
+     '(company-tooltip-scrollbar-thumb        ((t (:background "gray40" :foreground "black" :weight bold))))
+     '(company-template-field                 ((t (:background "magenta" :foreground "black"))))
+     '(company-tooltip-annotation             ((t (:background "white" :foreground "black"))))
+     '(company-tooltip-annotation-selection   ((t (:background "steel blue"))))
+     '(company-tooltip-common                 ((((type x)) (:inherit company-tooltip :foreground "blue" :weight bold))
+                                               (t (:inherit company-tooltip :foreground "blue"  :weight bold :underline nil))))
+     '(company-tooltip-common-selection       ((((type x)) (:inherit company-tooltip-selection :foreground "blue" :weight bold))
+                                               (t (:inherit company-tooltip-selection :foreground "blue" :weight bold :underline nil))))
+     '(company-tooltip-mouse                  ((t (:foreground "black"))))
+     '(company-tooltip-search                 ((t (:background "red" :foreground "black"))))
+     '(company-tooltip-quick-access           ((t (:foreground "black"))))
+     '(company-tooltip-quick-access-selection ((t (:foreground "white" :weight bold))))
+     '(popup-menu-face                        ((t :foreground "red"   :background "#49483E")))
+     '(popup-menu-selection-face              ((t :background "#349B8D"   :foreground "#BBF7EF")))
+     )
+
+
+
+    (setq company-backends '((company-capf company-dabbrev-code)
+                             company-yasnippet
+                             company-keywords
+                             company-files
+                             company-elisp
+                             company-ispell
+                             company-semantic
+                             company-org-block))
+
+
+    (add-to-list 'company-backends '(company-capf company-dabbrev-code) t)
+    (add-to-list 'company-backends '(company-capf company-ispell) t)
+    (add-to-list 'company-backends '(company-capf company-files) t)
+    (add-to-list 'company-backends '(company-capf company-shell) t)
+    (add-to-list 'company-backends '(company-capf company-emoji) t)
+    ;; Add yasnippet support for all company backends
+    ;; https://github.com/syl20bnr/spacemacs/pull/179
+    ;; https://emacs.stackexchange.com/questions/10431/get-company-to-show-suggestions-for-yasnippet-names?rq=1
+    (defvar company-mode/enable-yas t
+      "Enable yasnippet for all backends.")
+    (defun company-mode/backend-with-yas (backend)
+      (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
+          backend
+        (append (if (consp backend) backend (list backend))
+                '(:with company-yasnippet))))
+    (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+
     ;;  (use-package company-anaconda)
     ;;(add-to-list 'company-backends 'company-anaconda t)
     ;;(use-package company-jedi)
@@ -1413,6 +1530,10 @@ file to write to."
     ;;   (company-posframe-mode 1)
     ;;   )
 
+    ;; Better sorting and filtering
+    (use-package company-prescient
+      :init (company-prescient-mode 1))
+
     ;; Popup documentation for completion candidates
     (when (display-graphic-p)
       (use-package company-quickhelp
@@ -1421,30 +1542,27 @@ file to write to."
         :hook (global-company-mode . company-quickhelp-mode)
         :config
         (company-quickhelp-mode 1)
-        (setq company-quickhelp-use-propertized-text nil)
-        ;;(setq company-quickhelp-color-foreground "white")
-        ;;(setq company-quickhelp-color-background "black")
-        (setq company-quickhelp-delay 0.4))))
-  (defun --set-emoji-font (frame)
-    "Adjust the font settings of FRAME so Emacs can display emoji properly."
-    (if (eq system-type 'darwin)
-        ;; For NS/Cocoa
-        (set-fontset-font t 'symbol (font-spec :family "Apple Color Emoji") frame 'prepend)
-      ;; For Linux
-      (set-fontset-font t 'symbol (font-spec :family "Symbola") frame 'prepend)))
+        (setq company-quickhelp-use-propertized-text t)
+        (setq company-quickhelp-color-foreground "white")
+        (setq company-quickhelp-color-background "black")
+        (setq company-quickhelp-delay 0.4)))
+    (defun --set-emoji-font (frame)
+      "Adjust the font settings of FRAME so Emacs can display emoji properly."
+      (if (eq system-type 'darwin)
+          ;; For NS/Cocoa
+          (set-fontset-font t 'symbol (font-spec :family "Apple Color Emoji") frame 'prepend)
+        ;; For Linux
+        (set-fontset-font t 'symbol (font-spec :family "Symbola") frame 'prepend)))
 
-  ;; For when Emacs is started in GUI mode:
-  (--set-emoji-font nil)
-  ;; Hook for when a frame is created with emacsclient
-  ;; see https://www.gnu.org/software/emacs/manual/html_node/elisp/Creating-Frames.html
-  (add-hook 'after-make-frame-functions '--set-emoji-font)
-  (use-package company-emoji
-    :config
-    (add-to-list 'company-backends 'company-emoji))
-  )
+    ;; For when Emacs is started in GUI mode:
+    (--set-emoji-font nil)
+    ;; Hook for when a frame is created with emacsclient
+    ;; see https://www.gnu.org/software/emacs/manual/html_node/elisp/Creating-Frames.html
+    (add-hook 'after-make-frame-functions '--set-emoji-font)
+    ))
 
 
-(my-load-company)
+;;(my-load-company)
 (display-init-load-time-checkpoint "Done Loading company")
 
 (defun my-load-company-box ()
@@ -1462,22 +1580,24 @@ file to write to."
                company-box--apply-color
                company-box--make-line
                company-box-icons--elisp)
-
     :init
+
+    ;; original values from company-box
     (setq company-box-frame-parameters
           '((left . -1)
             (no-accept-focus . t)
             (no-focus-on-map . t)
-            (min-width  . t)
-            (min-height  . t)
-            (width  . 30)
-            (height  . 30)
-            (internal-border-width . 5)
-            (vertical-scroll-bars . nil)
+            (min-width  . 0)
+            (width  . 0)
+            (min-height  . 0)
+            (height  . 0)
+            (internal-border-width . 1)
             (horizontal-scroll-bars . nil)
+            (left-fringe . 0)
+            (right-fringe . 0)
             (menu-bar-lines . 0)
             (tool-bar-lines . 0)
-            (line-spacing . 1)
+            (line-spacing . 0)
             ;; (unsplittable . nil)
             (undecorated . t)
             (top . -1)
@@ -1486,17 +1606,45 @@ file to write to."
             (no-other-frame . t)
             (cursor-type . nil)
             (drag-internal-border . t)
-            (left-fringe . 5)
-            (right-fringe . 5)
-            (no-special-glyphs . t)))
-    (setq company-box-doc-frame-parameters
-          '((internal-border-width . 5)
-            (foreground-color . "white")
-            (background-color . "black")
-            (no-accept-focus . t)
-            (no-focus-on-map . t)
-            )
-          )
+            (left-fringe . 0)
+            (right-fringe . 0)
+            (no-special-glyphs . t))
+          "Frame parameters used to create the frame.")
+
+
+    ;; (setq company-box-frame-parameters
+    ;;       '(;;(left . -1)
+    ;;         (no-accept-focus . t)
+    ;;         (no-focus-on-map . t)
+    ;;         ;;(min-width  . t)
+    ;;         ;;(min-height  . t)
+    ;;         ;;(width  . 30)
+    ;;         ;;(height  . 30)
+    ;;         (internal-border-width . 5)
+    ;;         (vertical-scroll-bars . nil)
+    ;;         (horizontal-scroll-bars . nil)
+    ;;         (menu-bar-lines . 0)
+    ;;         (tool-bar-lines . 0)
+    ;;         (line-spacing . 1)
+    ;;         ;; (unsplittable . nil)
+    ;;         (undecorated . t)
+    ;;         ;;(top . -1)
+    ;;         (visibility . nil)
+    ;;         (mouse-wheel-frame . nil)
+    ;;         (no-other-frame . t)
+    ;;         (cursor-type . nil)
+    ;;         (drag-internal-border . t)
+    ;;         (left-fringe . 5)
+    ;;         (right-fringe . 5)
+    ;;         (no-special-glyphs . t)))
+    ;; (setq company-box-doc-frame-parameters
+    ;;       '((internal-border-width . 5)
+    ;;         (foreground-color . "white")
+    ;;         (background-color . "black")
+    ;;         (no-accept-focus . t)
+    ;;         (no-focus-on-map . t)
+    ;;         )
+    ;;       )
 
     (setq company-box-icons-alist 'company-box-icons-all-the-icons)
     :config
@@ -1624,7 +1772,7 @@ file to write to."
             (Operator . ,(all-the-icons-material "control_point" :height 0.9 :v-adjust -0.2))
             (TypeParameter . ,(all-the-icons-faicon "arrows" :height 0.85 :v-adjust -0.05))
             (Template . ,(all-the-icons-material "format_align_center" :height 0.9 :v-adjust -0.2))))
-      (setq company-box-icons-alist 'company-box-icons-all-the-icons))
+    (setq company-box-icons-alist 'company-box-icons-all-the-icons))
   )
 
 
@@ -1746,9 +1894,9 @@ file to write to."
 ;; ;; ;; C-x (or as many as space allows given your settings).
 
 (use-package which-key
-  :init
-  (which-key-mode)
+  ;;  :init
   :config
+  (which-key-mode)
   ;; copied from which-key.el to turn off header-line
   (defun which-key--init-buffer ()
     "Initialize which-key buffer"
@@ -2213,9 +2361,54 @@ file to write to."
 
 
 (global-set-key (kbd "M-A-<up>") 'duplicate-line-or-region)
+(global-set-key (kbd "M-d") 'duplicate-line-or-region)
 (global-set-key (kbd "M-A-<down>") 'duplicate-line-or-region)
 (global-set-key (kbd "A-<up>") 'move-line-up)
 (global-set-key (kbd "A-<down>") 'move-line-down)
+
+
+;;### Move selected regions up or down
+;; It is commands like these one that enable rapid reorganization of your prose when writing one sentence per row.
+;; Thank you to DivineDomain for the suggested upgrade.
+;; Source: https://www.emacswiki.org/emacs/MoveText
+(defun move-text-internal (arg)
+  (cond
+   ((and mark-active transient-mark-mode)
+    (if (> (point) (mark))
+        (exchange-point-and-mark))
+    (let ((column (current-column))
+          (text (delete-and-extract-region (point) (mark))))
+      (forward-line arg)
+      (move-to-column column t)
+      (set-mark (point))
+      (insert text)
+      (exchange-point-and-mark)
+      (setq deactivate-mark nil)))
+   (t
+    (let ((column (current-column)))
+      (beginning-of-line)
+      (when (or (> arg 0) (not (bobp)))
+        (forward-line)
+        (when (or (< arg 0) (not (eobp)))
+          (transpose-lines arg))
+        (forward-line -1))
+      (move-to-column column t)))))
+
+(defun move-line-region-down (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines down."
+  (interactive "*p")
+  (move-text-internal arg))
+
+(defun move-line-region-up (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines up."
+  (interactive "*p")
+  (move-text-internal (- arg)))
+
+(global-set-key (kbd "M-C-<down>") 'move-line-region-down)
+(global-set-key (kbd "M-C-<up>") 'move-line-region-up)
+
 
 
 (defun set-case ()
@@ -2363,19 +2556,19 @@ file to write to."
                 (if (string= (file-name-extension buffer-file-name) "sl")
                     (insert
                      "%%%-*- Mode: slang-mode ; Package: USER ; Base: 10; Syntax: slang  -*-
-                     %%%-------------------------------------------------------------------------
-                     %%%               Copyright (C) 2012 by Kestrel Technology
-                     %%%                          All Rights Reserved
-                     %%%-------------------------------------------------------------------------
-                     %%%
-                     %%%
-                     %%% $Id: init.el,v 1.12 2005/04/14 18:16:45 becker Exp $
-                     %%%
-                     %%% $Log$
-                     %%%
-                     %%%
-                     %%%
-                     "
+   %%%-------------------------------------------------------------------------
+   %%%               Copyright (C) 2012 by Kestrel Technology
+   %%%                          All Rights Reserved
+   %%%-------------------------------------------------------------------------
+   %%%
+   %%%
+   %%% $Id: init.el,v 1.12 2005/04/14 18:16:45 becker Exp $
+   %%%
+   %%% $Log$
+   %%%
+   %%%
+   %%%
+   "
                      )))))
 
 
@@ -2462,7 +2655,10 @@ file to write to."
                        ;;"c:/Program Files/Aspell6/x64/bin/aspell.exe"
                        "aspell")
                       (running-macos
-                       "/usr/local/bin/aspell")
+                       (if (file-executable-p "/usr/local/bin/aspell")
+                           "/usr/local/bin/aspell"
+                         (if (file-executable-p "/opt/homebrew/bin/aspell")
+                             "/opt/homebrew/bin/aspell")))
                       (t
                        (if (file-executable-p "/usr/bin/hunspell")
                            "/usr/bin/hunspell"
@@ -2530,7 +2726,7 @@ file to write to."
       (cond (running-ms-windows ; Windows
              "bash.exe")
             (running-macos
-             "/usr/local/bin/zsh")
+             "zsh")
             (t
              "bash")))
 
@@ -2820,6 +3016,7 @@ frames with exactly two windows."
   (save-excursion
     (indent-region (point-min) (point-max) nil)))
 (global-set-key (kbd "<f5>") 'my-indent-buffer)
+(global-set-key (kbd "M-A-l") 'my-indent-buffer)
 
 
 (defun my-kill-other-buffers ()
@@ -3328,6 +3525,7 @@ Version 2017-01-27"
 (diminish 'eldoc-mode "")
 
 ;; Use this to print all fonts
+;;(dolist (font (font-family-list)) (insert (format ";; \"%s\"\n" font)))
 (defun my-print-all-fonts ()
   (let ((str "The quick brown fox jumps over the lazy dog ´`''\"\"1lI|¦!Ø0Oo{[()]}.,:; ")
         (font-families (cl-remove-duplicates
@@ -3366,7 +3564,7 @@ Version 2017-01-27"
   (interactive)
   (display-init-load-time-checkpoint "Loading interaction log")
   (use-package interaction-log
-    :defer 10
+    ;;:defer 10
     :config
     (interaction-log-mode +1)
     (defun open-interaction-log ()
@@ -3565,7 +3763,8 @@ Version 2017-01-27"
 
 (display-init-load-time-checkpoint "Done loading json")
 
-(use-package markdown-mode :ensure t)
+(use-package markdown-mode ;;:ensure t
+  )
 (use-package markdown-toc)
 (display-init-load-time-checkpoint "Done loading markdown")
 (use-package move-text)
@@ -3718,9 +3917,10 @@ Version 2017-01-27"
 ;;(my-load-emms)
 ;;(my-load-python)
 ;; CTRL-Backspace disables auto-expansion
+(my-load-treemacs)
 (my-load-helm)
 (my-load-bookmarks)
-(my-load-treemacs)
+
 (my-load-shackle)
 ;;(my-load-org)
 ;;(my-load-gitgutter)
@@ -3799,12 +3999,11 @@ Version 2017-01-27"
   (follow-mode t))
 
 
-(use-package moom
-  :config
-
-  (setq moom-use-font-module nil)
-
-  (moom-mode 1))
+;;(use-package moom
+;;  :defer t
+;;  :config
+;;  (setq moom-use-font-module nil)
+;;  (moom-mode 1))
 
 ;;(use-package symon
 ;;  :config
@@ -3902,7 +4101,7 @@ Version 2017-01-27"
 ;; (setq debug-on-signal t)
 
 (use-package frog-jump-buffer
-  :ensure t
+  ;;:ensure t
   :config
   (setq frog-jump-buffer-use-all-the-icons-ivy t)
   (set-face-attribute
@@ -3915,11 +4114,95 @@ Version 2017-01-27"
 
 
 (use-package graphviz-dot-mode
-  :ensure t
+  ;;:ensure t
   :config
   (setq graphviz-dot-indent-width 4))
 
 
+
+(use-package editorconfig
+  ;;  :ensure t
+  :config
+  (editorconfig-mode 1))
+
+(global-set-key [remap dabbrev-expand] 'hippie-expand)
+
+
+;; (add-hook 'vterm-mode-hook
+;;           (lambda ()
+;;             (set (make-local-variable 'buffer-face-mode-face) 'Hack)
+;;                  (buffer-face-mode t)))
+
 ;; REMOVE THIS
 ;; ONLY TO TEST NATIVE COMPILED
 ;;(setq debug-on-signal t)
+(put 'upcase-region 'disabled nil)
+(put 'list-threads 'disabled nil)
+
+
+
+;;; Use this
+;;; This piece of advice allows you to see the function call sequence that resulted in each message in the Messages buffer:
+;;(defadvice message (before who-said-that activate)
+;;  "Find out who said that thing. and say so."
+;;  (let ((trace nil) (n 1) (frame nil))
+;;    (while (setq frame (backtrace-frame n))
+;;      (setq n     (1+ n)
+;;            trace (cons (cadr frame) trace)) )
+;;    (ad-set-arg 0 (concat "<<%S>>:\n" (ad-get-arg 0)))
+;;    (ad-set-args 1 (cons trace (ad-get-args 1))) ))
+
+;; To deactivate this, call
+
+;;(ad-disable-advice 'message 'before 'who-said-that)
+;;(ad-update 'message)
+
+;;(use-package centered-window-mode)
+(use-package writeroom-mode :ensure t)
+
+
+
+
+;;;;;;
+;;;
+;;; EMACS RESTCLIENT in org mode
+;;; Use this in an org file to get the results of a rest endpoing query:
+;; #+name: api-url
+;; : http://localhost:6333
+
+
+
+;; #+HEADER: :var name="test"
+;; #+HEADER: :var password="test"
+;; #+name: get-post
+;; #+begin_src restclient :var api=api-url :exports both :results value raw :jq . :wrap src json
+;;   GET  http://localhost:6333/Planner/loadScenario?scenarioId=Pacifica&planName=Plan+A&atoDay=AA
+;;   Content-Type: application/json
+;; #+end_src
+
+;; #+RESULTS: get-post
+;; #+begin_src json
+;; {
+;;   "response": {
+;;     "messageId": "5837908c-2933-4dc3-96fb-7397fa4a282c",
+;;     "responderId": "Planner",
+;;     "requestMessageId": "b409ca29-b9e4-4e5d-9fe0-870d77368fcc",
+;;     "requestorId": "ScharpPlannerClient",
+;;     "function": "loadScenario",
+;;     "errorMessage": ""
+;;   },
+;;   "scenarioId": "Pacifica",
+;;   "planName": "Plan A",
+;;   "atoDay": "AA",
+;;   "planId": "d6c9b6ca-47f3-4de7-9a07-ea4d19233732",
+;;   "planCreator": ""
+;; }
+;; #+end_src
+
+(use-package restclient
+  :config
+  (setq restclient-log-request t)
+  )
+
+(use-package ob-restclient
+  :after org)

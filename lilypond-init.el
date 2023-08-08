@@ -13,7 +13,7 @@
 ;; your `load-path'. Append the following line (modified) to your `~/.emacs':
 
 ;; (setq load-path (append (list (expand-file-name "/Users/marcelbecker/src/lilypond/lilypond-binaries/scripts/lilypond/install/share/emacs/site-lisp")) load-path))
- (setq load-path (append (list (expand-file-name "/usr/local/share/emacs/site-lisp/lilypond")) load-path))
+(setq load-path (append (list (expand-file-name "/usr/local/share/emacs/site-lisp/lilypond")) load-path))
 ;; (setenv "PATH" (concat "/Users/marcelbecker/src/lilypond/lilypond-binaries/scripts/lilypond/install/bin:" (getenv "PATH")))
 
 (use-package loop)
@@ -29,24 +29,25 @@
 (add-to-list 'auto-mode-alist '("\\.ily\\'" . LilyPond-mode))
 ;; (setq LilyPond-pdf-command
 (add-hook 'LilyPond-mode-hook (lambda () (turn-on-font-lock)))
+(add-hook 'LilyPond-mode-hook (lambda () (electric-indent-local-mode -1)))
 ;;(setenv "LYEDITOR" "emacsclient --no-wait +%(line)s:%(column)s %(file)s")
 ;;(setenv "LYEDITOR" "emacs")
 
 
-(defun LilyPond-source-correlate-handle-LilyPond-region (file line col)
-  "Translate backward search info with respect to `TeX-region'.
-That is, if FILE is `TeX-region', update FILE to the real tex
-file and LINE to (+ LINE offset-of-region).  Else, return nil."
+;; (defun LilyPond-source-correlate-handle-LilyPond-region (file line col)
+;;   "Translate backward search info with respect to `TeX-region'.
+;; That is, if FILE is `TeX-region', update FILE to the real tex
+;; file and LINE to (+ LINE offset-of-region).  Else, return nil."
 
-  (with-current-buffer (or (find-buffer-visiting file)
-                           (find-file-noselect file))
-    (goto-char 0)
-    ;; Same regexp used in `preview-parse-messages'.  XXX: XEmacs doesn't
-    ;; support regexp classes, so we can't use "[:digit:]" here.
-    (when (re-search-forward "!offset(\\([---0-9]+\\))" nil t)
-      (let ((offset (string-to-number (match-string-no-properties 1))))
-        (list (expand-file-name (buffer-file-name))
-              (+ line offset) col)))))
+;;   (with-current-buffer (or (find-buffer-visiting file)
+;;                            (find-file-noselect file))
+;;     (goto-char 0)
+;;     ;; Same regexp used in `preview-parse-messages'.  XXX: XEmacs doesn't
+;;     ;; support regexp classes, so we can't use "[:digit:]" here.
+;;     (when (re-search-forward "!offset(\\([---0-9]+\\))" nil t)
+;;       (let ((offset (string-to-number (match-string-no-properties 1))))
+;;         (list (expand-file-name (buffer-file-name))
+;;               (+ line offset) col)))))
 
 (defun LilyPond-pdf-tools-sync-view ()
   "Focus the focused page/paragraph in `pdf-view-mode'.
@@ -65,7 +66,7 @@ entry in `TeX-view-program-list-builtin'."
          )
     (cl-destructuring-bind (pdf page _x1 y1 _x2 _y2)
         (find-position-in-pdf-file pdf)
-      (message "Pdf %s page %s x1 %d" pdf page _x1)
+      ;; (message "Pdf %s page %s x1 %s y1 %s" pdf page _x1 y1)
       ;;(pop-to-buffer (or (find-buffer-visiting pdf)
       ;;               (find-file-noselect pdf)))))
       (let ((buffer (or (find-buffer-visiting pdf)
@@ -79,7 +80,7 @@ entry in `TeX-view-program-list-builtin'."
               (let ((top (* y1 (cdr (pdf-view-image-size))))
                     (edge-x (* _x1 (car (pdf-view-image-size))))
                     )
-                (message "y1 %d top %d image size %s" y1 top (pdf-view-image-size))
+                 (message "y1 %s top %s _x1 %s edge-x %s image size %s" y1 top _x1 edge-x (pdf-view-image-size))
                 (pdf-lilypond-util-tooltip-arrow (round top) (round edge-x) 10))))
           ;;(with-current-buffer buffer
           ;;(run-hooks 'pdf-sync-forward-hook))
@@ -87,51 +88,116 @@ entry in `TeX-view-program-list-builtin'."
 
 
 
+;; (defun pdf-lilypond-util-tooltip-arrow-old (image-top image-left &optional timeout)
+;;   (pdf-util-assert-pdf-window)
+;;   (when (floatp image-top)
+;;     (setq image-top
+;;           (round (* image-top (cdr (pdf-view-image-size))))))
+;;   (let* ((x-gtk-use-system-tooltips t) ;allow for display property in tooltip
+;;          (dx (+
+;;               image-left
+;;               (or (car (window-margins)) 0)
+;;               (car (window-fringes))))
+;;          (dy image-top)
+;;          (pos (list dx dy (+ dx (* 2 (frame-char-width))) (+ dy (* 2 (frame-char-height)))))
+;;          (vscroll
+;;           (pdf-util-required-vscroll pos))
+;;          (tooltip-frame-parameters
+;;           `((border-width . 1)
+;;             (internal-border-width . 1)
+;;             (width . 50)
+;;             (height . 50)
+;;             ,@tooltip-frame-parameters))
+;;          (tooltip-hide-delay (or timeout 10)))
+
+
+;;     (when vscroll
+;;       (image-set-window-vscroll vscroll))
+;;     (setq dx image-left)
+;;     (setq dy (max 0 (- dy
+;;                        (cdr (pdf-view-image-offset))
+;;                        (window-vscroll nil t)
+;;                        (frame-char-height))))
+;;     (setq dy image-top)
+;;     (when (overlay-get (pdf-view-current-overlay) 'before-string)
+;;       (let* ((e (window-inside-pixel-edges))
+;;              (xw (pdf-util-with-edges (e) e-width)))
+;;         (cl-incf dx (/ (- xw (car (pdf-view-image-size t))) 2))))
+
+
+;;     (pdf-util-tooltip-in-window
+;;      (propertize
+;;       " \n " 'display (propertize
+;;                        "\u2192" ;;right arrow
+;;                        'display '(height 5)
+;;                        'face `(:foreground
+;;                                "orange red"
+;;                                :background
+;;                                ,(if (bound-and-true-p pdf-view-midnight-minor-mode)
+;;                                     (cdr pdf-view-midnight-colors)
+;;                                   "white"))))
+;;      dx dy)))
+
+
 (defun pdf-lilypond-util-tooltip-arrow (image-top image-left &optional timeout)
   (pdf-util-assert-pdf-window)
+  (message "Tooltip Arrow Image-Top = %s image-left = %s" image-top image-left)
   (when (floatp image-top)
     (setq image-top
           (round (* image-top (cdr (pdf-view-image-size))))))
+  (message "Tooltip Arrow Image-Top = %s image-left = %s" image-top image-left)
   (let* (x-gtk-use-system-tooltips ;allow for display property in tooltip
-         (dx (+
-              image-left
+         (dx (+ image-left
               (or (car (window-margins)) 0)
-              (car (window-fringes))))
+                (car (window-fringes))))
          (dy image-top)
-         (pos (list dx dy dx (+ dy (* 2 (frame-char-height)))))
+         (pos (list dx dy (+ dx (* 2 (frame-char-width)))
+                    (+ dy (* 2 (frame-char-height)))))
          (vscroll
           (pdf-util-required-vscroll pos))
          (tooltip-frame-parameters
-          `((border-width . 1)
-            (internal-border-width . 1)
-            (width . 50)
-            (height . 50)
+          `((border-width . 0)
+            (internal-border-width . 0)
+            (width . 0)
+            (height . 0)
+            (background . red)
+            (foreground . blue)
             ,@tooltip-frame-parameters))
          (tooltip-hide-delay (or timeout 3)))
+    (message "Tooltip arrow Before dx = %s dy = %s vscroll %s" dx dy vscroll)
     (when vscroll
       (image-set-window-vscroll vscroll))
-    (setq dx image-left)
     (setq dy (max 0 (- dy
                        (cdr (pdf-view-image-offset))
                        (window-vscroll nil t)
                        (frame-char-height))))
-    (setq dy image-top)
     (when (overlay-get (pdf-view-current-overlay) 'before-string)
       (let* ((e (window-inside-pixel-edges))
              (xw (pdf-util-with-edges (e) e-width)))
+        (message "Tooltip arrow dx = %s dy = %s xw %s" dx dy xw)
         (cl-incf dx (/ (- xw (car (pdf-view-image-size t))) 2))))
+    (message "Tooltip arrow dx = %s dy = %s " dx dy)
     (pdf-util-tooltip-in-window
      (propertize
-      " \n " 'display (propertize
-                       "\u2192" ;;right arrow
-                       'display '(height 5)
-                       'face `(:foreground
-                               "orange red"
-                               :background
-                               ,(if (bound-and-true-p pdf-view-midnight-minor-mode)
-                                    (cdr pdf-view-midnight-colors)
-                                  "white"))))
+      " a\n\ta\n\ta\ta\n " 'display (propertize
+                    "\u2192" ;;right arrow
+                    'display '(height 10)
+                    'face `(:foreground
+                            "orange red"
+                            :background "black"
+
+                            ;; ,(cond
+                            ;;   ((bound-and-true-p pdf-view-midnight-minor-mode)
+                            ;;    (cdr pdf-view-midnight-colors))
+                            ;;   ((bound-and-true-p pdf-view-themed-minor-mode)
+                            ;;    (face-background 'default nil))
+                            ;;   (t "red"))
+
+                            )))
      dx dy)))
+     ;;image-left image-top)))
+
+
 
 (defun lilypond-sync-forward-search ()
   "Display the PDF location corresponding to LINE, COLUMN."
@@ -147,16 +213,20 @@ entry in `TeX-view-program-list-builtin'."
     (cl-loop
      for page from 1 to (pdf-info-number-of-pages pdf) ;; From pdf-tools/pdf-sync.el
      if position-in-file
-     do (return position-in-file)
+     do (progn
+          ;; (message "Returning position in file from 1\n%s" position-in-file)
+          (cl-return position-in-file))
      else
      do (cl-loop
          for annotation in (pdf-info-pagelinks page pdf)
          if position-in-file
-         do (return position-in-file)
+         do (progn
+              ;; (message "Returning position in file from 2\n%s" position-in-file)
+              (cl-return position-in-file))
          else
          do (let ((uri (alist-get 'uri annotation))
                   (edges (alist-get 'edges annotation)))
-              ;;(message "Page %i Annot %s %s" page uri edges)
+              ;; (message "Page %i \nAnnot %s\nEdges %s" page uri edges)
               (save-match-data
                 (progn
                   (string-match "textedit://\\(/.*\\):\\([0-9]+\\):\\([0-9]+\\):\\([0-9]+\\)" uri)
@@ -168,12 +238,17 @@ entry in `TeX-view-program-list-builtin'."
                                (= uri-line line)
                                (>= column uri-column1)
                                (<= column uri-column2))
-                      (message "Line %d Col %d returning position for URL %s" line column uri)
+                      ;; (message "Line %d Col %d returning position for URL %s" line column uri)
                       (setq position-in-file (cons pdf (cons page edges)))
-                      (message "Position-in-file %s" position-in-file)
-                      (return position-in-file))))))))
-    position-in-file
-    ))
+                      ;; (message "Position-in-file %s" position-in-file)
+                      (cl-return position-in-file))))))))
+    (progn
+      ;; (message "Returning position in file from bottom of function\n%s" position-in-file)
+      (unless position-in-file
+        ;; (message "Position in file is empty")
+        (setq position-in-file  (cons pdf (cons 1  '(0.0 0.0 0.0 0.0)))))
+      position-in-file
+      )))
 
 
 
@@ -196,7 +271,7 @@ command."
                                                 (apply file nil)))
               (jobs nil)
               (job-string "no jobs"))
-          (if (member name (list "View" "ViewPS"))
+          (if (member name (list  "ViewPS"));; (member name (list "View" "ViewPS"))
               ;; is USR1 a right signal for viewps?
               (let ((buffer-xdvi (get-buffer-create (concat "*" name "*"))))
                 ;; what if XEDITOR is set to gedit or so, should we steal it?
@@ -209,7 +284,7 @@ command."
                         (LilyPond-shell-process name buffer-xdvi command)))
                   (LilyPond-shell-process name buffer-xdvi command)))
             (progn
-              (when (string-equal name "ViewPDF")
+              (when  (member name '("View" "ViewPDF")) ;; (string-equal name "ViewPDF")
                 (setq job-string "pdf-tools")
                 (LilyPond-pdf-tools-sync-view)
                 )
@@ -309,7 +384,7 @@ Open the string URI using Org.
                 (filename  (match-string 1 uri))
                 (line (string-to-number (match-string 2 uri)))
                 (column (string-to-number (match-string 3 uri))))
-           (message "File %s line %s column %s" filename line column)
+           ;; (message "File %s line %s column %s" filename line column)
            (find-file-other-window filename)
            (goto-char (point-min))
            (forward-line (1- line))
@@ -319,8 +394,8 @@ Open the string URI using Org.
 
 
 (defun bury-compile-buffer-if-successful (buffer string)
- "Bury a compilation buffer if succeeded without warnings "
- (when (and
+  "Bury a compilation buffer if succeeded without warnings "
+  (when (and
          (buffer-live-p buffer)
          (string-match "compilation" (buffer-name buffer))
          (string-match "finished" string)
@@ -338,3 +413,111 @@ Open the string URI using Org.
     ;;(delete-window (get-buffer-window (get-buffer "*compilation*")))
     ))
 (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
+
+
+
+;; reduce the size of compilation window
+(defun my-compilation-hook ()
+  (when (not (get-buffer-window "*compilation*"))
+    (save-selected-window
+      (save-excursion
+        (let* ((w (split-window-vertically))
+               (h (window-height w)))
+          ;; (message "W %s H %s" w h)
+          (select-window w)
+          ;; (message "select window")
+          (switch-to-buffer "*compilation*")
+          ;; (message "switch to buffer")
+          ;;(shrink-window (- h 10))
+          (shrink-window  10)
+          )))))
+(add-hook 'compilation-mode-hook 'my-compilation-hook)
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;; Test for performance
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun LilyPond-calculate-indent ()
+  "Return appropriate indentation for current line as lilypond code.
+In usual case returns an integer: the column to indent to.
+Returns nil if line starts inside a string"
+  (save-excursion
+    (message "calculate indent point before %s" (point))
+    (beginning-of-line)
+    (message "calculate indent point after beginning of line %s" (point))
+    (let ((indent-point (point))
+          (case-fold-search nil)
+          state)
+      (setq containing-sexp (save-excursion (LilyPond-scan-containing-sexp)))
+      (message "calculate indent point after scan containing sexp point %s Containing sexp %s" (point) containing-sexp)
+      (beginning-of-defun)
+      (message "calculate indent point after beginning of defun point %s indent-point %s" (point) indent-point)
+      (while (< (point) indent-point)
+        (message "calculate indent inside while loop  point %s indent-point %s" (point) indent-point)
+        (setq state (parse-partial-sexp (point) indent-point 0)))
+      ;; (setq containing-sexp (car (cdr state))) is the traditional way for languages
+      ;; with simpler parenthesis delimiters
+      (message "calculate indent after while loop state =  %s" state)
+      (cond ((nth 3 state)
+             ;; point is in the middle of a string
+             nil)
+            ((nth 4 state)
+             ;; point is in the middle of a block comment
+             (LilyPond-calculate-indent-within-blockcomment))
+            ((null containing-sexp)
+             ;; Line is at top level - no indent
+             (beginning-of-line)
+             0)
+            (t
+             ;; Find previous non-comment character.
+             (goto-char indent-point)
+             (LilyPond-backward-to-noncomment containing-sexp)
+             ;; Now we get the answer.
+             ;; Position following last unclosed open.
+             (goto-char containing-sexp)
+             (or
+              ;; Is line first statement after an open brace or bracket?
+              ;; If no, find that first statement and indent like it.
+              (save-excursion
+                (forward-char 1)
+                ;; Skip over comments following open brace.
+                (skip-chars-forward " \t\n")
+                (cond ((looking-at "%{")
+                       (while  (progn
+                                 (and (not (looking-at "%}"))
+                                      (< (point) (point-max))))
+                         (forward-line 1)
+                         (skip-chars-forward " \t\n"))
+                       (forward-line 1)
+                       (skip-chars-forward " \t\n"))
+                      ((looking-at "%")
+                       (while (progn (skip-chars-forward " \t\n")
+                                     (looking-at "%"))
+                         (forward-line 1))))
+                ;; The first following code counts
+                ;; if it is before the line we want to indent.
+                (and (< (point) indent-point)
+                     (current-column)))
+              ;; If no previous statement,
+              ;; indent it relative to line brace is on.
+              ;; For open brace in column zero, don't let statement
+              ;; start there too.  If LilyPond-indent-level is zero, use
+              ;; LilyPond-brace-offset instead
+              (+ (if (and (bolp) (zerop LilyPond-indent-level))
+                     (cond ((= (following-char) ?{)
+                            LilyPond-brace-offset)
+                           ((= (following-char) ?<)
+                            LilyPond-angle-offset)
+                           ((= (following-char) ?\[)
+                            LilyPond-square-offset)
+                           ((= (following-char) ?\))
+                            LilyPond-scheme-paren-offset)
+                           (t
+                            0))
+                   LilyPond-indent-level)
+                 (progn
+                   (skip-chars-backward " \t")
+                   (current-indentation)))))))))

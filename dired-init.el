@@ -23,6 +23,7 @@
 (use-package dired-rainbow)
 
 (use-package ranger
+  :defer t
   :config
   (setq ranger-show-hidden t)
   (setq ranger-preview-file t)
@@ -70,7 +71,12 @@
   (require 'ls-lisp)
   ;; use brew install coreutils to get gls
   (setq ls-lisp-use-insert-directory-program t
-        insert-directory-program "/usr/local/bin/gls"))
+        insert-directory-program (cond
+                                  ((file-exists-p "/usr/local/bin/gls")
+                                   "/usr/local/bin/gls")
+                                  ((file-exists-p "/opt/homebrew/bin/gls")
+                                   "/opt/homebrew/bin/gls"))))
+
 
 ;; Omitting
 (setq-default dired-omit-files "^\\.[^.]+"
