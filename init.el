@@ -1,5 +1,11 @@
 ;;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2023-08-08 Tue 16:31 marcelbecker on Mac-Studio.local"
+;;; Time-stamp: "2023-12-19 Tue 17:45 marcelbecker on Mac-Studio.local"
+;;;
+;;;  __  __                    _   ____            _
+;;; |  \/  | __ _ _ __ ___ ___| | | __ )  ___  ___| | _____ _ __
+;;; | |\/| |/ _` | '__/ __/ _ \ | |  _ \ / _ \/ __| |/ / _ \ '__|
+;;; | |  | | (_| | | | (_|  __/ | | |_) |  __/ (__|   <  __/ |
+;;; |_|  |_|\__,_|_|  \___\___|_| |____/ \___|\___|_|\_\___|_|
 ;;;
 ;; use this to profile Emacs initialization.
 ;; ./nextstep/Emacs.app/Contents/MacOS/Emacs -Q -l \
@@ -318,6 +324,7 @@
 (global-font-lock-mode t)
 (setq max-lisp-eval-depth 1000)
 (setq inhibit-startup-message t)
+(setq delete-by-moving-to-trash t)
 ;;; Make sure there is a newline at the end of each file!
 (setq require-final-newline t)
 ;;; features you probably don't want to use
@@ -629,6 +636,7 @@
 (when (boundp 'native-comp-eln-load-path)
   (setq package-native-compile t)
   (setq comp-deferred-compilation t)
+  (setq native-comp-speed 3) ;; maximum native Elisp speed!
   ;; native-compile all Elisp files under a directory
   ;;(native-compile-async (expand-file-name "~/Dropbox/.emacs.d/elpa") 'recursively t)
   )
@@ -647,7 +655,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(straight-use-package 'use-package)
+(straight-use-package '(use-package :build t))
 (setq straight-use-package-by-default t)
 
 (unless (package-installed-p 'use-package)
@@ -659,16 +667,16 @@
 
 
 (require 'use-package)
-(setq use-package-always-ensure t
-      use-package-verbose nil
-      use-package-compute-statistics nil)
+(setq ;;use-package-always-ensure t
+ use-package-verbose nil
+ use-package-compute-statistics nil)
 (display-init-load-time-checkpoint "Done loading use-package")
 
 (straight-use-package 'org)
 (use-package package-utils)
 
 (use-package quelpa
-  :ensure t
+  ;;  :ensure t
   :init
   (setq quelpa-self-upgrade-p nil)
   (setq quelpa-upgrade-p nil)
@@ -676,11 +684,9 @@
   (setq quelpa-update-melpa-p nil))
 
 (use-package quelpa-use-package
-  :ensure t
+  ;;  :ensure t
   :config
   (quelpa-use-package-activate-advice))
-
-
 
 
 (display-init-load-time-checkpoint "Done loading quelpa")
@@ -798,14 +804,14 @@
   (setq-default neo-smart-open t)
   ;; change root automatically when running `projectile-switch-project`
   (setq projectile-switch-project-action 'neotree-projectile-action)
-  (setq neo-theme (if window-system 'icons 'nerd)) ; 'classic, 'nerd, 'ascii, 'arrow
+  (setq neo-theme (if window-system 'icons 'nerd)) ; 'Classic, 'nerd, 'ascii, 'arrow
   (setq neo-vc-integration '(face char))
   (setq neo-show-hidden-files t)
   (setq neo-toggle-window-keep-p t)
   (setq neo-force-change-root t)
   (setq neo-window-fixed-size nil)
-  (setq neo-window-width 50)
-
+  (setq neo-window-width 60)
+  (setq neo-window-position 'right)
   (add-hook 'neotree-mode-hook (lambda () (setq-local mode-line-format nil)))
 
   (defun neotree-resize-window (&rest _args)
@@ -1237,7 +1243,7 @@ file to write to."
 
 
 ;; find convenient unbound keystrokes
-(use-package unbound)                  ; `M-x describe-unbound-keys'
+(use-package unbound)  ;; `M-x describe-unbound-keys'
 (display-init-load-time-checkpoint "Done Loading unbound")
 (use-package free-keys
   :config
@@ -2631,7 +2637,7 @@ file to write to."
 ;;(use-package sr-speedbar)
 ;;(setq speedbar-use-images t)
 ;;(global-set-key [C-f4] 'sr-speedbar-toggle)
-;;(global-set-key (kbd "<f4>") 'sr-speedbar-select-window)
+;;(global-set-key [M-f4] 'sr-speedbar-select-window)
 ;;(setq speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'")
 ;;(setq speedbar-directory-unshown-regexp  "^\\(\\.*\\)\\'")
 
@@ -3152,6 +3158,9 @@ by using nxml's indentation rules."
     (ansi-color-apply-on-region compilation-filter-start (point))
     (read-only-mode))
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
+
+(add-hook 'compilation-filter-hook
+          (lambda () (ansi-color-apply-on-region (point-min) (point-max))))
 (display-init-load-time-checkpoint "Done loading ansi-color")
 
 ;; (use-package eclim
@@ -3763,7 +3772,8 @@ Version 2017-01-27"
 
 (display-init-load-time-checkpoint "Done loading json")
 
-(use-package markdown-mode ;;:ensure t
+(use-package markdown-mode
+  ;;:ensure t
   )
 (use-package markdown-toc)
 (display-init-load-time-checkpoint "Done loading markdown")
@@ -4158,7 +4168,9 @@ Version 2017-01-27"
 ;;(ad-update 'message)
 
 ;;(use-package centered-window-mode)
-(use-package writeroom-mode :ensure t)
+(use-package writeroom-mode
+  ;;:ensure t
+  )
 
 
 
@@ -4206,3 +4218,12 @@ Version 2017-01-27"
 
 (use-package ob-restclient
   :after org)
+
+
+(setq stack-trace-on-error nil)
+(setq debug-on-error nil)
+
+
+
+;; ;; (native-compile-async "/Users/marcelbecker/src/emacs/lisp" 'recursively)
+;; ;; (native-compile-async "/Users/marcelbecker/src/emacs/lisp" 'recursively)

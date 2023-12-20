@@ -2,7 +2,7 @@
 (require 'compile)
 
 (use-package lsp-mode
-  :ensure t
+  ;;  :ensure t
   :bind
   (:map lsp-mode-map
         (("C-M-b" . lsp-find-implementation)
@@ -21,6 +21,8 @@
   (setq flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
   (setq lsp-log-io t)
   (setq lsp-print-performance t)
+  (setq gc-cons-threshold 100000000)
+  (setq read-process-output-max (* 10 1024 1024))
   :hook ((python-mode . lsp)
          (java-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration)
@@ -43,8 +45,8 @@
                "jupyter")
   )
 
-(use-package company
-  :ensure t
+(use-package company-lsp
+  ;;  :ensure t
   :after  company
   :config
   (push 'company-lsp company-backends)
@@ -53,7 +55,7 @@
   )
 
 (use-package lsp-ui
-  :ensure t
+  ;;  :ensure t
   ;;  :commands lsp-ui-mode
   :config
   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
@@ -88,11 +90,81 @@
   )
 
 (use-package lsp-treemacs
-  :ensure t
+  ;;  :ensure t
   :config
   ;;(lsp-metals-treeview-enable t)
   (lsp-treemacs-sync-mode 1)
   ;;(setq lsp-metals-treeview-show-when-views-received t)
+  )
+
+
+(use-package lsp-java
+  ;;  :ensure t
+  :requires (lsp-ui-flycheck lsp-ui-sideline)
+  :config
+  (setq lsp-java-configuration-runtimes
+        '[(:name "JavaSE-21"
+                 :path
+                 "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"
+                 ;;"/Library/Java/JavaVirtualMachines/temurin-21.jdk"
+                 :default t)
+          ])
+  (setq lsp-java-jdt-download-url
+        ;;     "http://download.eclipse.org/che/che-ls-jdt/snapshots/che-jdt-language-server-latest.tar.gz")
+        "https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.30.1/jdt-language-server-1.30.1-202312071447.tar.gz")
+  ;;    (setq lsp-java-workspace-dir  "~/src/scharp-ft/scharp-planner/")
+  (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home")
+  (setq lsp-java-java-path "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java")
+  (setq lsp-java-import-gradle-java-home "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java")
+  (setq lsp-java-trace-server "verbose") ;; values are "off", "verbose", "messages"
+  (setq lsp-java-inhibit-message nil)
+  (setq lsp-inhibit-message nil)
+  (setq lsp-print-io t)
+  (defun my-java-lsp-setup ()
+    (interactive)
+    (message "Setting up java lsp")
+    (setq tab-width 2
+          c-basic-offset 2
+          c-max-one-liner-length 120)
+    (toggle-truncate-lines 1)
+    (setq-local tab-width 2)
+    (setq-local c-basic-offset 2)
+    (setq fill-column 120)
+    ;;(setq lsp-java-format-settings-url "file://Users/marcelbecker/src/scharp-ft/scharp-planner/eclipse-utils/EclipseRspaceFormatter.xml")
+    ;;(debug-on-variable-change lsp-java-format-settings-url)
+    (setq lsp-java-format-settings-url "file://Users/marcelbecker/Dropbox/.emacs.d/EclipseFormat.xml")
+    (setq lsp-java-format-settings-profile "Marcel-100-Width")
+
+    (setq lsp-java-vmargs
+          (list "-noverify"
+                "-Xmx30G"
+                ;;"-XX:+UseG1GC"
+                "-XX:+UseStringDeduplication"
+                "-XX:+UseParallelGC"
+                "-XX:GCTimeRatio=4"
+                "-XX:AdaptiveSizePolicyWeight=90"
+                "-Dsun.zip.disableMemoryMapping=true"
+                "-Xms1000m"
+                "-XX:+EnableDynamicAgentLoading"
+                "-javaagent:/Users/marcelbecker/Downloads/lombok/lombok.jar"
+                ))
+    ;; (setq lsp-file-watch-ignored
+    ;;       '(".idea" ".ensime_cache" ".eunit" "node_modules"
+    ;;         ".git" ".hg" ".fslckout" "_FOSSIL_"
+    ;;         ".bzr" "_darcs" ".tox" ".svn" ".stack-work"
+    ;;         "build"))
+    ;;(setq lsp-java-import-order '["" "java" "javax" "#"])
+    ;; Don't organize imports on save
+    (setq lsp-java-save-actions-organize-imports nil)
+    )
+  ;; (remove-hook 'java-mode-hook  'lsp-java-enable)
+  (add-hook 'java-mode-hook  'lsp)
+  (add-hook 'java-mode-hook  'flycheck-mode)
+  (add-hook 'java-mode-hook  'company-mode)
+  ;;(add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
+  (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
+  ;;  (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+  (add-hook 'java-mode-hook 'my-java-lsp-setup)
   )
 
 
@@ -104,6 +176,7 @@
   :config
   (dap-mode 1)
   (dap-ui-mode 1)
+  (dap-auto-configure-mode)
   ;; use tooltips for mouse hover
   ;; if it is not enabled `dap-mode' will use the minibuffer.
   (tooltip-mode 1);; enables mouse hover support
@@ -133,69 +206,34 @@
          :request "attach"
          :hostName "localhost"
          :port 5005))
+  (dap-register-debug-template
+   "Scharp Unitest"
+   (list :type "java"
+         :request "launch"
+         :vmArgs "-ea"
+         :cwd (cdr (project-current))
+         :projectName "scharp-planner"
+         :env '((VCAP_SERVICES_KRID_CREDENTIALS_AUTHDOMAIN . https://id-api.apps.krstaging.kesselrun.us)
+                (VCAP_SERVICES_KRID_CREDENTIALS_CLIENTID . anything)
+                (VCAP_SERVICES_KRID_CREDENTIALS_CLIENTSECRET . anything)
+                (VCAP_SERVICES_AMQ_CREDENTIALS_USERNAME . admin)
+                (VCAP_SERVICES_AMQ_CREDENTIALS_PD . admin)
+                (SPRING_PROFILES_ACTIVE . "rebelAllianceDisabled,nodb,test,nossl")
+                (SPRING_BOOT_DEFAULT_TEST_PASSWORD . test)
+                (VCAP_SERVICES_SCHARP_PLANNER_MYSQL_CREDENTIALS_USERNAME . root)
+                (VCAP_SERVICES_SCHARP_PLANNER_MYSQL_CREDENTIALS_PASSWORD . scharp)
+                (ENABLE_SSL . false))
+         ))
   )
 
 
 
 ;; optionally if you want to use debugger
 
-(use-package lsp-java
-  :ensure t
-  :requires (lsp-ui-flycheck lsp-ui-sideline)
-  :config
-  (setq lsp-java-configuration-runtimes '[(:name "Java-11"
-                                                 :path "/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/"
-                                                 :default t)
 
-                                          ;;(:name "JavaSE-11"
-                                          ;;	:path "/home/kyoncho/jdk-11.0.1.jdk/"
-                                          ;;	:default t)
-                                          ])
-  (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz")
-  (setq lsp-java-workspace-dir  "~/src/scharp-kubernets/scharp-planner/")
-  (defun my-java-lsp-setup ()
-    (interactive)
-    (message "Setting up java lsp")
-    (setq tab-width 2
-          c-basic-offset 2
-          c-max-one-liner-length 120)
-    (toggle-truncate-lines 1)
-    (setq-local tab-width 2)
-    (setq-local c-basic-offset 2)
-    (setq fill-column 120)
-    ;;(setq lsp-java-format-settings-url "file://Users/marcelbecker/src/rspace-eclipse/scharp/eclipse-utils/EclipseRspaceFormatter.xml")
-    ;;(debug-on-variable-change lsp-java-format-settings-url)
-    (setq lsp-java-format-settings-url "file://Users/marcelbecker/Dropbox/.emacs.d/EclipseFormat.xml")
-    (setq lsp-java-format-settings-profile "Marcel-100-Width")
-
-    (setq lsp-java-vmargs
-          (list "-noverify"
-                "-Xmx6G"
-                ;;"-XX:+UseG1GC"
-                "-XX:+UseStringDeduplication"
-                "-XX:+UseParallelGC"
-                "-XX:GCTimeRatio=4"
-                "-XX:AdaptiveSizePolicyWeight=90"
-                "-Dsun.zip.disableMemoryMapping=true"
-                "-Xms100m"))
-    ;; (setq lsp-file-watch-ignored
-    ;;       '(".idea" ".ensime_cache" ".eunit" "node_modules"
-    ;;         ".git" ".hg" ".fslckout" "_FOSSIL_"
-    ;;         ".bzr" "_darcs" ".tox" ".svn" ".stack-work"
-    ;;         "build"))
-    ;;(setq lsp-java-import-order '["" "java" "javax" "#"])
-    ;; Don't organize imports on save
-    (setq lsp-java-save-actions-organize-imports nil)
-    )
-  ;; (remove-hook 'java-mode-hook  'lsp-java-enable)
-  (add-hook 'java-mode-hook  'lsp)
-  (add-hook 'java-mode-hook  'flycheck-mode)
-  (add-hook 'java-mode-hook  'company-mode)
-  ;;(add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
-  (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
-  ;;  (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-  (add-hook 'java-mode-hook 'my-java-lsp-setup)
-  )
+;; (use-package lsp-intellij
+;;   :after (lsp-mode lsp-ui)
+;;   )
 
 
 (require 'lsp-java-boot)
@@ -204,6 +242,8 @@
 (add-hook 'lsp-mode-hook #'lsp-lens-mode)
 (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
 (add-hook 'java-mode-hook #'lsp-ui-mode)
+;;(add-hook 'java-mode-hook #'lsp-intellij-enable)
+
 
 ;;(setq lsp-java-format-settings-url "file://Users/marcelbecker/Dropbox/.emacs.d/EclipseFormat.xml")
 ;;(setq lsp-java-format-settings-profile "Marcel-100-Width")
@@ -300,7 +340,7 @@
 (defun my-use-pyright-as-python-server ()
   (interactive)
   (use-package lsp-pyright
-    :ensure t
+    ;;    :ensure t
     :config
     (setq lsp-pyright-python-executable-cmd "/usr/local/bin/python3")
     :hook (python-mode . (lambda ()
@@ -311,7 +351,7 @@
 (defun my-use-jedi-as-python-server ()
   (interactive)
   (use-package lsp-jedi
-    :ensure t
+    ;;    :ensure t
     :config
     (with-eval-after-load "lsp-mode"
       (add-to-list 'lsp-disabled-clients 'pyls)

@@ -324,11 +324,14 @@
 ;;               ("M-g M-l" . dogears-list)
 ;;               ("M-g M-s" . dogears-sidebar)))
 
+(load-file (concat marcel-lisp-dir "helm-all-the-icons.el"))
+
 
 (use-package helm-icons
   :after (helm treemacs)
   :config
   (setq helm-icons-provider 'treemacs)
   (helm-icons-enable))
+
 
 (display-init-load-time-checkpoint "Done setting helm mode on")

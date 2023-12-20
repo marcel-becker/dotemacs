@@ -1,5 +1,5 @@
 (use-package treemacs
-  :ensure t
+  ;;  :ensure t
   :defer 10
   :init
   (with-eval-after-load 'winum
@@ -63,11 +63,12 @@
 
 (use-package treemacs-evil
   :after (treemacs evil)
-  :ensure t)
+  ;;:ensure t
+  )
 
 (use-package treemacs-projectile
   :after (treemacs projectile)
-  :ensure nil
+  ;;  :ensure nil
   :config
   (setq treemacs-header-function #'treemacs-projectile-create-header)
   :bind (([M-f8] . treemacs-projectile)
@@ -76,14 +77,15 @@
 
 (use-package treemacs-icons-dired
   :after (treemacs dired)
-  :ensure t
+  ;;  :ensure t
   :config (treemacs-icons-dired-mode))
 
 (use-package treemacs-magit
   :after (treemacs magit)
-  :ensure t)
+  ;;:ensure t
+  )
 
 (use-package treemacs-persp
   :after (treemacs persp-mode)
-  :ensure t
+  ;;:ensure t
   :config (treemacs-set-scope-type 'Perspectives))

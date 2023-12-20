@@ -12,7 +12,7 @@
 
 
 (use-package org
-;;  :defer t
+  ;;  :defer t
   :straight (:type built-in)
   :config
   ;;  (require 'org-install)
@@ -48,7 +48,7 @@
 
 
 (require 'ob-tangle)
-(use-package ob-http)
+(require 'ob-http)
 (use-package ob-restclient :after org :ensure t)
 
 (use-package toc-org
@@ -587,7 +587,7 @@ entries in articles."
    (let ((elm (org-element-context))
          (use-dialog-box nil))
      (when (y-or-n-p "Delete comment? ")
-       (setf (buffer-substring
+       (setf (buffer-substringl
               (org-element-property :begin elm)
               (org-element-property :end elm))
              (cond
