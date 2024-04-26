@@ -1,5 +1,5 @@
 ;;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2023-12-19 Tue 17:45 marcelbecker on Mac-Studio.local"
+;;; Time-stamp: "2024-04-23 Tue 17:36 marcelbecker on Mac-Studio.local"
 ;;;
 ;;;  __  __                    _   ____            _
 ;;; |  \/  | __ _ _ __ ___ ___| | | __ )  ___  ___| | _____ _ __
@@ -12,6 +12,7 @@
 ;; ~/Dropbox/.emacs.d/profile-dotemacs.el
 ;; --eval "(setq profile-dotemacs-file (setq load-file-name \"~/Dropbox/.emacs.d/init.el\") marcel-lisp-dir \"~/Dropbox/.emacs.d/\")"
 ;;-f profile-dotemacs
+
 
 ;; Use this to create a new prefix
 ;; (fset     'my-cmds-prefix (make-sparse-keymap))
@@ -403,17 +404,12 @@
 
 (display-init-load-time-checkpoint "Starting to setup frame parameters")
 
-
-
-
-
-
 ;; use C-u C-x = to describe face at point.
 (setq default-frame-font
       (cond (running-ms-windows
              "DejaVu Sans Mono 11")
             (running-macos
-             "Source Code Pro for Powerline-16:medium"
+             "Source Code Pro for Powerline-18:medium"
              ;;"Menlo for Powerline-18:regular"
              ;;"DejaVu Sans Mono 18")
              ;;        "Geneva 13")
@@ -431,8 +427,6 @@
 ;;; Nice size for the default window
 (defun get-default-height ()
   (min 60 (/ (- (display-pixel-height) 200) (frame-char-height))))
-
-
 
 (defun get-default-x-frame-position ()
   (- (/ (display-pixel-width) 2) 400))
@@ -453,7 +447,7 @@
 (defun my-get-default-frame-height ()
   (let* ((workarea (frame-monitor-workarea))
          (height (nth 3 workarea)))
-    (floor  (- height 200) (frame-char-height))))
+    (floor  (- height 250) (frame-char-height))))
 
 
 (defun my-get-default-x-frame-position ()
@@ -466,7 +460,7 @@
   (let* ((workarea (frame-monitor-workarea))
          (width (nth 3 workarea))
          (display-y (nth 1 workarea)))
-    (+ 100 display-y)))
+    (+ 80 display-y)))
 
 (setq initial-frame-alist
       '((cursor-color . "white")
@@ -485,10 +479,14 @@
 ;;(set-face-attribute 'fringe nil :background "yellow")
 
 ;; Set Frame width/height
-(defun arrange-frame (w h x y)
+(defun my-arrange-frame (w h x y)
   "Set the width, height, and x/y position of the current frame"
   (let ((frame (selected-frame)))
     (delete-other-windows)
+    (message (with-output-to-string (princ " w = ")(princ w)
+                                    (princ " h = ")(princ h)
+                                    (princ " x = ")(princ x)
+                                    (princ " y = ")(princ y)))
     (set-frame-position frame x y)
     (set-frame-size frame w h)))
 
@@ -496,44 +494,70 @@
 
 (display-init-load-time-checkpoint "Configuring emacs frame")
 
+
+;; This function will center the initial emacs frame using 50% the width and 90% of the height of the monitor.
+(defun my-set-initial-frame ()
+  (interactive t)
+  (let* ((width-factor 0.5)
+         (height-factor 0.9)
+         (a-width (* (display-pixel-width) width-factor))
+         (a-height (* (display-pixel-height) height-factor))
+         (a-left (truncate (/ (- (display-pixel-width) a-width) 2)))
+         (a-top (truncate (/ (- (display-pixel-height) a-height) 2))))
+    (set-frame-position (selected-frame) a-left a-top)
+    (set-frame-size (selected-frame) (truncate a-width)  (truncate a-height) t)))
+(setq frame-resize-pixelwise t)
+;;(my-set-initial-frame)
+
+
+;;; Use (frame-parameters) [Ctrl-J] in *scratch* buffer to see frame parameters.
+;;;
 (let* ((frame-font (cons 'font default-frame-font))
        (default-height (my-get-default-frame-height))
-       (frame-height (cons 'height default-height))
-       (frame-width (cons 'width 180))
-       (frame-top (cons 'top (my-get-default-y-frame-position)))
-       (frame-left (cons 'left (my-get-default-x-frame-position)))
-       (bg-color  (if (eq (user-uid) 0) "gray38" "#09223F"))
+       (frame-height   (cons 'height default-height))
+       (frame-width    (cons 'width 180))
+       (frame-top      (cons 'top  (my-get-default-y-frame-position)))
+       (frame-left     (cons 'left (my-get-default-x-frame-position)))
+       (bg-color       (if (eq (user-uid) 0) "gray38" "#09223F"))
        (frame-background-color (if (eq (user-uid) 0)
                                    '(background-color . "gray38")
                                  '(background-color . "#09223F")
                                  )))
   (add-to-list 'default-frame-alist frame-font)
   (add-to-list 'initial-frame-alist frame-font)
-
-  (add-to-list 'default-frame-alist frame-height)
-  (add-to-list 'initial-frame-alist frame-height)
-
   (add-to-list 'default-frame-alist frame-background-color)
   (add-to-list 'initial-frame-alist frame-background-color)
   (set-face-attribute 'default nil :background bg-color :foreground "white")
 
-
-  (add-to-list 'default-frame-alist frame-width)
-  (add-to-list 'initial-frame-alist frame-width)
-
-  (add-to-list 'default-frame-alist frame-top)
-  (add-to-list 'initial-frame-alist frame-top)
-
-  (add-to-list 'default-frame-alist frame-left)
-  (add-to-list 'initial-frame-alist frame-left)
-
-  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-  (add-to-list 'default-frame-alist '(ns-appearance . dark))
+  (when (> (display-pixel-width) 7000)
+    (setq frame-height (cons 'height 87)
+          frame-width  (cons 'width 231)
+          frame-top    (cons 'top 63)
+          frame-left   (cons 'left 2483))
+    (set-frame-position (selected-frame) 2483 63)
+    (set-frame-size (selected-frame) 231 87 nil))
 
 
-  ;;(message  "Frame alist %s" initial-frame-alist)
-  (arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
-  )
+  (when window-system
+
+    (add-to-list 'default-frame-alist frame-height)
+    (add-to-list 'initial-frame-alist frame-height)
+
+    (add-to-list 'default-frame-alist frame-width)
+    (add-to-list 'initial-frame-alist frame-width)
+
+    (add-to-list 'default-frame-alist frame-top)
+    (add-to-list 'initial-frame-alist frame-top)
+
+    (add-to-list 'default-frame-alist frame-left)
+    (add-to-list 'initial-frame-alist frame-left)
+
+    (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+    (add-to-list 'default-frame-alist '(ns-appearance . dark))
+
+    ;;(message  "Frame alist %s" initial-frame-alist)
+    ;;(arrange-frame 180 (my-get-default-frame-height) (my-get-default-x-frame-position) (my-get-default-y-frame-position))
+    ))
 
 (defun my-example-make-frame ()
   "Doc-string."
@@ -546,13 +570,14 @@
                 (right-fringe . 8)
                 (vertical-scroll-bars . right)
                 (cursor-color . "yellow")
-                (cursor-type . (bar . 1))
+                (cursor-type . (box . 1))
                 (background-color . "black")
                 (foreground-color . "white")
                 (tool-bar-lines . 0)
                 (menu-bar-lines . 0)
-                (width . (text-pixels . 400))
-                (height . (text-pixels . 400)))))
+                ;(width . (text-pixels . 400))
+                ;(height . (text-pixels . 400))
+                )))
 
 (display-init-load-time-checkpoint "Finished configuring emacs frame")
 
@@ -566,10 +591,8 @@
 (display-init-load-time-checkpoint "Setting up ELPA")
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ;; ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ;; ("melpa" . "https://stable.melpa.org/packages/")
-                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpas" . "https://melpa.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ;; ( "org" . "http://orgmode.org/elpa/")
                          ))
 
@@ -1048,6 +1071,13 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (display-init-load-time-checkpoint "Done loading helm"))
 
 
+(defun my-load-vertico ()
+  (interactive)
+  (display-init-load-time-checkpoint "Loading vertico/consult")
+  (my-load-init-file  "vertico-consult-init.el")
+  (display-init-load-time-checkpoint "Done loading vertico/consult"))
+
+
 (defun my-load-bookmarks ()
   (interactive)
   (display-init-load-time-checkpoint "Loading bookmarks")
@@ -1237,7 +1267,19 @@ file to write to."
   (setq history-delete-duplicates t)
   (setq savehist-save-minibuffer-history 1)
   (setq savehist-additional-variables
-        '(kill-ring search-ring regexp-search-ring))
+        '(kill-ring
+          search-ring
+          regexp-search-ring
+          command-history
+          set-variable-value-history
+          custom-variable-history
+          query-replace-history
+          read-expression-history
+          minibuffer-history
+          read-char-history
+          face-name-history
+          bookmark-history
+          file-name-history))
   (savehist-mode 1))
 (display-init-load-time-checkpoint "Done Loading savehist")
 
@@ -1328,54 +1370,55 @@ file to write to."
   (diminish 'visual-line-mode "VizLine"))
 
 
-(use-package hlinum
-  ;;:ensure t
-  ;;  :init
+;; (use-package hlinum
+;;   ;;:ensure t
+;;   ;;  :init
 
-  :config
-  ;;(hlinum-activate)
-  (set-face-attribute 'hl-line nil :inherit nil
-                      :background "#666666"
-                      :foreground 'unspecified
-                      :weight 'bold)
-  ;;(set-face-attribute 'linum-highlight-face nil :background "#666666")
-  (set-face-attribute 'linum-highlight-face nil :inherit 'hl-line :weight 'ultra-bold)
+;;   :dis
+;;   :config
+;;   ;;(hlinum-activate)
+;;   (set-face-attribute 'hl-line nil :inherit nil
+;;                       :background "#666666"
+;;                       :foreground 'unspecified
+;;                       :weight 'bold)
+;;   ;;(set-face-attribute 'linum-highlight-face nil :background "#666666")
+;;   (set-face-attribute 'linum-highlight-face nil :inherit 'hl-line :weight 'ultra-bold)
 
-  (defun my-set-hl-line-color-based-on-theme ()
-    "Sets the hl-line face to have no foregorund and a background
-    that is 10% darker than the default face's background."
-    (interactive)
-    (set-face-attribute 'hl-line nil
-                        :foreground 'unspecified
-                        :background (color-darken-name (face-background 'default) 10)))
+;;   (defun my-set-hl-line-color-based-on-theme ()
+;;     "Sets the hl-line face to have no foregorund and a background
+;;     that is 10% darker than the default face's background."
+;;     (interactive)
+;;     (set-face-attribute 'hl-line nil
+;;                         :foreground 'unspecified
+;;                         :background (color-darken-name (face-background 'default) 10)))
 
 
-  (defun my-set-hl-line-color-lighten-based-on-theme ()
-    "Sets the hl-line face to have no foregorund and a background
-    that is 10% darker than the default face's background."
-    (interactive)
-    (set-face-attribute 'hl-line nil
-                        :foreground 'unspecified
-                        :background (color-lighten-name (face-background 'default) 10)))
+;;   (defun my-set-hl-line-color-lighten-based-on-theme ()
+;;     "Sets the hl-line face to have no foregorund and a background
+;;     that is 10% darker than the default face's background."
+;;     (interactive)
+;;     (set-face-attribute 'hl-line nil
+;;                         :foreground 'unspecified
+;;                         :background (color-lighten-name (face-background 'default) 10)))
 
-  (defun my-set-hl-line-color-lighten ()
-    "Sets the hl-line face to have no foregorund and a background
-    that is 10% darker than the default face's background."
-    (interactive)
-    (set-face-attribute 'hl-line nil
-                        :foreground 'unspecified
-                        :background (color-lighten-name (face-background 'hl-line) 10)))
+;;   (defun my-set-hl-line-color-lighten ()
+;;     "Sets the hl-line face to have no foregorund and a background
+;;     that is 10% darker than the default face's background."
+;;     (interactive)
+;;     (set-face-attribute 'hl-line nil
+;;                         :foreground 'unspecified
+;;                         :background (color-lighten-name (face-background 'hl-line) 10)))
 
-  (defun my-set-hl-line-color-darken ()
-    "Sets the hl-line face to have no foregorund and a background
-    that is 10% darker than the default face's background."
-    (interactive)
-    (set-face-attribute 'hl-line nil
-                        :foreground 'unspecified
-                        :background (color-darken-name (face-background 'hl-line) 10)))
-  ;;(my-set-hl-line-color-based-on-theme)
-  )
-(display-init-load-time-checkpoint "Done Loading hlinum")
+;;   (defun my-set-hl-line-color-darken ()
+;;     "Sets the hl-line face to have no foregorund and a background
+;;     that is 10% darker than the default face's background."
+;;     (interactive)
+;;     (set-face-attribute 'hl-line nil
+;;                         :foreground 'unspecified
+;;                         :background (color-darken-name (face-background 'hl-line) 10)))
+;;   ;;(my-set-hl-line-color-based-on-theme)
+;;   )
+;; (display-init-load-time-checkpoint "Done Loading hlinum")
 
 
 
@@ -2842,6 +2885,15 @@ file to write to."
   (display-init-load-time-checkpoint "Done loading modeline")
   )
 
+(defun my-load-leadkey ()
+  (interactive)
+  (display-init-load-time-checkpoint "Loading leadkey")
+  (load-file (concat marcel-lisp-dir  "leadkey-init.el"))
+  (display-init-load-time-checkpoint "Done loading leadkey")
+  )
+
+
+
 (setq frame-title-format
       '("EMACS: [" (:eval (or (getenv "USERNAME") (getenv "USER"))) "@"
         (:eval (downcase (system-name))) "]: "
@@ -3929,6 +3981,7 @@ Version 2017-01-27"
 ;; CTRL-Backspace disables auto-expansion
 (my-load-treemacs)
 (my-load-helm)
+;;(my-load-vertico)
 (my-load-bookmarks)
 
 (my-load-shackle)
@@ -3984,7 +4037,7 @@ Version 2017-01-27"
 ;;   :bind ("<f9>" . modus-themes-toggle))
 
 
-
+(my-load-leadkey)
 (my-load-modeline)
 
 (use-package psession
@@ -4083,28 +4136,38 @@ Version 2017-01-27"
 (let* ((frame-parameters (frame-parameters))
        (top (assoc 'top frame-parameters))
        (left (assoc 'left frame-parameters))
-       (height (frame-height))
+       (height (min 85 (frame-height)))
        (width (frame-width))
        (background-color (assoc 'background-color frame-parameters))
        (foreground-color (assoc 'foreground-color frame-parameters))
        (alist (list top left)))
   ;;(message "\n Before %s" default-frame-alist)
   (modify-frame-parameters nil alist)
-  (set-frame-size nil width height)
-  (setf (alist-get 'width default-frame-alist) width)
-  (setf (alist-get 'width initial-frame-alist) width)
-  (setf (alist-get 'height default-frame-alist) height)
-  (setf (alist-get 'height initial-frame-alist) height)
-  (setf (alist-get 'top default-frame-alist) (cdr top))
-  (setf (alist-get 'top initial-frame-alist) (cdr top))
-  (setf (alist-get 'left default-frame-alist) (cdr left))
-  (setf (alist-get 'left initial-frame-alist) (cdr left))
+  (when window-system
+    ;;(set-frame-size nil width height)
+    (setf (alist-get 'width default-frame-alist) width)
+    (setf (alist-get 'width initial-frame-alist) width)
+    (setf (alist-get 'height default-frame-alist) height)
+    (setf (alist-get 'height initial-frame-alist) height)
+    (setf (alist-get 'top default-frame-alist) (cdr top))
+    (setf (alist-get 'top initial-frame-alist) (cdr top))
+    (setf (alist-get 'left default-frame-alist) (cdr left))
+    (setf (alist-get 'left initial-frame-alist) (cdr left))
+    ;;(arrange-frame 180 height (my-get-default-x-frame-position) (my-get-default-y-frame-position))
+    )
   (setf (alist-get 'background-color default-frame-alist) (cdr background-color))
   (setf (alist-get 'background-color initial-frame-alist) (cdr background-color))
   (setf (alist-get 'foreground-color default-frame-alist) (cdr foreground-color))
   (setf (alist-get 'foreground-color initial-frame-alist) (cdr foreground-color))
   (set-face-attribute 'region nil :background "magenta1" :foreground "#ffffff"))
 
+
+(unless window-system
+  (require 'mouse)
+  (xterm-mouse-mode t)
+  (defun track-mouse (e))
+  (setq mouse-sel-mode t)
+  )
 
 ;; REMOVE THIS
 ;; ONLY TO TEST NATIVE COMPILED
@@ -4220,10 +4283,35 @@ Version 2017-01-27"
   :after org)
 
 
+(use-package fzf
+  :bind
+    ;; Don't forget to set keybinds!
+  :config
+  (setq fzf/args "-x --color bw --print-query --margin=1,0 --no-hscroll"
+        fzf/executable "fzf"
+        fzf/git-grep-args "-i --line-number %s"
+        ;; command used for `fzf-grep-*` functions
+        ;; example usage for ripgrep:
+        ;; fzf/grep-command "rg --no-heading -nH"
+        fzf/grep-command "grep -nrH"
+        ;; If nil, the fzf buffer will appear at the top of the window
+        fzf/position-bottom t
+        fzf/window-height 15))
+
+
+(use-package transient-dwim
+  :bind ("M-=" . transient-dwim-dispatch))
+
 (setq stack-trace-on-error nil)
 (setq debug-on-error nil)
 
 
 
+
 ;; ;; (native-compile-async "/Users/marcelbecker/src/emacs/lisp" 'recursively)
 ;; ;; (native-compile-async "/Users/marcelbecker/src/emacs/lisp" 'recursively)
+
+
+;;(use-package treesit-auto
+;;:config
+;;(treesit-auto-add-to-auto-mode-alist 'all))

@@ -111,7 +111,10 @@
           ])
   (setq lsp-java-jdt-download-url
         ;;     "http://download.eclipse.org/che/che-ls-jdt/snapshots/che-jdt-language-server-latest.tar.gz")
-        "https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.30.1/jdt-language-server-1.30.1-202312071447.tar.gz")
+        ;;"https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.33.0/jdt-language-server-1.30.1-202312071447.tar.gz")
+        ;;"https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.33.0/jdt-language-server-1.33.0-202402151717.tar.gz"
+        "https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.34.0/jdt-language-server-1.34.0-202404031240.tar.gz"
+        )
   ;;    (setq lsp-java-workspace-dir  "~/src/scharp-ft/scharp-planner/")
   (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home")
   (setq lsp-java-java-path "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java")
@@ -170,6 +173,16 @@
 
 (use-package dap-mode
   :after lsp-mode
+  :bind
+  (:map dap-mode-map
+        ;; Intellij Debug Shortcuts
+        ("<f7>" . dap-step-in)
+        ("<f8>" . dap-next)
+        ("S-<f8>" . dap-step-out)
+        ("M-<f8>" . dap-breakpoint-toggle)
+        ("<f9>" . dap-continue)
+        ("<M-f2>" . dap-delete-all-sessions)
+        )
   :custom
   ;;(dap-python-debugger 'debugpy)
   (dap-python-executable "/usr/local/bin/python3")
@@ -193,13 +206,7 @@
   ;; (global-set-key (kbd "<f7>") 'dap-step-out)
   ;; (global-set-key (kbd "<f8>") 'dap-continue)
 
-  ;; Intellij Debug Shortcuts
-  (global-set-key (kbd "<f7>") 'dap-step-in)
-  (global-set-key (kbd "<f8>") 'dap-next)
-  (global-set-key (kbd "S-<f8>") 'dap-step-out)
-  (global-set-key (kbd "M-<f8>") 'dap-breakpoint-toggle)
-  (global-set-key (kbd "<f9>") 'dap-continue)
-  (global-set-key (kbd "<M-f2>") 'dap-delete-all-sessions)
+
   (dap-register-debug-template
    "localhost:5005"
    (list :type "java"
@@ -364,11 +371,36 @@
 
 (defun my-eglot-init ()
   (interactive)
-  (use-package eglot)
+  (use-package eglot :straight t)
+  (use-package eglot-java
+    :straight t
+    :config
+    (add-hook 'java-mode-hook 'eglot-java-mode)
+    (add-hook 'java-mode-hook 'eglot-ensure)
+    (with-eval-after-load 'eglot-java
+      (define-key eglot-java-mode-map (kbd "C-c l n") #'eglot-java-file-new)
+      (define-key eglot-java-mode-map (kbd "C-c l x") #'eglot-java-run-main)
+      (define-key eglot-java-mode-map (kbd "C-c l t") #'eglot-java-run-test)
+      (define-key eglot-java-mode-map (kbd "C-c l N") #'eglot-java-project-new)
+      (define-key eglot-java-mode-map (kbd "C-c l T") #'eglot-java-project-build-task)
+      (define-key eglot-java-mode-map (kbd "C-c l R") #'eglot-java-project-build-refresh)))
+
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
   (add-hook 'c-mode-hook 'eglot-ensure)
   (add-hook 'c++-mode-hook 'eglot-ensure))
 
+
+(defconst my-eclipse-jdt-home
+"/Users/marcelbecker/Dropbox/.emacs.d/.cache/lsp/eclipse.jdt.ls/features/org.eclipse.equinox.executable_3.8.2400.v20240129-1338.jar")
+
+(defun my-eclipse-jdt-contact (interactive)
+  (let ((cp (getenv "CLASSPATH")))
+    (setenv "CLASSPATH" (concat cp ":" my-eclipse-jdt-home))
+    (unwind-protect
+        (eglot--eclipse-jdt-contact nil)
+      (setenv "CLASSPATH" cp))))
+
+(setcdr (assq 'java-mode eglot-server-programs) #'my-eclipse-jdt-contact)
 
 
 

@@ -35,11 +35,7 @@
 (use-package dired-toggle)
 (use-package dired-toggle-sudo)
 (use-package diredful)
-
-
-
 (use-package all-the-icons-dired)
-
 
 (use-package dired-column-widths
   :quelpa (dired-column-widths :fetcher github :repo "emacsmirror/dired-column-widths"))
@@ -79,8 +75,8 @@
 
 
 ;; Omitting
-(setq-default dired-omit-files "^\\.[^.]+"
-              dired-omit-mode t)
+;; (setq-default dired-omit-files "^\\.[^.]+"
+              ;; dired-omit-mode t)
 
 ;; Adapt ls lisp format
 (if (boundp 'ls-lisp-ignore-case)
@@ -294,3 +290,7 @@
   (setq dired-sidebar-use-term-integration t)
   (setq dired-sidebar-width 50)
   (setq dired-sidebar-use-custom-font nil))
+
+
+;; (use-package stripe-buffer              ; Add stripes to a buffer
+;; :init (add-hook 'dired-mode-hook #'stripe-buffer-mode))

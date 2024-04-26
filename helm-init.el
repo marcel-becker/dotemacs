@@ -21,8 +21,8 @@
   ;;   :config
   ;;(require 'helm-autoloads)
   (set-face-attribute 'helm-selection nil :background "purple" :foreground "white" :weight 'bold)
-  (set-face-attribute 'helm-header nil :background "SkyBlue4" :foreground "wheat1" :weight 'ultra-bold :height 1.2)
-  (set-face-attribute 'helm-source-header nil :height 1.2)
+  (set-face-attribute 'helm-header nil :background "SkyBlue4" :foreground "wheat1" :weight 'ultra-bold :height 1.3)
+  (set-face-attribute 'helm-source-header nil :height 1.3)
   (set-face-attribute 'helm-match nil :foreground "dark cyan" :weight 'bold)
 
   (global-set-key (kbd "M-x") 'helm-M-x)
@@ -275,7 +275,7 @@
   (setq helm-projectile-sources-list (cons 'helm-source-projectile-files-list
                                            (remove 'helm-source-projectile-files-list
                                                    helm-projectile-sources-list)))
-
+  (add-to-list 'projectile-ignored-projects "~/")
   (define-key projectile-mode-map (kbd "C-c p /")
               #'(lambda ()
                   (interactive)
