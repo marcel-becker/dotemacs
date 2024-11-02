@@ -14,6 +14,7 @@
   (lsp-headerline-breadcrumb-segments '(project file symbols))
   :init
   (setq lsp-keymap-prefix "C-c l")
+  (setq lsp-file-watch-threshold 2500)
   (setq lsp-inhibit-message nil ; you may set this to t to hide messages from message area
         lsp-eldoc-render-all nil
         lsp-highlight-symbol-at-point nil)
@@ -73,7 +74,7 @@
         lsp-ui-sideline-show-hover t
         lsp-ui-sideline-show-code-actions t
         lsp-ui-sideline-ignore-duplicate t
-        lsp-ui-sideline-update-mode 'point
+        ;; lsp-ui-sideline-update-mode 'point
         lsp-ui-peek-enable t
         lsp-ui-peek-show-directory t
         lsp-ui-doc-enable t
@@ -113,12 +114,13 @@
         ;;     "http://download.eclipse.org/che/che-ls-jdt/snapshots/che-jdt-language-server-latest.tar.gz")
         ;;"https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.33.0/jdt-language-server-1.30.1-202312071447.tar.gz")
         ;;"https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.33.0/jdt-language-server-1.33.0-202402151717.tar.gz"
-        "https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.34.0/jdt-language-server-1.34.0-202404031240.tar.gz"
+        ;;"https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.39.0/jdt-language-server-1.34.0-202404031240.tar.gz"
+        "https://download.eclipse.org/jdtls/milestones/1.39.0/jdt-language-server-1.39.0-202408291433.tar.gz"
         )
   ;;    (setq lsp-java-workspace-dir  "~/src/scharp-ft/scharp-planner/")
-  (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home")
-  (setq lsp-java-java-path "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java")
-  (setq lsp-java-import-gradle-java-home "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java")
+  (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/temurin-23.jdk/Contents/Home")
+  (setq lsp-java-java-path "/Library/Java/JavaVirtualMachines/temurin-23.jdk/Contents/Home/bin/java")
+  (setq lsp-java-import-gradle-java-home "/Library/Java/JavaVirtualMachines/temurin-23.jdk/Contents/Home/bin/java")
   (setq lsp-java-trace-server "verbose") ;; values are "off", "verbose", "messages"
   (setq lsp-java-inhibit-message nil)
   (setq lsp-inhibit-message nil)
@@ -149,7 +151,9 @@
                 "-Dsun.zip.disableMemoryMapping=true"
                 "-Xms1000m"
                 "-XX:+EnableDynamicAgentLoading"
-                "-javaagent:/Users/marcelbecker/Downloads/lombok/lombok.jar"
+                ;; "-javaagent:/Users/marcelbecker/Downloads/lombok/lombok.jar"
+                "-javaagent:/Users/marcelbecker/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.34/ec547ef414ab1d2c040118fb9c1c265ada63af14/lombok-1.18.34.jar"
+                ;;"-Xbootclasspath/a:/Users/marcelbecker/Downloads/lombok/lombok.jar"
                 ))
     ;; (setq lsp-file-watch-ignored
     ;;       '(".idea" ".ensime_cache" ".eunit" "node_modules"
@@ -161,13 +165,14 @@
     (setq lsp-java-save-actions-organize-imports nil)
     )
   ;; (remove-hook 'java-mode-hook  'lsp-java-enable)
+  (add-hook 'java-mode-hook 'my-java-lsp-setup)
   (add-hook 'java-mode-hook  'lsp)
   (add-hook 'java-mode-hook  'flycheck-mode)
   (add-hook 'java-mode-hook  'company-mode)
   ;;(add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
   (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
   ;;  (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-  (add-hook 'java-mode-hook 'my-java-lsp-setup)
+
   )
 
 
@@ -234,6 +239,15 @@
   )
 
 
+(use-package jarchive
+  :hook (after-init . jarchive-setup))
+
+(with-eval-after-load 'lsp-mode
+  ;; :global/:workspace/:file
+  (setq lsp-modeline-diagnostics-scope :workspace))
+
+(with-eval-after-load 'lsp-mode
+  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
 
 ;; optionally if you want to use debugger
 
@@ -242,6 +256,15 @@
 ;;   :after (lsp-mode lsp-ui)
 ;;   )
 
+
+;; ANSI-escape coloring in compilation-mode
+;; {{ http://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode
+(ignore-errors
+  (defun my-colorize-compilation-buffer ()
+    (when (eq major-mode 'compilation-mode)
+      (unless (featurep 'ansi-color) (require 'ansi-color))
+      (ansi-color-apply-on-region compilation-filter-start (point-max))))
+  (add-hook 'compilation-filter-hook 'my-colorize-compilation-buffer))
 
 (require 'lsp-java-boot)
 
@@ -385,13 +408,13 @@
       (define-key eglot-java-mode-map (kbd "C-c l T") #'eglot-java-project-build-task)
       (define-key eglot-java-mode-map (kbd "C-c l R") #'eglot-java-project-build-refresh)))
 
-  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-  (add-hook 'c-mode-hook 'eglot-ensure)
-  (add-hook 'c++-mode-hook 'eglot-ensure))
+;;  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  ;; (add-hook 'c-mode-hook 'eglot-ensure)
+  ;; (add-hook 'c++-mode-hook 'eglot-ensure))
 
 
 (defconst my-eclipse-jdt-home
-"/Users/marcelbecker/Dropbox/.emacs.d/.cache/lsp/eclipse.jdt.ls/features/org.eclipse.equinox.executable_3.8.2400.v20240129-1338.jar")
+  "/Users/marcelbecker/Dropbox/.emacs.d/.cache/lsp/eclipse.jdt.ls/features/org.eclipse.equinox.executable_3.8.2600.v20240722-2106.jar")
 
 (defun my-eclipse-jdt-contact (interactive)
   (let ((cp (getenv "CLASSPATH")))
@@ -400,7 +423,7 @@
         (eglot--eclipse-jdt-contact nil)
       (setenv "CLASSPATH" cp))))
 
-(setcdr (assq 'java-mode eglot-server-programs) #'my-eclipse-jdt-contact)
+;; (setcdr (assq 'java-mode eglot-server-programs) #'my-eclipse-jdt-contact)
 
 
 

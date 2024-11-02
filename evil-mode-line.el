@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'evil)
-(require 'mode-line-color)
+(load-file "mode-line-color.el")
 
 (defgroup evil-mode-line nil
   "Mode line color and message for Evil"
@@ -48,7 +48,7 @@
 (defcustom evil-insert-state-msg "INSERT"
   "Mode line message for Evil insert state."
   :type 'string
-  :group 'evil-mode-linei)
+  :group 'evil-mode-line)
 (defcustom evil-replace-state-msg "REPLACE"
   "Mode line message for Evil replace state."
   :type 'string

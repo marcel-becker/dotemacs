@@ -1,5 +1,5 @@
 ;;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2024-04-23 Tue 17:36 marcelbecker on Mac-Studio.local"
+;;; Time-stamp: "2024-10-29 Tue 18:40 marcelbecker on Mac-Studio.local"
 ;;;
 ;;;  __  __                    _   ____            _
 ;;; |  \/  | __ _ _ __ ___ ___| | | __ )  ___  ___| | _____ _ __
@@ -277,9 +277,13 @@
 (display-line-numbers-mode 1)
 (global-display-line-numbers-mode 1)
 ;; Face for the highlighted current line.
-(set-face-attribute 'hl-line nil :inherit nil :background "#666666"  :foreground nil :weight 'ultra-bold)
+(set-face-attribute 'hl-line nil :inherit nil :background "gray39"  :foreground nil :weight 'ultra-bold)
 ;; Face for the line number
-(set-face-attribute 'line-number-current-line nil :background "#666666"  :foreground nil :weight 'ultra-bold)
+(setq-default display-line-numbers 'visual
+              display-line-numbers-current-absolute t
+              display-line-numbers-width 4
+              display-line-numbers-widen t)
+(set-face-attribute 'line-number-current-line nil :background "gray16"  :foreground "orange" :weight 'ultra-bold)
 ;; highlight current line
 
 
@@ -409,7 +413,7 @@
       (cond (running-ms-windows
              "DejaVu Sans Mono 11")
             (running-macos
-             "Source Code Pro for Powerline-18:medium"
+             "Source Code Pro for Powerline-20:medium"
              ;;"Menlo for Powerline-18:regular"
              ;;"DejaVu Sans Mono 18")
              ;;        "Geneva 13")
@@ -518,10 +522,10 @@
        (frame-width    (cons 'width 180))
        (frame-top      (cons 'top  (my-get-default-y-frame-position)))
        (frame-left     (cons 'left (my-get-default-x-frame-position)))
-       (bg-color       (if (eq (user-uid) 0) "gray38" "#09223F"))
+       (bg-color       (if (eq (user-uid) 0) "gray38" "#16161e" )) ;;"#09223F"))
        (frame-background-color (if (eq (user-uid) 0)
                                    '(background-color . "gray38")
-                                 '(background-color . "#09223F")
+                                 '(background-color . "#16161e" ) ;; "#09223F")
                                  )))
   (add-to-list 'default-frame-alist frame-font)
   (add-to-list 'initial-frame-alist frame-font)
@@ -530,12 +534,12 @@
   (set-face-attribute 'default nil :background bg-color :foreground "white")
 
   (when (> (display-pixel-width) 7000)
-    (setq frame-height (cons 'height 87)
+    (setq frame-height (cons 'height 80)
           frame-width  (cons 'width 231)
           frame-top    (cons 'top 63)
           frame-left   (cons 'left 2483))
     (set-frame-position (selected-frame) 2483 63)
-    (set-frame-size (selected-frame) 231 87 nil))
+    (set-frame-size (selected-frame) 231 80 nil))
 
 
   (when window-system
@@ -575,8 +579,8 @@
                 (foreground-color . "white")
                 (tool-bar-lines . 0)
                 (menu-bar-lines . 0)
-                ;(width . (text-pixels . 400))
-                ;(height . (text-pixels . 400))
+                                        ;(width . (text-pixels . 400))
+                                        ;(height . (text-pixels . 400))
                 )))
 
 (display-init-load-time-checkpoint "Finished configuring emacs frame")
@@ -589,7 +593,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (display-init-load-time-checkpoint "Setting up ELPA")
-(require 'package)
+;;(require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpas" . "https://melpa.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
@@ -2111,7 +2115,7 @@ file to write to."
 ;; ;; (winner-mode 1)
 
 
-(setq linum-format " %d ")
+;; (setq linum-format " %d ")
 ;;(setq linum-format "\u2502 %6d \u2502\u2502")
 ;; ;; ;; To make emacs use spaces instead of tabs (Added by Art Lee on 2/19/2008)
 (setq-default indent-tabs-mode nil)
@@ -4201,6 +4205,28 @@ Version 2017-01-27"
 (global-set-key [remap dabbrev-expand] 'hippie-expand)
 
 
+(use-package eterm-256color)
+(use-package vterm
+  :config
+  (custom-set-faces
+   '(vterm                ((t (:foreground "brightblack"))))
+   '(vterm-color-black    ((t (:background "black"     :foreground "black"))))
+   '(vterm-color-red      ((t (:background "magenta"   :foreground "magenta"))))
+   '(vterm-color-green    ((t (:background "SeaGreen2" :foreground "SeaGreen2"))))
+   '(vterm-color-yellow   ((t (:background "yellow"    :foreground "yellow"))))
+   '(vterm-color-blue     ((t (:background "darkcyan"  :foreground "darkcyan"))))
+   '(vterm-color-magenta  ((t (:background "magenta"   :foreground "magenta"))))
+   '(vterm-color-cyan    ((t ( :background "cyan"      :foreground "cyan"))))
+   '(vterm-color-white    ((t (:background "white"     :foreground "white")))))
+  (add-hook 'vterm-mode-hook
+            (lambda ()
+              (set (make-local-variable 'buffer-face-mode-face) ;;'(:family "Hack Nerd Font"))
+                   '(:family "Meslo LG L for Powerline"))
+              (buffer-face-mode t)))
+  (add-hook 'vterm-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
+  (add-hook 'vterm-mode-hook #'eterm-256color-mode))
+
+
 ;; (add-hook 'vterm-mode-hook
 ;;           (lambda ()
 ;;             (set (make-local-variable 'buffer-face-mode-face) 'Hack)
@@ -4285,7 +4311,7 @@ Version 2017-01-27"
 
 (use-package fzf
   :bind
-    ;; Don't forget to set keybinds!
+  ;; Don't forget to set keybinds!
   :config
   (setq fzf/args "-x --color bw --print-query --margin=1,0 --no-hscroll"
         fzf/executable "fzf"
@@ -4305,13 +4331,44 @@ Version 2017-01-27"
 (setq stack-trace-on-error nil)
 (setq debug-on-error nil)
 
-
-
-
 ;; ;; (native-compile-async "/Users/marcelbecker/src/emacs/lisp" 'recursively)
 ;; ;; (native-compile-async "/Users/marcelbecker/src/emacs/lisp" 'recursively)
 
 
-;;(use-package treesit-auto
+;;(use-package treesit-auto)
 ;;:config
 ;;(treesit-auto-add-to-auto-mode-alist 'all))
+(use-package tree-sitter)
+
+(use-package tree-sitter-langs)
+(global-tree-sitter-mode)
+(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
+
+(use-package load-env-vars)
+
+(defvar @-dotenv-file-name ".env"
+  "The name of the .env file."
+  )
+
+(defun @-find-env-file ()
+  "Find the closest .env file in the directory hierarchy."
+  (let* ((env-file-directory (locate-dominating-file "." @-dotenv-file-name))
+         (file-name (concat env-file-directory @-dotenv-file-name)))
+    (when (file-exists-p file-name)
+      file-name)))
+
+(defun my-set-project-env ()
+  "Export all environment variables in the closest .env file."
+  (let ((env-file (@-find-env-file)))
+    (when env-file
+      (load-env-vars env-file))))
+
+
+(add-hook 'projectile-mode-hook #'my-set-project-env)
+(add-hook 'projectile-after-switch-project-hook #'my-set-project-env)
+(add-hook 'comint-exec-hook #'my-set-project-env)
+(add-hook 'lsp-mode-hook #'my-set-project-env)
+(add-hook 'vterm-mode-hook #'my-set-project-env)
+
+(use-package vimrc-mode)

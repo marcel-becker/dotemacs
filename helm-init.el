@@ -222,11 +222,7 @@
       helm-buffer-max-length nil
       )
 
-                                        ;(add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
-
-
-
-
+;;(add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
 
 (use-package helm-grepint
   :after helm
@@ -243,12 +239,6 @@
 ;; show minibuffer history with Helm
 (define-key minibuffer-local-map (kbd "M-p") 'helm-minibuffer-history)
 (define-key minibuffer-local-map (kbd "M-n") 'helm-minibuffer-history)
-
-
-
-
-
-
 
 
 ;;(add-to-list 'helm-completing-read-handlers-alist '(find-file))
