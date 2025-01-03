@@ -115,7 +115,8 @@
         ;;"https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.33.0/jdt-language-server-1.30.1-202312071447.tar.gz")
         ;;"https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.33.0/jdt-language-server-1.33.0-202402151717.tar.gz"
         ;;"https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.39.0/jdt-language-server-1.34.0-202404031240.tar.gz"
-        "https://download.eclipse.org/jdtls/milestones/1.39.0/jdt-language-server-1.39.0-202408291433.tar.gz"
+        ;;"https://download.eclipse.org/jdtls/milestones/1.41.0/jdt-language-server-1.39.0-202408291433.tar.gz"
+        "https://download.eclipse.org/jdtls/milestones/1.41.0/jdt-language-server-1.41.0-202410311350.tar.gz"
         )
   ;;    (setq lsp-java-workspace-dir  "~/src/scharp-ft/scharp-planner/")
   (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/temurin-23.jdk/Contents/Home")
@@ -151,8 +152,8 @@
                 "-Dsun.zip.disableMemoryMapping=true"
                 "-Xms1000m"
                 "-XX:+EnableDynamicAgentLoading"
-                ;; "-javaagent:/Users/marcelbecker/Downloads/lombok/lombok.jar"
-                "-javaagent:/Users/marcelbecker/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.34/ec547ef414ab1d2c040118fb9c1c265ada63af14/lombok-1.18.34.jar"
+                "-javaagent:/Users/marcelbecker/Downloads/lombok/lombok.jar"
+                ;;"-javaagent:/Users/marcelbecker/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.34/ec547ef414ab1d2c040118fb9c1c265ada63af14/lombok-1.18.34.jar"
                 ;;"-Xbootclasspath/a:/Users/marcelbecker/Downloads/lombok/lombok.jar"
                 ))
     ;; (setq lsp-file-watch-ignored

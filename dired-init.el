@@ -13,14 +13,14 @@
 ;; This causes message Invalid face reference: quote
 (use-package dired-efap)
 ;;(use-package dired-explorer)
-(use-package dired-fdclone)
+;;(use-package dired-fdclone)
 (use-package dired-filetype-face)
 (use-package dired-hacks-utils)
 (use-package dired-imenu)
 (use-package dired-launch)
 (use-package dired-narrow)
 (use-package dired-open)
-(use-package dired-quick-sort)
+;;(use-package dired-quick-sort)
 (use-package dired-rainbow)
 
 (use-package ranger
@@ -51,8 +51,8 @@
   (setq dired-details-initially-hide nil))
 
 
-(use-package dired-quick-sort
-  :quelpa (dired-quick-sort :fetcher github :repo "emacsmirror/dired-quick-sort"))
+;; (use-package dired-quick-sort
+;; :quelpa (dired-quick-sort :fetcher github :repo "emacsmirror/dired-quick-sort"))
 
 (use-package dired-sort-menu
   :quelpa (dired-sort-menu :fetcher github :repo "emacsmirror/dired-sort-menu"))
@@ -77,7 +77,7 @@
 
 ;; Omitting
 ;; (setq-default dired-omit-files "^\\.[^.]+"
-              ;; dired-omit-mode t)
+;; dired-omit-mode t)
 
 ;; Adapt ls lisp format
 (if (boundp 'ls-lisp-ignore-case)

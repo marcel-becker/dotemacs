@@ -1,5 +1,5 @@
 ;;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2024-10-29 Tue 18:40 marcelbecker on Mac-Studio.local"
+;;; Time-stamp: "2025-01-03 Fri 15:40 marcelbecker on Mac-Studio.local"
 ;;;
 ;;;  __  __                    _   ____            _
 ;;; |  \/  | __ _ _ __ ___ ___| | | __ )  ___  ___| | _____ _ __
@@ -533,13 +533,20 @@
   (add-to-list 'initial-frame-alist frame-background-color)
   (set-face-attribute 'default nil :background bg-color :foreground "white")
 
-  (when (> (display-pixel-width) 7000)
+  (cond ((> (display-pixel-width) 7000)
     (setq frame-height (cons 'height 80)
           frame-width  (cons 'width 231)
           frame-top    (cons 'top 63)
           frame-left   (cons 'left 2483))
     (set-frame-position (selected-frame) 2483 63)
     (set-frame-size (selected-frame) 231 80 nil))
+        (t
+         (setq  frame-height (cons 'height 74)
+          frame-width  (cons 'width 200)
+          frame-top    (cons 'top 25)
+          frame-left   (cons 'left 588))
+    (set-frame-position (selected-frame) 588 25)
+    (set-frame-size (selected-frame) 200 74 nil)))
 
 
   (when window-system
@@ -665,14 +672,14 @@
   (setq comp-deferred-compilation t)
   (setq native-comp-speed 3) ;; maximum native Elisp speed!
   ;; native-compile all Elisp files under a directory
-  ;;(native-compile-async (expand-file-name "~/Dropbox/.emacs.d/elpa") 'recursively t)
+  ;;(native-compile-async (expand-file-name "~/Dropbox/.emacs.d/") 'recursively t)
   )
 
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
+      (bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
@@ -3115,7 +3122,7 @@ frames with exactly two windows."
 (use-package time-stamp
   :config
   ;; format of the string inserted by `M-x time-stamp'
-  (setq time-stamp-format "%Y-%02m-%02d %3a %02H:%02M %u on %s")
+  (setq time-stamp-format "%Y-%02m-%02d %3a %02H:%02M %l on %Q")
   ;; `YYYY-MM-DD Weekday HH:MM user on system'
   ;; see `system-time-locale' for non-numeric formatted items of time
   ;; update time stamps every time you save a buffer
@@ -4338,11 +4345,28 @@ Version 2017-01-27"
 ;;(use-package treesit-auto)
 ;;:config
 ;;(treesit-auto-add-to-auto-mode-alist 'all))
-(use-package tree-sitter)
+;;(use-package tree-sitter)
+;;(use-package tree-sitter-langs)
+;;(require 'tree-sitter)
+;;(require 'tree-sitter-langs)
+;;(tree-sitter-require 'java)
+;;(tree-sitter-require 'json)
+;;(tree-sitter-require 'bash)
+;;(tree-sitter-require 'elisp)
+;;(global-tree-sitter-mode)
+;;(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
-(use-package tree-sitter-langs)
-(global-tree-sitter-mode)
-(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+;;(require 'treesit)
+;; (require 'treesit-langs)
+;; (treesit-langs-major-mode-setup)
+;; (use-package treesit-langs)
+
+;; (use-package treesit-auto
+;;   :custom
+;;   (treesit-auto-install 'prompt)
+;;   :config
+;;   (treesit-auto-add-to-auto-mode-alist 'all)
+;;   (global-treesit-auto-mode))
 
 
 (use-package load-env-vars)
