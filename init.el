@@ -1,5 +1,5 @@
 ;;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2025-03-04 Tue 13:45 marcelbecker on Mac-Studio.local"
+;;; Time-stamp: "2025-03-04 Tue 14:08 marcelbecker on Mac-Studio.local"
 ;;;
 ;;;  __  __                    _   ____            _
 ;;; |  \/  | __ _ _ __ ___ ___| | | __ )  ___  ___| | _____ _ __
@@ -1083,6 +1083,7 @@ https://github.com/jaypei/emacs-neotree/pull/110"
   (interactive)
   (display-init-load-time-checkpoint "Loading helm")
   (my-load-init-file  "helm-init.el")
+  (my-load-init-file  "helm-fzf.el")
   (display-init-load-time-checkpoint "Done loading helm"))
 
 
