@@ -1,5 +1,5 @@
 ;;; -*- lexical-binding: t -*-
-;;; Time-stamp: "2025-01-03 Fri 15:40 marcelbecker on Mac-Studio.local"
+;;; Time-stamp: "2025-03-04 Tue 13:45 marcelbecker on Mac-Studio.local"
 ;;;
 ;;;  __  __                    _   ____            _
 ;;; |  \/  | __ _ _ __ ___ ___| | | __ )  ___  ___| | _____ _ __
@@ -534,19 +534,19 @@
   (set-face-attribute 'default nil :background bg-color :foreground "white")
 
   (cond ((> (display-pixel-width) 7000)
-    (setq frame-height (cons 'height 80)
-          frame-width  (cons 'width 231)
-          frame-top    (cons 'top 63)
-          frame-left   (cons 'left 2483))
-    (set-frame-position (selected-frame) 2483 63)
-    (set-frame-size (selected-frame) 231 80 nil))
+         (setq frame-height (cons 'height 80)
+               frame-width  (cons 'width 231)
+               frame-top    (cons 'top 63)
+               frame-left   (cons 'left 2483))
+         (set-frame-position (selected-frame) 2483 63)
+         (set-frame-size (selected-frame) 231 80 nil))
         (t
          (setq  frame-height (cons 'height 74)
-          frame-width  (cons 'width 200)
-          frame-top    (cons 'top 25)
-          frame-left   (cons 'left 588))
-    (set-frame-position (selected-frame) 588 25)
-    (set-frame-size (selected-frame) 200 74 nil)))
+                frame-width  (cons 'width 200)
+                frame-top    (cons 'top 25)
+                frame-left   (cons 'left 588))
+         (set-frame-position (selected-frame) 588 25)
+         (set-frame-size (selected-frame) 200 74 nil)))
 
 
   (when window-system
@@ -676,9 +676,13 @@
   )
 
 
+(setq straight-base-dir (expand-file-name "~/.emacs.d"))
 (defvar bootstrap-version)
 (let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
       (bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
@@ -4005,7 +4009,7 @@ Version 2017-01-27"
 (my-load-quelpa-packages)
 
 (my-load-dired)
-(my-load-interaction-log)
+;;(my-load-interaction-log)
 
 ;;;;; NOT USED
 ;;(my-load-evil)

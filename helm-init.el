@@ -112,9 +112,9 @@
 
 (display-init-load-time-checkpoint "Done Loading helm gitignore")
 
-(use-package helm-mode-manager
-  :after helm)
-(display-init-load-time-checkpoint "Done Loading helm mode-manager")
+;;(use-package helm-mode-manager
+;;  :after helm)
+;;(display-init-load-time-checkpoint "Done Loading helm mode-manager")
 
 
 (use-package helm-pydoc
